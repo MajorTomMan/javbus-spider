@@ -1,5 +1,6 @@
 import warnings
 import os
+from bs4 import BeautifulSoup
 import requests
 
 
@@ -8,6 +9,8 @@ from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
+from Attr import MovieAttrs
 
 
 class WebUtil:
@@ -241,6 +244,7 @@ class ImageUtil:
         if self.__checkFolderIsExists(targetFolder):
             self.__save(response,path)
         else:
+            print("create folder "+targetFolder)
             os.makedirs(targetFolder)
             self.__save(response,path)
         print("image "+path+" is downloaded")
@@ -252,7 +256,7 @@ class ImageUtil:
         print(path+" not exists")
         return False
     def __checkFileIsExists(self,attrs,filename,isBigImage):
-        if isBigImage:
+        if not isBigImage:
             path=self.basePath+attrs.name+"/"+attrs.code+"/"+"sample"+"/"+filename
         else:
             path=self.basePath+attrs.name+"/"+attrs.code+"/"+"bigImage"+"/"+filename
@@ -263,3 +267,77 @@ class ImageUtil:
         with open(path,"wb") as f:
             for cache in response.iter_content(chunk_size=32):
                 f.write(cache)
+                
+                
+class PageUtil:
+    WebUtil=WebUtil()
+    AttrsUtil=AttrsUtil()
+    ImageUtil=ImageUtil()
+    baseUrl=""
+    def __init__(self,url) -> None:
+        self.baseUrl=url
+    def parseDetailPage(self, link):
+        driver = self.WebUtil.getWebSite(link)
+        bs = BeautifulSoup(driver.page_source,"html.parser")
+        title = self.AttrsUtil.getTitle(bs)
+        attrs = self.getInfos(bs)
+        attrs.title=title
+        a = bs.find("a", {"class": "bigImage"})
+        if a:
+            bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
+            attrs.bigImageLink=bigImagePath
+        waterfall = bs.find("div", {"id": "sample-waterfall"})
+        if waterfall:
+            imgs = self.AttrsUtil.getSampleImages(waterfall)
+            if imgs:
+                if attrs:
+                    attrs.sampleImageLinks=imgs
+        self.ImageUtil.downloadSampleImages(links=attrs.sampleImageLinks,attrs=attrs)
+        self.ImageUtil.downloadBigImage(bigImagePath,attrs=attrs)
+        return attrs
+    def getInfos(self, bs):
+        attrs=MovieAttrs()
+        info = bs.find("div", {"class": "col-md-3 info"})
+        if info:
+            ps = info.find_all("p")
+            for p in ps:
+                header = p.find("span", {"class": "header"})
+                if header:
+                    if "識別碼:" in header:
+                        code = self.AttrsUtil.getCode(p)
+                        attrs.code=code
+                    if "發行日期:" in header:
+                        date = self.AttrsUtil.getReleaseDate(header)
+                        attrs.date=date
+                    if "長度:" in header:
+                        length = self.AttrsUtil.getLength(header)
+                        attrs.length=length
+                    if "導演:" in header:
+                        director = self.AttrsUtil.getDirector(p)
+                        attrs.director=director
+                    if "製作商:" in header:
+                        studio = self.AttrsUtil.getStudio(p)
+                        attrs.studio=studio
+                    if "發行商:" in header:
+                        label = self.AttrsUtil.getLabel(p)
+                        attrs.label=label
+                    if "系列:" in header:
+                        series = self.AttrsUtil.getSeries(p)
+                        if series:
+                            attrs.series=series
+                        else:
+                            print("series not found")
+
+            p=ps[-3]
+            genres = self.AttrsUtil.getGenres(p)
+            attrs.genres=genres
+            p = ps[-1]
+            name = self.AttrsUtil.getName(p)
+            if name:
+                for k,v in name.items():
+                    attrs.name=k
+                    attrs.nameLink=v
+            return attrs
+        else:
+            print("info not found")
+            return None

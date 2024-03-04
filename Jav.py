@@ -15,4 +15,6 @@ if __name__=="__main__":
         print("starting index bfs model")
         index(baseUrl).BFS()
     elif int(num)==2:
+        name=input("input what you want to search(only name):")
         print("starting search bfs model")
+        search(baseUrl,name).BFS()
