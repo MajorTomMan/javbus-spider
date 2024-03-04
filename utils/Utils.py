@@ -9,6 +9,7 @@ from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+
 class WebUtil:
     def __init__(self) -> None:
         self.options=Options()
@@ -118,67 +119,71 @@ class AttrsUtil:
     def getLength(self, bs):
         return bs.next_sibling.text.strip()
 
-    def getDirector(self, bs,directors):
+    def getDirector(self, bs):
+        director={}
         a = bs.find("a")
         if a:
             href = a["href"]
             name = a.text.strip()
-            directors[name] = href
-            return name
+            director[name]=href
+            return director
         else:
             print("director not found")
             return None
 
-    def getStudio(self, bs,studios):
+    def getStudio(self, bs):
+        studio={}
         a = bs.find("a")
         if a:
             href = a["href"]
             name = a.text.strip()
-            studios[name] = href
-            return name
+            studio[name]=href
+            return studio
         else:
             print("studio not found")
             return None
 
-    def getLabel(self, bs,labels):
+    def getLabel(self, bs):
+        labels={}
         a = bs.find("a")
         if a:
             href = a["href"]
             name = a.text.strip()
             labels[name] = href
-            return name
+            return labels
         else:
             print("label not found")
             return None
 
-    def getGenres(self, bs,genreDict):
-        genreStr = ""
-        genres = bs.find_all("span", {"class": "genre"})
-        if genres:
-            for genre in genres:
+    def getGenres(self, bs):
+        genres={}
+        genresList = bs.find_all("span", {"class": "genre"})
+        if genresList:
+            for genre in genresList:
                 a = genre.find("a")
                 if a:
                     href = a["href"]
                     g = a.text.strip()
-                    genreDict[g] = href
-                    genreStr += g + ","
-            return genreStr
+                    genres[g]=href
+            return genres
         else:
             print("genres not found")
             return None
 
-    def getName(self, bs,names):
+    def getName(self, bs):
+        names={}
         a = bs.find("a")
         if a:
             href = a["href"]
             name = a.text
             names[name] = href
-            return name
+            return names
         else:
             print("name not found")
             return None
 
-    def getSeries(self, bs,series):
+    def getSeries(self, bs):
+        series={}
         a = bs.find("a")
         if a:
             href = a["href"]
@@ -193,24 +198,24 @@ class AttrsUtil:
 class ImageUtil:
     def __init__(self) -> None:
         self.ua=UserAgent()
-        self.basePath="./images"
-    def downloadSampleImages(self,links,info):
+        self.basePath="./images/"
+    def downloadSampleImages(self,links,attrs):
         headers={"User-Agent":self.ua.random}
         for link in links:
             filename=link.split("/")[-1]
-            if self.__checkFileIsExists(infos=info,filename=filename,isBigImage=False):
+            if self.__checkFileIsExists(attrs=attrs,filename=filename,isBigImage=False):
                 print("local sample file "+filename+" already exists skipping download")
                 continue
             response=requests.get(link,headers=headers)
             print("image response code is "+str(response.status_code))
             if response.status_code==200:
                 print("image "+ response.url+" download success")
-                self.__save2Local(response,info,filename,False)
+                self.__save2Local(response,attrs,filename,False)
             else:
                 print("image "+ response.url+" download failure")
-    def downloadBigImage(self,link,info):
+    def downloadBigImage(self,link,attrs):
         filename=link.split("/")[-1]
-        if self.__checkFileIsExists(infos=info,filename=filename,isBigImage=False):
+        if self.__checkFileIsExists(attrs=attrs,filename=filename,isBigImage=True):
             print("local bigImage file "+filename+" already exists skipping download")
             return
         headers={"User-Agent":self.ua.random}
@@ -222,17 +227,15 @@ class ImageUtil:
             url=response.url
             paths=url.split("/")
             filename=paths[-1]
-            self.__save2Local(response,info,filename,True)
+            self.__save2Local(response,attrs,filename,True)
         else:
             print("image "+ response.url+" download failure")
         
-    def __save2Local(self,response,info,filename,isBigImage):
-        code=info["識別碼"]
-        name=info["演員"]
+    def __save2Local(self,response,attrs,filename,isBigImage):
         if not isBigImage:
-            targetFolder=self.basePath+name+"/"+code+"/"+"sample"+"/"
+            targetFolder=self.basePath+attrs.name+"/"+attrs.code+"/"+"sample"+"/"
         else:
-            targetFolder=self.basePath+name+"/"+code+"/"+"bigImage"+"/"
+            targetFolder=self.basePath+attrs.name+"/"+attrs.code+"/"+"bigImage"+"/"
         path=targetFolder+filename
         print("current image store path is "+path)
         if self.__checkFolderIsExists(targetFolder):
@@ -248,11 +251,11 @@ class ImageUtil:
             return True
         print(path+" not exists")
         return False
-    def __checkFileIsExists(self,infos,filename,isBigImage):
+    def __checkFileIsExists(self,attrs,filename,isBigImage):
         if isBigImage:
-            path=self.basePath+infos["演員"]+"/"+infos["識別碼"]+"/"+"sample"+"/"+filename
+            path=self.basePath+attrs.name+"/"+attrs.code+"/"+"sample"+"/"+filename
         else:
-            path=self.basePath+infos["演員"]+"/"+infos["識別碼"]+"/"+"bigImage"+"/"+filename
+            path=self.basePath+attrs.name+"/"+attrs.code+"/"+"bigImage"+"/"+filename
         if os.path.exists(path):
             return True
         return False
