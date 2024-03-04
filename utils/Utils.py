@@ -7,7 +7,6 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from Attr import MovieAttrs
@@ -22,7 +21,7 @@ class WebUtil:
     def __configure(self):
         # selenium configuration for headless browser mode
         warnings.simplefilter("ignore", ResourceWarning)
-        #WebUtils.options.add_argument("--headless")
+        self.options.add_argument("--headless")
         self.options.add_argument('--disable-blink-features=AutomationControlled')
         self.options.add_argument('--disable-extensions')
         self.options.add_argument('--disable-gpu')
@@ -40,14 +39,14 @@ class WebUtil:
 
     def getWebSite(self,url):
         user_agent = self.ua.random
+        self.options.add_argument(f'user-agent={user_agent}')
         driver = webdriver.Chrome(options=self.options)
-        driver.execute_cdp_cmd("Network.setUserAgentOverride", {"userAgent": user_agent})
         driver.get(url)
         return driver
     def save2local(self,path,filename,content):
         with open(path+"/"+filename+".html", "w", encoding="utf-8") as f:
             f.write(content)
-    
+        
     def checkisLimitedByAge(self, content):
         if "Age" in content:
             return True
@@ -66,7 +65,15 @@ class WebUtil:
         else:
             print("checkbox not found")
 
-
+    def get(self,url):
+        headers={
+            "User-Agent": self.ua.random
+        }
+        response=requests.get(url,headers=headers)
+        if response.status_code==200:
+            return response.text
+        else:
+            return None
 class AttrsUtil:
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})

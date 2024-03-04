@@ -11,7 +11,7 @@ class index:
     pageNum = 1
     baseUrl=""
     def __init__(self,url):
-        self.baseUrl = url+"/page/"+str(self.pageNum)
+        self.baseUrl = url+"page/"+str(self.pageNum)
         self.PageUtil=PageUtil(url)
     def BFS(self):
         if self.baseUrl:
@@ -37,3 +37,6 @@ class index:
             print("all link was visited jump to next page")
         else:
             print("movie list not found")
+    def save2local(self,content):
+        with open("./headers/requests.txt") as f:
+            f.write(content)
