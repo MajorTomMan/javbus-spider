@@ -1,0 +1,3 @@
+class Studio:
+    name=""
+    link=""

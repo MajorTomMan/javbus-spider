@@ -1,13 +1,13 @@
 from bs4 import BeautifulSoup
-from utils.Utils import AttrsUtil, PageUtil, WebUtil
-
+from utils.Utils import AttrsUtil, PageUtil, WebUtil,RequestUtil
+import json
 
 class index:
     WebUtil=WebUtil()
     PageUtil
     AttrsUtil=AttrsUtil()
+    RequestUtil=RequestUtil()
     links=[]
-    attrsList=[]
     pageNum = 1
     baseUrl=""
     def __init__(self,url):
@@ -32,11 +32,27 @@ class index:
                 print("now visit website link is "+link)
                 if link:
                     self.links.append(link)
-                    attrs=self.PageUtil.parseDetailPage(link)
-                    self.attrsList.append(attrs)
+                    movie=self.PageUtil.parseDetailPage(link)
+                    for actor in movie.stars:
+                        star_link=movie.stars[actor]
+                        star=self.PageUtil.parseStarDetailsPage(star_link)
+                        star.star_link=star_link
+                        if star:
+                            self.sendData2Server(star,"/star/save")
+                        else:
+                            print("star not found")
+                    print(movie)
             print("all link was visited jump to next page")
         else:
             print("movie list not found")
     def save2local(self,content):
         with open("./headers/requests.txt") as f:
             f.write(content)
+    def sendData2Server(self,data,path):
+        data_json=json.dumps(data.__dict__,ensure_ascii=False)
+        response=self.RequestUtil.post(data=data_json,path=path)
+        if response.status_code==200:
+            print(response.content)
+            print("send data was success")
+        else:
+            print("send data was failure")

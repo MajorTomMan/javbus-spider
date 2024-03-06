@@ -1,0 +1,3 @@
+class Series:
+    name=""
+    link=""

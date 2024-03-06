@@ -10,7 +10,8 @@ from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 from selenium.webdriver.common.by import By
 
-from Attr import MovieAttrs
+from utils.attrs.Movie import Movie
+from utils.attrs.Star import Star
 
 
 class WebUtil:
@@ -179,16 +180,19 @@ class AttrsUtil:
             print("genres not found")
             return None
 
-    def getName(self, bs):
+    def getStars(self, bs):
         names={}
-        a = bs.find("a")
-        if a:
-            href = a["href"]
-            name = a.text
-            names[name] = href
+        spans=bs.find_all("span",{"class":"genre"})
+        if spans:
+            for span in spans:
+                a=span.find("a")
+                if a:
+                    link=a["href"]
+                    name=a.text
+                    names[name]=link
             return names
         else:
-            print("name not found")
+            print("stars not found")
             return None
 
     def getSeries(self, bs):
@@ -202,29 +206,87 @@ class AttrsUtil:
         else:
             print("series not found")
             return None
-        
-        
+    def getPhotoLink(self,bs):
+        img=bs.find("img")
+        if img:
+            src=img["src"]
+            return src
+    def getBrithDay(self,bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getAge(self,bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getHeight(self,bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getCup(self,bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getBust(self,bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getWaist(self, bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+
+    def getHip(self, bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+
+    def getBirthPlace(self, bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+
+    def getHobby(self, bs):
+        attr=bs.text.split(":")
+        if attr:
+            return attr[-1].strip()
+    def getName(self,bs):
+        span=bs.find("span",{"class":"pb10"})
+        if span:
+            name=span.text
+            return name.strip()
+        else:
+            print("name not found")
+            return None
 class ImageUtil:
     def __init__(self) -> None:
         self.ua=UserAgent()
         self.basePath="./images/"
-    def downloadSampleImages(self,links,attrs):
+    def downloadSampleImages(self,links,movie):
+        if len(movie.stars)>1:
+            stars="-".join(movie.stars.keys())
+        else:
+            stars=movie.stars.keys()
         headers={"User-Agent":self.ua.random}
         for link in links:
             filename=link.split("/")[-1]
-            if self.__checkFileIsExists(attrs=attrs,filename=filename,isBigImage=False):
+            if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=False):
                 print("local sample file "+filename+" already exists skipping download")
                 continue
             response=requests.get(link,headers=headers)
             print("image response code is "+str(response.status_code))
             if response.status_code==200:
                 print("image "+ response.url+" download success")
-                self.__save2Local(response,attrs,filename,False)
+                self.__save2Local(response=response,stars=stars,code=movie.code,filename=filename,isBigImage=False)
             else:
                 print("image "+ response.url+" download failure")
-    def downloadBigImage(self,link,attrs):
+    def downloadBigImage(self,link,movie):
+        if len(movie.stars)>1:
+            stars="-".join(movie.stars.keys())
+        else:
+            stars=movie.stars.keys()
         filename=link.split("/")[-1]
-        if self.__checkFileIsExists(attrs=attrs,filename=filename,isBigImage=True):
+        if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=True):
             print("local bigImage file "+filename+" already exists skipping download")
             return
         headers={"User-Agent":self.ua.random}
@@ -236,15 +298,15 @@ class ImageUtil:
             url=response.url
             paths=url.split("/")
             filename=paths[-1]
-            self.__save2Local(response,attrs,filename,True)
+            self.__save2Local(response=response,stars=stars,code=movie.code,filename=filename,isBigImage=True)
         else:
             print("image "+ response.url+" download failure")
         
-    def __save2Local(self,response,attrs,filename,isBigImage):
+    def __save2Local(self,response,stars,code,filename,isBigImage):
         if not isBigImage:
-            targetFolder=self.basePath+attrs.name+"/"+attrs.code+"/"+"sample"+"/"
+            targetFolder=self.basePath+stars+"/"+code+"/"+"sample"+"/"
         else:
-            targetFolder=self.basePath+attrs.name+"/"+attrs.code+"/"+"bigImage"+"/"
+            targetFolder=self.basePath+stars+"/"+code+"/"+"bigImage"+"/"
         path=targetFolder+filename
         print("current image store path is "+path)
         if self.__checkFolderIsExists(targetFolder):
@@ -261,11 +323,11 @@ class ImageUtil:
             return True
         print(path+" not exists")
         return False
-    def __checkFileIsExists(self,attrs,filename,isBigImage):
+    def __checkFileIsExists(self,stars,code,filename,isBigImage):
         if not isBigImage:
-            path=self.basePath+attrs.name+"/"+attrs.code+"/"+"sample"+"/"+filename
+            path=self.basePath+stars+"/"+code+"/"+"sample"+"/"+filename
         else:
-            path=self.basePath+attrs.name+"/"+attrs.code+"/"+"bigImage"+"/"+filename
+            path=self.basePath+stars+"/"+code+"/"+"bigImage"+"/"+filename
         if os.path.exists(path):
             return True
         return False
@@ -286,23 +348,23 @@ class PageUtil:
         driver = self.WebUtil.getWebSite(link)
         bs = BeautifulSoup(driver.page_source,"html.parser")
         title = self.AttrsUtil.getTitle(bs)
-        attrs = self.getInfos(bs)
-        attrs.title=title
+        movie = self.getInfos(bs)
+        movie.title=title
         a = bs.find("a", {"class": "bigImage"})
         if a:
             bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
-            attrs.bigImageLink=bigImagePath
+            movie.bigImageLink=bigImagePath
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
             imgs = self.AttrsUtil.getSampleImages(waterfall)
             if imgs:
-                if attrs:
-                    attrs.sampleImageLinks=imgs
-        self.ImageUtil.downloadSampleImages(links=attrs.sampleImageLinks,attrs=attrs)
-        self.ImageUtil.downloadBigImage(bigImagePath,attrs=attrs)
-        return attrs
+                if movie:
+                    movie.sampleImageLinks=imgs
+        self.ImageUtil.downloadSampleImages(links=movie.sampleImageLinks,movie=movie)
+        self.ImageUtil.downloadBigImage(bigImagePath,movie=movie)
+        return movie
     def getInfos(self, bs):
-        attrs=MovieAttrs()
+        movie=Movie()
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -311,39 +373,101 @@ class PageUtil:
                 if header:
                     if "識別碼:" in header:
                         code = self.AttrsUtil.getCode(p)
-                        attrs.code=code
+                        movie.code=code
                     if "發行日期:" in header:
                         date = self.AttrsUtil.getReleaseDate(header)
-                        attrs.date=date
+                        movie.date=date
                     if "長度:" in header:
                         length = self.AttrsUtil.getLength(header)
-                        attrs.length=length
+                        movie.length=length
                     if "導演:" in header:
                         director = self.AttrsUtil.getDirector(p)
-                        attrs.director=director
+                        movie.director=director
                     if "製作商:" in header:
                         studio = self.AttrsUtil.getStudio(p)
-                        attrs.studio=studio
+                        movie.studio=studio
                     if "發行商:" in header:
                         label = self.AttrsUtil.getLabel(p)
-                        attrs.label=label
+                        movie.label=label
                     if "系列:" in header:
                         series = self.AttrsUtil.getSeries(p)
                         if series:
-                            attrs.series=series
+                            movie.series=series
                         else:
                             print("series not found")
-
             p=ps[-3]
             genres = self.AttrsUtil.getGenres(p)
-            attrs.genres=genres
+            movie.genres=genres
             p = ps[-1]
-            name = self.AttrsUtil.getName(p)
-            if name:
-                for k,v in name.items():
-                    attrs.name=k
-                    attrs.nameLink=v
-            return attrs
+            stars = self.AttrsUtil.getStars(p)
+            movie.stars=stars
+            return movie
         else:
             print("info not found")
             return None
+    def parseStarDetailsPage(self,link):
+        driver=self.WebUtil.getWebSite(link)
+        bs=BeautifulSoup(driver.page_source,"html.parser")
+        star=Star()
+        box=bs.find("div",{"class":"avatar-box"})
+        if box:
+            frame=box.find("div",{"class":"photo-frame"})
+            info=box.find("div",{"class":"photo-info"})
+            if frame:
+                link=self.AttrsUtil.getPhotoLink(frame)
+                star.photo_link=link
+            else:
+                print("photo link not found")
+            if info:
+                name=self.AttrsUtil.getName(info)
+                if name:
+                    star.name=name
+                ps=info.find_all("p")
+                if ps:
+                    for p in ps:
+                        if "生日:" in p.text:
+                             brithday=self.AttrsUtil.getBrithDay(p)
+                             star.brith_day=brithday
+                        if "年齡:" in p.text:
+                            age=self.AttrsUtil.getAge(p)
+                            if age:
+                                star.age=age
+                        if "罩杯:" in p.text:
+                            cup=self.AttrsUtil.getCup(p)
+                            if cup:
+                                star.cup=cup
+                        if "身高:" in p.text:
+                            height=self.AttrsUtil.getHeight(p)
+                            if height:
+                                star.height=height
+                        if "胸圍:" in p.text:
+                            bust=self.AttrsUtil.getBust(p)
+                            if bust:
+                                star.bust=bust
+                        if "腰圍:" in p.text:
+                            waist=self.AttrsUtil.getWaist(p)
+                            if waist:
+                                star.waist=waist
+                        if "臀圍:" in p.text:
+                            hip=self.AttrsUtil.getHip(p)
+                            if hip:
+                                star.hip=hip
+                        if "出生地:" in p.text:
+                            brith_place=self.AttrsUtil.getBirthPlace(p)
+                            if brith_place:
+                                star.birth_place=brith_place
+                        if "愛好:" in p.text:
+                            hobby=self.AttrsUtil.getHobby(p)
+                            if hobby:
+                                star.hobby=hobby
+        else:
+            print("star detail page not found")
+        return star
+class RequestUtil:
+    baseUrl="http://localhost:8080/"
+    headers={'Content-Type': 'application/json'}
+    def post(self,data,path):
+        return requests.post(url=self.baseUrl+path,data=data,headers=self.headers)
+    def get(self,path):
+        return requests.get(self.baseUrl+path)
+    
