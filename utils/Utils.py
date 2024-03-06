@@ -1,9 +1,10 @@
+import time
 import warnings
 import os
 from bs4 import BeautifulSoup
 import requests
 
-
+import undetected_chromedriver as uc
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
@@ -34,14 +35,12 @@ class WebUtil:
         self.options.add_argument('--start-maximized')
         self.options.add_argument('--user-data-dir=/dev/null')
         self.options.add_argument('--remote-debugging-port=12000')
-        self.options.add_experimental_option('excludeSwitches', ['enable-automation', 'useAutomationExtension','enable-logging'])
-    
+        #self.options.add_experimental_option('excludeSwitches', ['enable-automation', 'useAutomationExtension','enable-logging'])
 
     def getWebSite(self,url):
-        user_agent = self.ua.random
-        self.options.add_argument(f'user-agent={user_agent}')
-        driver = webdriver.Chrome(options=self.options)
+        driver = uc.Chrome(headless=True)
         driver.get(url)
+        time.sleep(6)
         return driver
     def save2local(self,path,filename,content):
         with open(path+"/"+filename+".html", "w", encoding="utf-8") as f:
