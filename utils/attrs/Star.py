@@ -2,7 +2,7 @@ class Star:
     name=""
     star_link=""
     photo_link=""
-    brith_day=""
+    birth_day=""
     age=""
     height=""
     cup=""

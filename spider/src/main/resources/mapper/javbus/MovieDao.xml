@@ -2,7 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.javbus.spider.spider.dao.MovieDao">
-    <!-- saveMovie --> 
-    <select id="saveMovie">
+
+    <!-- 根据 ID 查询 -->
+    <select id="queryMovieById" resultType="com.javbus.spider.spider.entity.Movie">
+        SELECT * FROM movie WHERE id = #{id}
     </select>
+    <select id="queryMovieByTitle" resultType="com.javbus.spider.spider.entity.Movie" >
+        SELECT * FROM movie WHERE title = #{title}
+    </select>
+    <!-- 查询所有 -->
+    <select id="queryAll">
+        SELECT * FROM movie
+    </select>
+
+    <!-- 插入 -->
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.Movie">
+        <!-- 添加插入语句 -->
+        INSERT INTO movie (title, release_date, length, link, director_id, studio_id, category_id, series_id)
+        VALUES (#{title}, #{releaseDate}, #{length}, #{link}, #{director.id}, #{studio.id}, #{categories['id']}, #{series.id})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.javbus.spider.spider.entity.Movie">
+        UPDATE movie
+        <set>
+            <if test="star != null">star_id = #{star.id},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="releaseDate != null">release_date = #{releaseDate},</if>
+            <if test="length != null">length = #{length},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="director != null">director_id = #{director.id},</if>
+            <if test="studio != null">studio_id = #{studio.id},</if>
+            <if test="categories != null">category_id = #{categories.id},</if>
+            <if test="series != null">series_id = #{series.id},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据 ID 删除 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM movie WHERE id = #{id}
+    </delete>
 </mapper>

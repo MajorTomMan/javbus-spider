@@ -3,16 +3,26 @@
 <mapper namespace="com.javbus.spider.spider.dao.CategoryDao">
 
     <select id="queryCategoryById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Category">
-        SELECT id, name
+        SELECT *
         FROM category
         WHERE id = #{id}
     </select>
-
-    <insert id="save" parameterType="com.javbus.spider.spider.entity.Category">
-        INSERT INTO category (id, name)
-        VALUES (#{id}, #{name})
+    <select id="queryCategoryByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.Category">
+        SELECT *
+        FROM category
+        WHERE name = #{name}
+    </select>
+    <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.Category">
+        INSERT INTO category (id, name,link)
+        VALUES (#{id}, #{name},#{link})
     </insert>
-
+    <!-- 插入多个Category -->
+    <insert id="saveCategories" parameterType="List">
+        INSERT INTO category (name,link) VALUES
+        <foreach collection="list" item="category" separator=",">
+            (#{category.name},#{category.link})
+        </foreach>
+    </insert>
     <delete id="delete" parameterType="java.lang.Integer">
         DELETE FROM category
         WHERE id = #{id}

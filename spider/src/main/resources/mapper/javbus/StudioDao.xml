@@ -3,14 +3,18 @@
 <mapper namespace="com.javbus.spider.spider.dao.StudioDao">
 
     <select id="queryStudioById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Studio">
-        SELECT id, name
+        SELECT *
         FROM studio
         WHERE id = #{id}
     </select>
-
+    <select id="queryStudioByName">
+        SELECT *
+        FROM studio
+        WHERE name = #{name}
+    </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.Studio">
-        INSERT INTO studio (id, name)
-        VALUES (#{id}, #{name})
+        INSERT INTO studio (name,link)
+        VALUES (#{name},#{link})
     </insert>
 
     <delete id="delete" parameterType="java.lang.Integer">
@@ -20,7 +24,7 @@
 
     <update id="update" parameterType="com.javbus.spider.spider.entity.Studio">
         UPDATE studio
-        SET name = #{name}
+        SET name = #{name} and link=#{link}
         WHERE id = #{id}
     </update>
 

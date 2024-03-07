@@ -3,7 +3,7 @@ package com.javbus.spider.spider.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javbus.spider.spider.entity.Movie;
+import com.javbus.spider.spider.entity.request.MovieRequest;
 import com.javbus.spider.spider.service.MovieService;
 import com.javbus.spider.spider.utils.R;
 
@@ -18,7 +18,7 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
     @PostMapping("save")
-    public R saveMovie(@RequestBody Movie movie) {
+    public R saveMovie(@RequestBody MovieRequest movie) {
         //TODO: process POST request
         movieService.saveMovie(movie);
         return R.ok();

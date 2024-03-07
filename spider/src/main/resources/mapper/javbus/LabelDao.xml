@@ -3,14 +3,18 @@
 <mapper namespace="com.javbus.spider.spider.dao.LabelDao">
 
     <select id="queryLabelById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Label">
-        SELECT id, name
+        SELECT *
         FROM label
         WHERE id = #{id}
     </select>
-
+    <select id="queryLabelByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Director">
+        SELECT *
+        FROM label
+        WHERE name=#{name}
+    </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.Label">
-        INSERT INTO label (id, name)
-        VALUES (#{id}, #{name})
+        INSERT INTO label (name,link)
+        VALUES ( #{name} , #{link} )
     </insert>
 
     <delete id="delete" parameterType="java.lang.Integer">
@@ -20,7 +24,7 @@
 
     <update id="update" parameterType="com.javbus.spider.spider.entity.Label">
         UPDATE label
-        SET name = #{name}
+        SET name = #{name} and link=#{link}
         WHERE id = #{id}
     </update>
 

@@ -7,7 +7,7 @@ import com.javbus.spider.spider.entity.Studio;
 @Mapper
 public interface StudioDao {
     Studio queryStudioById(Integer id);
-
+    Studio queryStudioByName(Integer id);
     void save(Studio studio);
 
     void delete(Integer id);

@@ -9,9 +9,9 @@ import com.javbus.spider.spider.entity.Label;
 public interface LabelDao {
     void save(Label label);
 
-    int queryDirectorById(Integer id);
+    Label queryDirectorById(Integer id);
 
-    int update(Label label);
+    void update(Label label);
 
-    int delete(Integer id);
+    void delete(Integer id);
 }

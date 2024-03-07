@@ -1,5 +1,8 @@
 package com.javbus.spider.spider.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +20,9 @@ public class CategoryController {
     private CategoryService categoryService;
     
     @PostMapping("save")
-    public R saveCategory(@RequestBody Category category) {
+    public R saveCategory(@RequestBody List<Category> categories) {
         // TODO: process POST request
-        categoryService.saveCategory(category);
+        categoryService.saveCategories(categories);
         return R.ok();
     }
 }

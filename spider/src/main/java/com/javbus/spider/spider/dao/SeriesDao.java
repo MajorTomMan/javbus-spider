@@ -7,7 +7,7 @@ import com.javbus.spider.spider.entity.Series;
 @Mapper
 public interface SeriesDao {
     Series querySeriesById(Integer id);
-
+    Series querySeriesByName(String name);
     void save(Series series);
 
     void delete(Integer id);

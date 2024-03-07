@@ -7,7 +7,8 @@ import com.javbus.spider.spider.entity.Director;
 @Mapper
 public interface DirectorDao {
     void save(Director director);
-    int queryDirectorById(Integer id);
-    int update(Director director);
-    int delete(Integer id);
+    Director queryDirectorById(Integer id);
+    Director queryDirectorByName(String name);
+    void update(Director director);
+    void delete(Integer id);
 }

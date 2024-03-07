@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.relation.MovieCategoryDao">
+
+    <insert id="addMovieCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieCategoryRelation">
+        INSERT INTO movie_category_relation (movie_id, category_id)
+        VALUES (#{movieId}, #{categoryId})
+    </insert>
+
+    <delete id="deleteMovieCategoryRelation">
+        DELETE FROM movie_category_relation
+        WHERE movie_id = #{movieId} AND category_id = #{categoryId}
+    </delete>
+
+    <!-- Other operations as needed -->
+
+</mapper>

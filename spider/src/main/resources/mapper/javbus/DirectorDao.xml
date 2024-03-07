@@ -7,10 +7,14 @@
         FROM director
         WHERE id = #{id}
     </select>
-
+    <select id="queryDirectorByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Director">
+        SELECT *
+        FROM director
+        WHERE name=#{name}
+    </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.Director">
-        INSERT INTO director (id, name)
-        VALUES (#{id}, #{name})
+        INSERT INTO director (name,link)
+        VALUES (#{name}, #{link} )
     </insert>
 
     <delete id="delete" parameterType="java.lang.Integer">
@@ -20,7 +24,7 @@
 
     <update id="update" parameterType="com.javbus.spider.spider.entity.Director">
         UPDATE director
-        SET name = #{name}
+        SET name = #{name} and link=#{link}
         WHERE id = #{id}
     </update>
 

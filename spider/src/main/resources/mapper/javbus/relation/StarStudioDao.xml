@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.relation.StarStudioDao">
+
+    <insert id="addStarStudioRelation" parameterType="com.javbus.spider.spider.entity.relation.StarStudioRelation">
+        INSERT INTO star_studio_relation (star_id, studio_id)
+        VALUES (#{starId}, #{studioId})
+    </insert>
+
+    <delete id="deleteStarStudioRelation">
+        DELETE FROM star_studio_relation
+        WHERE star_id = #{starId} AND studio_id = #{studioId}
+    </delete>
+
+    <!-- Other operations as needed -->
+
+</mapper>

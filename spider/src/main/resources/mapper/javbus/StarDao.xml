@@ -22,6 +22,9 @@
     <select id="queryStarById" parameterType="int" resultType="com.javbus.spider.spider.entity.Star">
         SELECT * FROM star WHERE id = #{id}
     </select>
+    <select id="queryStarByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.Star">
+        SELECT * FROM star WHERE name = #{name}
+    </select>
 
     <!-- 更新操作 -->
     <update id="update" parameterType="com.javbus.spider.spider.entity.Star">
@@ -42,4 +45,12 @@
         WHERE id = #{id}
     </update>
 
+    <!-- saveStars --> 
+<!-- 插入多个Star -->
+    <insert id="saveStars" parameterType="List">
+        INSERT INTO star (name, star_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place, hobby) VALUES
+        <foreach collection="list" item="star" separator=",">
+            (#{star.name}, #{star.starLink}, #{star.photoLink}, #{star.birthDay}, #{star.age}, #{star.height}, #{star.cup}, #{star.bust}, #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby})
+        </foreach>
+    </insert>
 </mapper>

@@ -219,7 +219,7 @@ class AttrsUtil:
         if img:
             src=img["src"]
             return src
-    def getBrithDay(self,bs):
+    def getBirthDay(self,bs):
         attr=bs.text.split(":")
         if attr:
             return attr[-1].strip()
@@ -272,13 +272,11 @@ class ImageUtil:
         self.basePath="./images/"
     def downloadSampleImages(self,links,movie):
         if movie.stars==None:
-            stars="演员未知"
+            stars="未知演员"
         elif len(movie.stars)>1:
-            stars="-".join(movie.stars.keys())
+            stars = "".join([star.get('name') for star in movie.stars])
         elif len(movie.stars)==1:
-            stars=list(movie.stars.keys())[0]
-        else:
-            return
+            stars=movie.stars[0].get("name")
         headers={"User-Agent":self.ua.random}
         for link in links:
             filename=link.split("/")[-1]
@@ -294,13 +292,11 @@ class ImageUtil:
                 print("image "+ response.url+" download failure")
     def downloadBigImage(self,link,movie):
         if movie.stars==None:
-            stars="演员未知"
+            stars="未知演员"
         elif len(movie.stars)>1:
-            stars="-".join(movie.stars.keys())
+            stars = "".join([star.get('name') for star in movie.stars])
         elif len(movie.stars)==1:
-            stars=list(movie.stars.keys())[0]
-        else:
-            return
+            stars=movie.stars[0].get("name")
         filename=link.split("/")[-1]
         if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=True):
             print("local bigImage file "+filename+" already exists skipping download")
@@ -376,6 +372,20 @@ class PageUtil:
             if imgs:
                 if movie:
                     movie.sample_image_links=imgs
+        #收集女优数据
+        if movie.stars:
+            starsList=[]
+            for actor in movie.stars:
+                star_link=movie.stars[actor]
+                star=self.parseStarDetailsPage(star_link)
+                star.star_link=star_link
+                if star:
+                    starsList.append(star.toDict())
+                else:
+                    print("star not found")
+            movie.stars=starsList
+        else:
+            print("stars not found")
         self.ImageUtil.downloadSampleImages(links=movie.sample_image_links,movie=movie)
         self.ImageUtil.downloadBigImage(link=movie.big_image_link,movie=movie)
         return movie
@@ -429,7 +439,10 @@ class PageUtil:
             p=ps[-3]
             genres = self.AttrsUtil.getGenres(p)
             if genres:
-                movie.categories=genres
+                categories=[]
+                for k,v in genres.items():
+                    categories.append({"name":k,"link":v})
+                movie.categories=categories
             else:
                 print("genres not found")
             return movie
@@ -460,8 +473,8 @@ class PageUtil:
                 if ps:
                     for p in ps:
                         if "生日:" in p.text:
-                             brithday=self.AttrsUtil.getBrithDay(p)
-                             star.brith_day=brithday
+                             birthday=self.AttrsUtil.getBirthDay(p)
+                             star.brith_day=birthday
                         if "年齡:" in p.text:
                             age=self.AttrsUtil.getAge(p)
                             if age:

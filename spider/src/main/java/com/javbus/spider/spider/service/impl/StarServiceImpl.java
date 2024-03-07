@@ -1,5 +1,7 @@
 package com.javbus.spider.spider.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,11 @@ public class StarServiceImpl implements StarService {
     public void saveStar(Star star) {
         // TODO Auto-generated method stub
         starDao.save(star);
+    }
+    @Override
+    public void saveStars(List<Star> stars) {
+        // TODO Auto-generated method stub
+        starDao.saveStars(stars);
     }
     
 }

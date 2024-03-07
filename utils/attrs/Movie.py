@@ -5,7 +5,7 @@ class Movie:
     length=""
     big_image_link=""
     sample_image_links=[]
-    stars={}
+    stars=[]
     categories=None
     label=None
     director = None

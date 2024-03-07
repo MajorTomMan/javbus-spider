@@ -3,14 +3,18 @@
 <mapper namespace="com.javbus.spider.spider.dao.SeriesDao">
 
     <select id="querySeriesById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Series">
-        SELECT id, name
+        SELECT *
         FROM series
         WHERE id = #{id}
     </select>
-
+    <select id="querySeriesByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.Series">
+        SELECT *
+        FROM series
+        WHERE name = #{name}
+    </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.Series">
-        INSERT INTO series (id, name)
-        VALUES (#{id}, #{name})
+        INSERT INTO series (name,link)
+        VALUES (#{name},#{link})
     </insert>
 
     <delete id="delete" parameterType="java.lang.Integer">
@@ -20,7 +24,7 @@
 
     <update id="update" parameterType="com.javbus.spider.spider.entity.Series">
         UPDATE series
-        SET name = #{name}
+        SET name = #{name} and link= #{link}
         WHERE id = #{id}
     </update>
 

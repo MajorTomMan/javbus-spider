@@ -15,7 +15,7 @@ public class Star {
     private String starLink;
     @JsonProperty("photo_link")
     private String photoLink;
-    @JsonProperty("brith_day")
+    @JsonProperty("birth_day")
     private String birthDay;
     private String age;
     private String height;
