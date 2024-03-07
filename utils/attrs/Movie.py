@@ -6,26 +6,13 @@ class Movie:
     big_image_link=""
     sample_image_links=[]
     stars={}
+    categories=None
     label=None
     director = None
     studio = None
-    categorys = []
-    genres = None
     series = None
     def __str__(self):
-        return (
-            f"Title: {self.title}\n"
-            f"Code: {self.code}\n"
-            f"Release Date: {self.release_date}\n"
-            f"Length: {self.length}\n"
-            f"Big Image Link: {self.big_image_link}\n"
-            f"Sample Image Links: {', '.join(self.sample_image_links)}\n"
-            f"Stars: {', '.join(self.stars.keys())}\n"
-            f"Director: {self.director}\n"
-            f"Studio: {self.studio}\n"
-            f"Categorys: {', '.join(self.categorys)}\n"
-            f"Genres: {self.genres}\n"
-            f"Series: {self.series}"
-        )
-    def toDict():
-        return self.__dict
+        properties = [f"{key}: {value}" for key, value in self.__dict__.items()]
+        return "\n".join(properties)
+    def toDict(self):
+        return self.__dict__

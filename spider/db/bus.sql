@@ -5,14 +5,6 @@ CREATE DATABASE IF NOT EXISTS javbus CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 -- 切换到 javbus 数据库
 USE javbus;
 
-
-CREATE TABLE IF NOT EXISTS genre (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) UNIQUE,
-    link VARCHAR(255) UNIQUE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-
 CREATE TABLE IF NOT EXISTS director (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE,
@@ -60,7 +52,7 @@ CREATE TABLE IF NOT EXISTS movie (
     id INT PRIMARY KEY AUTO_INCREMENT,
     star_id INT,
     title VARCHAR(255),
-    release_date date,
+    release_date VARCHAR(255),
     length INT,
     link VARCHAR(255),
     director_id INT,

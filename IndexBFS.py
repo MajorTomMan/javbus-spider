@@ -1,3 +1,5 @@
+import json
+import orjson
 from bs4 import BeautifulSoup
 from utils.Utils import AttrsUtil, PageUtil, WebUtil,RequestUtil
 
@@ -32,15 +34,23 @@ class index:
                 if link:
                     self.links.append(link)
                     movie=self.PageUtil.parseDetailPage(link)
-                    for actor in movie.stars:
-                        star_link=movie.stars[actor]
-                        star=self.PageUtil.parseStarDetailsPage(star_link)
-                        star.star_link=star_link
-                        if star:
-                            self.sendData2Server(star.toDict(),"/star/save")
-                        else:
-                            print("star not found")
-                    print(movie)
+                    if movie:
+                        print("------------------------------movie info start--------------------------------------")
+                        print(movie)
+                        print("------------------------------movie info ended--------------------------------------")
+                        self.sendData2Server(movie.toDict(),"/movie/save")
+                    if movie.stars:
+                        for actor in movie.stars:
+                            star_link=movie.stars[actor]
+                            star=self.PageUtil.parseStarDetailsPage(star_link)
+                            star.star_link=star_link
+                            if star:
+                                self.sendData2Server(star.toDict(),"/star/save")
+                            else:
+                                print("star not found")
+                    else:
+                        print("stars not found")
+                    
             print("all link was visited jump to next page")
         else:
             print("movie list not found")

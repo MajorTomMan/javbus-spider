@@ -1,3 +1,4 @@
+import json
 import time
 import warnings
 import os
@@ -11,7 +12,6 @@ from selenium.webdriver.common.by import By
 
 
 from utils.attrs.Director import Director
-from utils.attrs.Genre import Genre
 from utils.attrs.Movie import Movie
 from utils.attrs.Star import Star
 from utils.attrs.Studio import Studio
@@ -100,6 +100,8 @@ class AttrsUtil:
             return None
 
     def getBigImage(self, bs,url):
+        if url.endswith("/"):
+            url = url[:-1]
         imgs = bs.find("img")
         if imgs:
             img = imgs["src"]
@@ -208,7 +210,7 @@ class AttrsUtil:
             href = a["href"]
             serie = a.text
             series[serie] = href
-            return serie
+            return series
         else:
             print("series not found")
             return None
@@ -269,7 +271,9 @@ class ImageUtil:
         self.ua=UserAgent()
         self.basePath="./images/"
     def downloadSampleImages(self,links,movie):
-        if len(movie.stars)>1:
+        if movie.stars==None:
+            stars="演员未知"
+        elif len(movie.stars)>1:
             stars="-".join(movie.stars.keys())
         elif len(movie.stars)==1:
             stars=list(movie.stars.keys())[0]
@@ -289,7 +293,9 @@ class ImageUtil:
             else:
                 print("image "+ response.url+" download failure")
     def downloadBigImage(self,link,movie):
-        if len(movie.stars)>1:
+        if movie.stars==None:
+            stars="演员未知"
+        elif len(movie.stars)>1:
             stars="-".join(movie.stars.keys())
         elif len(movie.stars)==1:
             stars=list(movie.stars.keys())[0]
@@ -363,20 +369,19 @@ class PageUtil:
         a = bs.find("a", {"class": "bigImage"})
         if a:
             bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
-            movie.bigImageLink=bigImagePath
+            movie.big_image_link=bigImagePath
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
             imgs = self.AttrsUtil.getSampleImages(waterfall)
             if imgs:
                 if movie:
-                    movie.sampleImageLinks=imgs
-        self.ImageUtil.downloadSampleImages(links=movie.sampleImageLinks,movie=movie)
-        self.ImageUtil.downloadBigImage(bigImagePath,movie=movie)
+                    movie.sample_image_links=imgs
+        self.ImageUtil.downloadSampleImages(links=movie.sample_image_links,movie=movie)
+        self.ImageUtil.downloadBigImage(link=movie.big_image_link,movie=movie)
         return movie
     def getInfos(self, bs):
         movie=Movie()
         director=Director()
-        category=Category()
         series=Series()
         studio=Studio()
         label=Label()
@@ -391,7 +396,7 @@ class PageUtil:
                         movie.code=code
                     if "發行日期:" in header:
                         date = self.AttrsUtil.getReleaseDate(header)
-                        movie.date=date
+                        movie.release_date=date
                     if "長度:" in header:
                         length = self.AttrsUtil.getLength(header)
                         movie.length=length
@@ -399,35 +404,34 @@ class PageUtil:
                         d = self.AttrsUtil.getDirector(p)
                         director.name=list(d.keys())[0]
                         director.link=d.get(director.name)
-                        movie.director=director
+                        movie.director=director.toDict()
                     if "製作商:" in header:
                         s = self.AttrsUtil.getStudio(p)
-                        studio.name=list(d.keys())[0]
+                        studio.name=list(s.keys())[0]
                         studio.link=s.get(studio.name)
-                        movie.studio=studio
+                        movie.studio=studio.toDict()
                     if "發行商:" in header:
                         l = self.AttrsUtil.getLabel(p)
                         label.name=list(l.keys())[0]
                         label.link=l.get(label.name)
-                        movie.label=label
+                        movie.label=label.toDict()
                     if "系列:" in header:
                         s = self.AttrsUtil.getSeries(p)
                         if s:
                             series.name=list(s.keys())[0]
-                            series.link=l.get(series.name)
-                            movie.series=series
+                            series.link=s.get(series.name)
+                            movie.series=series.toDict()
                         else:
                             print("series not found")
-            p=ps[-3]
-            genres = self.AttrsUtil.getGenres(p)
-            for genre in genres:
-                category=Category()
-                category.name=list(genre.keys())[0]
-                category.link=genre.get(category.name)
-                movie.categorys.append(category)
             p = ps[-1]
             stars = self.AttrsUtil.getStars(p)
             movie.stars=stars
+            p=ps[-3]
+            genres = self.AttrsUtil.getGenres(p)
+            if genres:
+                movie.categories=genres
+            else:
+                print("genres not found")
             return movie
         else:
             print("info not found")
@@ -500,4 +504,5 @@ class RequestUtil:
         return requests.post(url=self.baseUrl+path,json=data)
     def get(self,path):
         return requests.get(self.baseUrl+path)
-    
+
+
