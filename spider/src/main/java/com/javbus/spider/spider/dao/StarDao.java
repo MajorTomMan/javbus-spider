@@ -6,5 +6,8 @@ import com.javbus.spider.spider.entity.Star;
 
 @Mapper
 public interface StarDao {
-    void saveStar(Star star);
+    void save(Star star);
+    void queryStarById(Integer id);
+    void update(Star star);
+    void delete(Integer id);
 }

@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 from utils.Utils import AttrsUtil, PageUtil, WebUtil,RequestUtil
-import json
 
 class index:
     WebUtil=WebUtil()

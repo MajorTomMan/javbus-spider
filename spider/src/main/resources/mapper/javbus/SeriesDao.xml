@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.SeriesDao">
+
+    <select id="querySeriesById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Series">
+        SELECT id, name
+        FROM series
+        WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.Series">
+        INSERT INTO series (id, name)
+        VALUES (#{id}, #{name})
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM series
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.javbus.spider.spider.entity.Series">
+        UPDATE series
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.StudioDao">
+
+    <select id="queryStudioById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.Studio">
+        SELECT id, name
+        FROM studio
+        WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.Studio">
+        INSERT INTO studio (id, name)
+        VALUES (#{id}, #{name})
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM studio
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.javbus.spider.spider.entity.Studio">
+        UPDATE studio
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

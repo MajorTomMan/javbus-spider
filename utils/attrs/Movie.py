@@ -6,6 +6,7 @@ class Movie:
     big_image_link=""
     sample_image_links=[]
     stars={}
+    label=None
     director = None
     studio = None
     categorys = []
@@ -26,5 +27,5 @@ class Movie:
             f"Genres: {self.genres}\n"
             f"Series: {self.series}"
         )
-    def toDict(self):
-        return self.__dict__
+    def toDict():
+        return self.__dict

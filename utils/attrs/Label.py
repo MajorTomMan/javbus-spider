@@ -1,5 +1,5 @@
-class Studio:
+class Label:
     name=""
     link=""
     def toDict(self):
-        return self.__dict__
+        return self.__dict__    

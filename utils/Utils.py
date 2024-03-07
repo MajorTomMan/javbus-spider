@@ -5,13 +5,19 @@ from bs4 import BeautifulSoup
 import requests
 
 import undetected_chromedriver as uc
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 from selenium.webdriver.common.by import By
 
+
+from utils.attrs.Director import Director
+from utils.attrs.Genre import Genre
 from utils.attrs.Movie import Movie
 from utils.attrs.Star import Star
+from utils.attrs.Studio import Studio
+from utils.attrs.Series import Series
+from utils.attrs.Category import Category
+from utils.attrs.Label import Label
 
 
 class WebUtil:
@@ -369,6 +375,11 @@ class PageUtil:
         return movie
     def getInfos(self, bs):
         movie=Movie()
+        director=Director()
+        category=Category()
+        series=Series()
+        studio=Studio()
+        label=Label()
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -385,23 +396,35 @@ class PageUtil:
                         length = self.AttrsUtil.getLength(header)
                         movie.length=length
                     if "導演:" in header:
-                        director = self.AttrsUtil.getDirector(p)
+                        d = self.AttrsUtil.getDirector(p)
+                        director.name=list(d.keys())[0]
+                        director.link=d.get(director.name)
                         movie.director=director
                     if "製作商:" in header:
-                        studio = self.AttrsUtil.getStudio(p)
+                        s = self.AttrsUtil.getStudio(p)
+                        studio.name=list(d.keys())[0]
+                        studio.link=s.get(studio.name)
                         movie.studio=studio
                     if "發行商:" in header:
-                        label = self.AttrsUtil.getLabel(p)
+                        l = self.AttrsUtil.getLabel(p)
+                        label.name=list(l.keys())[0]
+                        label.link=l.get(label.name)
                         movie.label=label
                     if "系列:" in header:
-                        series = self.AttrsUtil.getSeries(p)
-                        if series:
+                        s = self.AttrsUtil.getSeries(p)
+                        if s:
+                            series.name=list(s.keys())[0]
+                            series.link=l.get(series.name)
                             movie.series=series
                         else:
                             print("series not found")
             p=ps[-3]
             genres = self.AttrsUtil.getGenres(p)
-            movie.genres=genres
+            for genre in genres:
+                category=Category()
+                category.name=list(genre.keys())[0]
+                category.link=genre.get(category.name)
+                movie.categorys.append(category)
             p = ps[-1]
             stars = self.AttrsUtil.getStars(p)
             movie.stars=stars

@@ -4,7 +4,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.StarDao">
 
     <!-- 插入操作 -->
-    <insert id="saveStar" parameterType="com.javbus.spider.spider.entity.Star">
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.Star">
         INSERT INTO star(
             name, star_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place, hobby
         )
@@ -14,17 +14,17 @@
     </insert>
 
     <!-- 删除操作 -->
-    <delete id="deleteStarById" parameterType="int">
+    <delete id="delete" parameterType="int">
         DELETE FROM star WHERE id = #{id}
     </delete>
 
     <!-- 查询操作 -->
-    <select id="selectStarById" parameterType="int" resultType="com.javbus.spider.spider.entity.Star">
+    <select id="queryStarById" parameterType="int" resultType="com.javbus.spider.spider.entity.Star">
         SELECT * FROM star WHERE id = #{id}
     </select>
 
     <!-- 更新操作 -->
-    <update id="updateStar" parameterType="com.javbus.spider.spider.entity.Star">
+    <update id="update" parameterType="com.javbus.spider.spider.entity.Star">
         UPDATE star
         SET
             name = #{name},

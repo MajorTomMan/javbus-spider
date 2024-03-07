@@ -1,3 +1,0 @@
-class Genre:
-    name=""
-    link=""
