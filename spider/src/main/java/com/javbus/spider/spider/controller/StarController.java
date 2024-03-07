@@ -26,6 +26,4 @@ public class StarController {
         starService.saveStar(star);
         return R.ok();
     }
-    
-    
 }

@@ -26,3 +26,5 @@ class Movie:
             f"Genres: {self.genres}\n"
             f"Series: {self.series}"
         )
+    def toDict(self):
+        return self.__dict__

@@ -265,8 +265,10 @@ class ImageUtil:
     def downloadSampleImages(self,links,movie):
         if len(movie.stars)>1:
             stars="-".join(movie.stars.keys())
+        elif len(movie.stars)==1:
+            stars=list(movie.stars.keys())[0]
         else:
-            stars=movie.stars.keys()
+            return
         headers={"User-Agent":self.ua.random}
         for link in links:
             filename=link.split("/")[-1]
@@ -283,8 +285,10 @@ class ImageUtil:
     def downloadBigImage(self,link,movie):
         if len(movie.stars)>1:
             stars="-".join(movie.stars.keys())
+        elif len(movie.stars)==1:
+            stars=list(movie.stars.keys())[0]
         else:
-            stars=movie.stars.keys()
+            return
         filename=link.split("/")[-1]
         if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=True):
             print("local bigImage file "+filename+" already exists skipping download")
@@ -415,7 +419,10 @@ class PageUtil:
             info=box.find("div",{"class":"photo-info"})
             if frame:
                 link=self.AttrsUtil.getPhotoLink(frame)
-                star.photo_link=link
+                if self.baseUrl.endswith("/"):
+                    url = self.baseUrl[:-1]
+                    star_link=url+link
+                    star.photo_link=star_link
             else:
                 print("photo link not found")
             if info:
@@ -464,10 +471,10 @@ class PageUtil:
             print("star detail page not found")
         return star
 class RequestUtil:
-    baseUrl="http://localhost:8080/"
+    baseUrl="http://localhost:8080"
     headers={'Content-Type': 'application/json'}
     def post(self,data,path):
-        return requests.post(url=self.baseUrl+path,data=data,headers=self.headers)
+        return requests.post(url=self.baseUrl+path,json=data)
     def get(self,path):
         return requests.get(self.baseUrl+path)
     

@@ -38,7 +38,7 @@ class index:
                         star=self.PageUtil.parseStarDetailsPage(star_link)
                         star.star_link=star_link
                         if star:
-                            self.sendData2Server(star,"/star/save")
+                            self.sendData2Server(star.toDict(),"/star/save")
                         else:
                             print("star not found")
                     print(movie)
@@ -49,10 +49,8 @@ class index:
         with open("./headers/requests.txt") as f:
             f.write(content)
     def sendData2Server(self,data,path):
-        data_json=json.dumps(data.__dict__,ensure_ascii=False)
-        response=self.RequestUtil.post(data=data_json,path=path)
+        response=self.RequestUtil.post(data=data,path=path)
         if response.status_code==200:
-            print(response.content)
             print("send data was success")
         else:
             print("send data was failure")

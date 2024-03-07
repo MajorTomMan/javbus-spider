@@ -26,3 +26,5 @@ class Star:
             f"Birth Place: {self.birth_place}\n"
             f"Hobby: {self.hobby}"
         )
+    def toDict(self):
+        return self.__dict__
