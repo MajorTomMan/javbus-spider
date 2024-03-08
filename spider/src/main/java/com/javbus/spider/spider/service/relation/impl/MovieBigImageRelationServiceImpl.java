@@ -1,6 +1,7 @@
 package com.javbus.spider.spider.service.relation.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.BigImageDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -11,8 +12,8 @@ import com.javbus.spider.spider.entity.relation.MovieBigImageRelation;
 import com.javbus.spider.spider.entity.vo.MovieBigImageVo;
 import com.javbus.spider.spider.service.relation.MovieBigImageRelationService;
 
-import lombok.extern.log4j.Log4j2;
 
+@Service
 public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationService{
     @Autowired
     private MovieBigImageDao movieBigImageDao;

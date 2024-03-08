@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.CategoryDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -16,6 +17,7 @@ import com.javbus.spider.spider.service.relation.MovieCategoryRelationService;
 
 import lombok.extern.log4j.Log4j2;
 
+@Service
 public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationService {
     @Autowired
     private MovieCategoryDao movieCategoryDao;

@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieSampleImageDao">
 
 
-    <insert id="addMovieSampleImageRelation" parameterType="com.javbus.spider.spider.entity.MovieSampleImageRelation">
+    <insert id="addMovieSampleImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
         <!-- 插入单个关系 -->
         INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
         (#{movieId}, #{sampleImageId})

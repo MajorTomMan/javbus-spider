@@ -3,11 +3,11 @@
 
 <mapper namespace="com.javbus.spider.spider.dao.relation.StarCategoryDao">
 
-    <insert id="addStarCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.StarSeriesRelation">
+    <insert id="addStarCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.StarCategoryRelation">
         INSERT INTO star_category_relation (star_id, category_id)
         VALUES (#{starId}, #{categoryId})
     </insert>
-    <insert id="addStarCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.StarSeriesRelation">
+    <insert id="addStarCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.StarCategoryRelation">
         INSERT INTO star_category_relation (star_id, category_id)
         VALUES
         <foreach collection="list" item="item" separator=",">

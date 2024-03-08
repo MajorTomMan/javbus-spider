@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.entity.vo.StarCategoryVo;
 import com.javbus.spider.spider.service.relation.StarCategoryRelationService;
 
+@Service
 public class StarCategoryRelationServiceImpl implements StarCategoryRelationService {
     @Autowired
     private StarCategoryDao starCategoryDao;

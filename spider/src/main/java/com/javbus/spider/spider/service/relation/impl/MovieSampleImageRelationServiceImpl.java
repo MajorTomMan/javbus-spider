@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.MovieDao;
 import com.javbus.spider.spider.dao.base.SampleImageDao;
@@ -13,6 +14,7 @@ import com.javbus.spider.spider.entity.relation.MovieSampleImageRelation;
 import com.javbus.spider.spider.entity.vo.MovieSampleImageVo;
 import com.javbus.spider.spider.service.relation.MovieSampleImageRelationService;
 
+@Service
 public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRelationService{
     @Autowired
     private MovieSampleImageDao movieSampleImageDao;

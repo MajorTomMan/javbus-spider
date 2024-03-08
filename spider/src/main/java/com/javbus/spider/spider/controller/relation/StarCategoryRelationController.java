@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javbus.spider.spider.entity.vo.MovieStudioVo;
 import com.javbus.spider.spider.entity.vo.StarCategoryVo;
 import com.javbus.spider.spider.utils.R;
 import com.javbus.spider.spider.service.relation.StarCategoryRelationService;

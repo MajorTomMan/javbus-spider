@@ -2,8 +2,11 @@ package com.javbus.spider.spider.dao.base;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.javbus.spider.spider.entity.base.SampleImage;
 
+@Mapper
 public interface SampleImageDao {
     SampleImage querySampleImageById(Integer id);
 

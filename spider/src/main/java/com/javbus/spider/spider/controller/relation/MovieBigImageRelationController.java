@@ -19,10 +19,6 @@ public class MovieBigImageRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieBigImageVo vo) {
         // TODO: process POST request
-        if(vo==null){
-            return R.error();
-        }
-
         movieBigImageRelationService.saveRelaton(vo);
         return R.ok();
     }

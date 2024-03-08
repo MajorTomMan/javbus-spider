@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.MovieDao;
 import com.javbus.spider.spider.dao.base.StarDao;
@@ -14,6 +15,7 @@ import com.javbus.spider.spider.entity.relation.MovieStarRelation;
 import com.javbus.spider.spider.entity.vo.MovieStarVo;
 import com.javbus.spider.spider.service.relation.MovieStarRelationService;
 
+@Service
 public class MovieStarRelationServiceImpl implements MovieStarRelationService {
     @Autowired
     private MovieStarDao movieStarDao;

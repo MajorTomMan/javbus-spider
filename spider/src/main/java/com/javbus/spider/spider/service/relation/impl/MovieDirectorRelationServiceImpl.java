@@ -1,6 +1,7 @@
 package com.javbus.spider.spider.service.relation.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.DirectorDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -12,6 +13,7 @@ import com.javbus.spider.spider.entity.vo.MovieDirectorVo;
 import com.javbus.spider.spider.service.relation.MovieDirectorRelationService;
 
 
+@Service
 public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationService {
     @Autowired
     private MovieDirectorDao movieDirectorDao;
