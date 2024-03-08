@@ -30,8 +30,8 @@ class index:
         if bricks:
             for brick in bricks:
                 link = self.AttrsUtil.getLink(brick)
-                print("now visit website link is "+link)
                 if link:
+                    print("now visit website link is "+link)
                     self.links.append(link)
                     page=self.PageUtil.parseDetailPage(link)
                     if page:
@@ -43,15 +43,67 @@ class index:
                             for star in page.stars:
                                 print("star: "+str(star))
                             print("------------------------------star info ended--------------------------------------")
-                        self.sendData2Server(page.stars,"/star/save")
-                        self.sendData2Server(page.categories,"/category/save")
-                        self.sendData2Server(page.studio,"/studio/save")
-                        self.sendData2Server(page.series,"/series/save")
-                        self.sendData2Server(page.label,"/label/save")
-                        self.sendData2Server(page.director,"/director/save")
                         self.sendData2Server(page.movie,"/movie/save")
-                        self.sendData2Server(page)
-                    
+                        movieBigImageVo={
+                            "code":page.movie["code"],
+                            "bigImage":page.images["big_image_link"],
+                        }
+                        movieCategoryVo={
+                            "code":page.movie["code"],
+                            "categories":page.categories
+                        }
+                        movieDirectVo={
+                            "code":page.movie["code"],
+                            "director":page.director
+                        }
+                        movieLabelVo={
+                            "code":page.movie["code"],
+                            "label":page.label
+                        }
+                        movieSampleImageVo={
+                            "code":page.movie["code"],
+                            "sampleImages": page.images["sample_image_link"]
+                        }
+                        movieStarVo={
+                            "code":page.movie["code"],
+                            "stars":page.stars
+                        }
+                        movieStudioVo={
+                            "code":page.movie["code"],
+                            "studio":page.studio
+                        }
+                        movieSeriesVo={
+                            "code":page.movie["code"],
+                            "studio":page.series
+                        }
+                        starCategoryVo={
+                            "stars":page.stars,
+                            "categories":page.categories
+                        }
+                        starDirectorVo={
+                            "stars":page.stars,
+                            "director":page.director
+                        }
+                        starStudioVo={
+                            "stars":page.stars,
+                            "studio":page.studio
+                        }
+                        starSeriesVo={
+                            "stars":page.stars,
+                            "series":page.series
+                        }
+                        self.sendData2Server(movieBigImageVo,"/movie/relation/bigimage/save")
+                        self.sendData2Server(movieCategoryVo,"/movie/relation/category/save")
+                        self.sendData2Server(movieDirectVo,"/movie/relation/director/save")
+                        self.sendData2Server(movieLabelVo,"/movie/relation/label/save")
+                        self.sendData2Server(movieStarVo,"/movie/relation/star/save")
+                        self.sendData2Server(movieSampleImageVo,"/movie/relation/sampleimage/save")
+                        self.sendData2Server(movieStudioVo,"/movie/relation/studio/save")
+                        self.sendData2Server(movieSeriesVo,"/movie/relation/series/save")
+                        self.sendData2Server(starCategoryVo,"/star/relation/category/save")
+                        self.sendData2Server(starDirectorVo,"/star/relation/director/save")
+                        self.sendData2Server(starStudioVo,"/star/relation/studio/save")
+                        self.sendData2Server(starSeriesVo,"/star/relation/series/save")
             print("all link was visited jump to next page")
         else:
             print("page list not found")

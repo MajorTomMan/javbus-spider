@@ -51,7 +51,6 @@ class WebUtil:
     def getWebSite(self,url):
         driver = uc.Chrome(headless=True,driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe")
         driver.get(url)
-        time.sleep(6)
         return driver
     def save2local(self,path,filename,content):
         with open(path+"/"+filename+".html", "w", encoding="utf-8") as f:
@@ -86,14 +85,12 @@ class WebUtil:
             return None
 class AttrsUtil:
     def getLink(self, bs):
-        a = bs.find("a", {"class": "page-box"})
+        a = bs.find("a", {"class": "movie-box"})
         if a:
             link = a["href"]
             return link
-        else:
-            print("link not found")
-            return None
-
+        print("link not found")
+        return None
     def getTitle(self, bs):
         h3 = bs.find("h3")
         if h3:
@@ -366,8 +363,8 @@ class PageUtil:
         page = self.getPage(bs)
         stars=page.stars
         code=page.movie.get("code")
-        self.ImageUtil.downloadSampleImages(links=page.images.sample_image_link,stars=stars,code=code)
-        self.ImageUtil.downloadBigImage(link=page.images.big_image_link,stars=stars,code=code)
+        self.ImageUtil.downloadSampleImages(links=page.images["sample_image_link"],stars=stars,code=code)
+        self.ImageUtil.downloadBigImage(link=page.images["big_image_link"],stars=stars,code=code)
         return page
     def getPage(self, bs):
         page=Page()
@@ -424,15 +421,6 @@ class PageUtil:
                             series.link=s.get(series.name)
                         else:
                             print("series not found")
-            p=ps[-3]
-            genres = self.AttrsUtil.getGenres(p)
-            if genres:
-                categories=[]
-                for k,v in genres.items():
-                    categories.append({"name":k,"link":v})
-                page.categories=categories
-            else:
-                print("genres not found")
             p = ps[-1]
             stars = self.AttrsUtil.getStars(p)
             if stars:
@@ -442,17 +430,32 @@ class PageUtil:
                     star.star_link=stars[star]
                     t.append(starDetail.toDict())
                 stars=t
+            if stars:
+                p=ps[-3]
             else:
-                print("stars not found")            
+                p=ps[-2]
+            genres = self.AttrsUtil.getGenres(p)
+            if genres:
+                categories=[]
+                for k,v in genres.items():
+                    categories.append({"name":k,"link":v})
+                page.categories=categories          
         else:
             print("info not found")
-        page.series=series.toDict()
-        page.images=image.toDict()
-        page.movie=movie.toDict()
-        page.studio=studio.toDict()
-        page.director=director.toDict()
-        page.label=label.toDict()
-        page.stars=stars.toDict()
+        if series: 
+            page.series=series.toDict()
+        if image: 
+            page.images=image.toDict()
+        if movie:
+            page.movie=movie.toDict()
+        if studio:
+            page.studio=studio.toDict()
+        if director:
+            page.director=director.toDict()
+        if label:
+            page.label=label.toDict()
+        if stars: 
+            page.stars=stars.toDict()
         return page
     def parseStarDetailsPage(self,link):
         driver=self.WebUtil.getWebSite(link)

@@ -32,11 +32,6 @@ CREATE TABLE IF NOT EXISTS category (
     link VARCHAR(255) UNIQUE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS series (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) UNIQUE,
-    link VARCHAR(255) UNIQUE
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 CREATE TABLE star(
@@ -57,7 +52,6 @@ CREATE TABLE star(
 
 CREATE TABLE IF NOT EXISTS movie (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    star_id INT,
     code VARCHAR(255),
     title VARCHAR(255),
     release_date VARCHAR(255),
@@ -87,13 +81,6 @@ CREATE TABLE IF NOT EXISTS movie_label_relation (
     FOREIGN KEY (movie_id) REFERENCES movie(id),
     FOREIGN KEY (studio_id) REFERENCES studio(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE TABLE IF NOT EXISTS movie_studio_relation (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    movie_id INT,
-    studio_id INT,
-    FOREIGN KEY (movie_id) REFERENCES movie(id),
-    FOREIGN KEY (studio_id) REFERENCES studio(id)
-) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS movie_studio_relation (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -103,6 +90,20 @@ CREATE TABLE IF NOT EXISTS movie_studio_relation (
     FOREIGN KEY (studio_id) REFERENCES studio(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS movie_big_image_relation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    big_image_id INT,
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (big_image_id) REFERENCES big_image(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS movie_sample_image_relation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    sample_image_id INT,
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (sample_image_id) REFERENCES sample_image(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS movie_category_relation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     movie_id INT,
@@ -143,10 +144,10 @@ CREATE TABLE IF NOT EXISTS star_studio_relation (
     FOREIGN KEY (studio_id) REFERENCES studio(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS star_series_relation (
+CREATE TABLE IF NOT EXISTS star_category_relation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     star_id INT,
-    series_id INT,
+    category_id INT,
     FOREIGN KEY (star_id) REFERENCES star(id),
-    FOREIGN KEY (series_id) REFERENCES series(id)
+    FOREIGN KEY (category_id) REFERENCES category(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
