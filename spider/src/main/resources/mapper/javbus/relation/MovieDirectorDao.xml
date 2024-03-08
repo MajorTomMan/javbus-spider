@@ -4,12 +4,12 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieDirectorDao">
 
     <insert id="addMovieDirectorRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT INTO director_movie_relation (director_id, movie_id)
-        VALUES (#{directorId}, #{movieId})
+        INSERT INTO movie_director_relation (movie_id, director_id)
+        VALUES (#{movieId}, #{directorId})
     </insert>
 
     <delete id="deleteMovieDirectorRelation">
-        DELETE FROM director_movie_relation
-        WHERE director_id = #{directorId} AND movie_id = #{movieId}
+        DELETE FROM movie_director_relation
+        WHERE movie_id = #{movieId} AND director_id = #{directorId}
     </delete>
 </mapper>

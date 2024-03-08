@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.base.SampleImageDao">
+    <select id="querySampleImageById" parameterType="java.util.Integer" resultType="com.javbus.spider.spider.entity.base.SampleImage">
+        SELECT * FROM sample_image WHERE id=#{id}
+    </select>
+    <select id="querySampleImageIdsByLinks" parameterType="java.util.List" resultType="com.javbus.spider.spider.entity.base.SampleImage">
+        SELECT id FROM sample_image WHERE link IN
+        <foreach item="link" collection="list" open="(" separator="," close=")">
+            #{link}
+        </foreach>
+    </select>
+    <insert id="saveSampleImages" parameterType="List">
+        INSERT INTO sample_image (link) VALUES
+        <foreach collection="list" item="image" separator=",">
+            (#{image.link})
+        </foreach>
+    </insert>
+</mapper>

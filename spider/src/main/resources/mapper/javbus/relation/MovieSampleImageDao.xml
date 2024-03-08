@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.relation.MovieSampleImageDao">
+
+
+    <insert id="addMovieSampleImageRelation" parameterType="com.javbus.spider.spider.entity.MovieSampleImageRelation">
+        <!-- 插入单个关系 -->
+        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
+        (#{movieId}, #{sampleImageId})
+    </insert>
+
+    <delete id="deleteMovieSampleImageRelation">
+        <!-- 删除单个关系 -->
+        DELETE FROM movie_sample_image_relation WHERE movie_id = #{movieId} AND sample_image_id = #{sampleImageId}
+    </delete>
+
+    <insert id="addMovieSampleImageRelations" parameterType="List">
+        <!-- 插入多个关系 -->
+        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.movieId}, #{relation.sampleImageId})
+        </foreach>
+    </insert>
+</mapper>

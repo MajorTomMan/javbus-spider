@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.relation.StarCategoryDao">
+
+    <insert id="addStarCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.StarSeriesRelation">
+        INSERT INTO star_category_relation (star_id, category_id)
+        VALUES (#{starId}, #{categoryId})
+    </insert>
+    <insert id="addStarCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.StarSeriesRelation">
+        INSERT INTO star_category_relation (star_id, category_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.starId}, #{item.categoryId})
+        </foreach>
+    </insert>
+    <delete id="deleteStarCategoryRelation">
+        DELETE FROM star_category_relation
+        WHERE star_id = #{starId} AND category_id = #{categoryId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.base.DirectorDao">
+
+    <select id="queryDirectorById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Director">
+        SELECT id, name
+        FROM director
+        WHERE id = #{id}
+    </select>
+    <select id="queryDirectorByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Director">
+        SELECT *
+        FROM director
+        WHERE name=#{name}
+    </select>
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Director">
+        INSERT INTO director (name,link)
+        VALUES (#{name}, #{link} )
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM director
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Director">
+        UPDATE director
+        SET name = #{name} and link=#{link}
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>

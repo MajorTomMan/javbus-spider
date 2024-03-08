@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MovieStarRelation {
-    private Long movieId;
-    private Long starId;
+    private Integer id;
+    private Integer movieId;
+    private Integer starId;
 }

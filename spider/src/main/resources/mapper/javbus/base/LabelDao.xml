@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.base.LabelDao">
+
+    <select id="queryLabelById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Label">
+        SELECT *
+        FROM label
+        WHERE id = #{id}
+    </select>
+    <select id="queryLabelByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Director">
+        SELECT *
+        FROM label
+        WHERE name=#{name}
+    </select>
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Label">
+        INSERT INTO label (name,link)
+        VALUES ( #{name} , #{link} )
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM label
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Label">
+        UPDATE label
+        SET name = #{name} and link=#{link}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

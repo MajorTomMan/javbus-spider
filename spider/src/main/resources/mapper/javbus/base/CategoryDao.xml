@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.base.CategoryDao">
+
+    <select id="queryCategoryById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Category">
+        SELECT *
+        FROM category
+        WHERE id = #{id}
+    </select>
+    <select id="queryCategoryByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Category">
+        SELECT *
+        FROM category
+        WHERE name = #{name}
+    </select>
+    <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category">
+        INSERT INTO category (id, name,link)
+        VALUES (#{id}, #{name},#{link})
+    </insert>
+    <!-- 插入多个Category -->
+    <insert id="saveCategories" parameterType="List">
+        INSERT INTO category (name,link) VALUES
+        <foreach collection="list" item="category" separator=",">
+            (#{category.name},#{category.link})
+        </foreach>
+    </insert>
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM category
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Category">
+        UPDATE category
+        SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <!-- queryCategoryByNames --> 
+
+    <select id="queryCategoriesByNames" resultType="com.javbus.spider.spider.entity.base.Category">
+        SELECT id FROM category
+        WHERE name IN
+        <foreach collection="names" item="name" open="(" separator="," close=")">
+            #{name}
+        </foreach>
+    </select>
+</mapper>

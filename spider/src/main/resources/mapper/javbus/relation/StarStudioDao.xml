@@ -12,7 +12,13 @@
         DELETE FROM star_studio_relation
         WHERE star_id = #{starId} AND studio_id = #{studioId}
     </delete>
-
-    <!-- Other operations as needed -->
+    <!-- 批量添加明星与工作室关系 -->
+    <insert id="addStarStudioRelations" parameterType="java.util.List">
+        INSERT INTO star_studio_relation (star_id, studio_id)
+        VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.starId}, #{relation.studioId})
+        </foreach>
+    </insert>
 
 </mapper>

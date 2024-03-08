@@ -33,27 +33,28 @@ class index:
                 print("now visit website link is "+link)
                 if link:
                     self.links.append(link)
-                    movie=self.PageUtil.parseDetailPage(link)
-                    if movie:
-                        print("------------------------------movie info start--------------------------------------")
-                        print(movie)
-                        print("------------------------------movie info ended--------------------------------------")
-                        if movie.stars:
+                    page=self.PageUtil.parseDetailPage(link)
+                    if page:
+                        print("------------------------------page info start--------------------------------------")
+                        print(page)
+                        print("------------------------------page info ended--------------------------------------")
+                        if page.stars:
                             print("------------------------------star info start--------------------------------------")
-                            for star in movie.stars:
+                            for star in page.stars:
                                 print("star: "+str(star))
                             print("------------------------------star info ended--------------------------------------")
-                        self.sendData2Server(movie.categories,"/category/save")
-                        self.sendData2Server(movie.studio,"/studio/save")
-                        self.sendData2Server(movie.series,"/series/save")
-                        self.sendData2Server(movie.label,"/label/save")
-                        self.sendData2Server(movie.director,"/director/save")
-                        self.sendData2Server(movie.stars,"/star/save")
-                        self.sendData2Server(movie.toDict(),"/movie/save")
+                        self.sendData2Server(page.stars,"/star/save")
+                        self.sendData2Server(page.categories,"/category/save")
+                        self.sendData2Server(page.studio,"/studio/save")
+                        self.sendData2Server(page.series,"/series/save")
+                        self.sendData2Server(page.label,"/label/save")
+                        self.sendData2Server(page.director,"/director/save")
+                        self.sendData2Server(page.movie,"/movie/save")
+                        self.sendData2Server(page)
                     
             print("all link was visited jump to next page")
         else:
-            print("movie list not found")
+            print("page list not found")
     def save2local(self,content):
         with open("./headers/requests.txt") as f:
             f.write(content)

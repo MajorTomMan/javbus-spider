@@ -5,14 +5,18 @@ import os
 from bs4 import BeautifulSoup
 import requests
 
+from selenium import webdriver
 import undetected_chromedriver as uc
+from undetected_chromedriver import ChromeOptions
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 from selenium.webdriver.common.by import By
 
 
 from utils.attrs.Director import Director
+from utils.attrs.Image import Image
 from utils.attrs.Movie import Movie
+from utils.attrs.Page import Page
 from utils.attrs.Star import Star
 from utils.attrs.Studio import Studio
 from utils.attrs.Series import Series
@@ -22,7 +26,7 @@ from utils.attrs.Label import Label
 
 class WebUtil:
     def __init__(self) -> None:
-        self.options=Options()
+        self.options=ChromeOptions()
         self.ua=UserAgent()
         self.__configure()
 
@@ -45,7 +49,7 @@ class WebUtil:
         #self.options.add_experimental_option('excludeSwitches', ['enable-automation', 'useAutomationExtension','enable-logging'])
 
     def getWebSite(self,url):
-        driver = uc.Chrome(headless=True)
+        driver = uc.Chrome(headless=True,driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe")
         driver.get(url)
         time.sleep(6)
         return driver
@@ -82,7 +86,7 @@ class WebUtil:
             return None
 class AttrsUtil:
     def getLink(self, bs):
-        a = bs.find("a", {"class": "movie-box"})
+        a = bs.find("a", {"class": "page-box"})
         if a:
             link = a["href"]
             return link
@@ -270,35 +274,35 @@ class ImageUtil:
     def __init__(self) -> None:
         self.ua=UserAgent()
         self.basePath="./images/"
-    def downloadSampleImages(self,links,movie):
-        if movie.stars==None:
+    def downloadSampleImages(self,links,stars,code):
+        if stars==None:
             stars="未知演员"
-        elif len(movie.stars)>1:
-            stars = "".join([star.get('name') for star in movie.stars])
-        elif len(movie.stars)==1:
-            stars=movie.stars[0].get("name")
+        elif len(stars)>1:
+            stars = "-".join([star.get('name') for star in stars])
+        elif len(stars)==1:
+            stars=stars[0].get("name")
         headers={"User-Agent":self.ua.random}
         for link in links:
             filename=link.split("/")[-1]
-            if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=False):
+            if self.__checkFileIsExists(stars=stars,code=code,filename=filename,isBigImage=False):
                 print("local sample file "+filename+" already exists skipping download")
                 continue
             response=requests.get(link,headers=headers)
             print("image response code is "+str(response.status_code))
             if response.status_code==200:
                 print("image "+ response.url+" download success")
-                self.__save2Local(response=response,stars=stars,code=movie.code,filename=filename,isBigImage=False)
+                self.__save2Local(response=response,stars=stars,code=code,filename=filename,isBigImage=False)
             else:
                 print("image "+ response.url+" download failure")
-    def downloadBigImage(self,link,movie):
-        if movie.stars==None:
+    def downloadBigImage(self,link,stars,code):
+        if stars==None:
             stars="未知演员"
-        elif len(movie.stars)>1:
-            stars = "".join([star.get('name') for star in movie.stars])
-        elif len(movie.stars)==1:
-            stars=movie.stars[0].get("name")
+        elif len(stars)>1:
+            stars = "-".join([star.get('name') for star in stars])
+        elif len(stars)==1:
+            stars=stars[0].get("name")
         filename=link.split("/")[-1]
-        if self.__checkFileIsExists(stars=stars,code=movie.code,filename=filename,isBigImage=True):
+        if self.__checkFileIsExists(stars=stars,code=code,filename=filename,isBigImage=True):
             print("local bigImage file "+filename+" already exists skipping download")
             return
         headers={"User-Agent":self.ua.random}
@@ -310,7 +314,7 @@ class ImageUtil:
             url=response.url
             paths=url.split("/")
             filename=paths[-1]
-            self.__save2Local(response=response,stars=stars,code=movie.code,filename=filename,isBigImage=True)
+            self.__save2Local(response=response,stars=stars,code=code,filename=filename,isBigImage=True)
         else:
             print("image "+ response.url+" download failure")
         
@@ -359,42 +363,33 @@ class PageUtil:
     def parseDetailPage(self, link):
         driver = self.WebUtil.getWebSite(link)
         bs = BeautifulSoup(driver.page_source,"html.parser")
-        title = self.AttrsUtil.getTitle(bs)
-        movie = self.getInfos(bs)
-        movie.title=title
-        a = bs.find("a", {"class": "bigImage"})
-        if a:
-            bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
-            movie.big_image_link=bigImagePath
-        waterfall = bs.find("div", {"id": "sample-waterfall"})
-        if waterfall:
-            imgs = self.AttrsUtil.getSampleImages(waterfall)
-            if imgs:
-                if movie:
-                    movie.sample_image_links=imgs
-        #收集女优数据
-        if movie.stars:
-            starsList=[]
-            for actor in movie.stars:
-                star_link=movie.stars[actor]
-                star=self.parseStarDetailsPage(star_link)
-                star.star_link=star_link
-                if star:
-                    starsList.append(star.toDict())
-                else:
-                    print("star not found")
-            movie.stars=starsList
-        else:
-            print("stars not found")
-        self.ImageUtil.downloadSampleImages(links=movie.sample_image_links,movie=movie)
-        self.ImageUtil.downloadBigImage(link=movie.big_image_link,movie=movie)
-        return movie
-    def getInfos(self, bs):
+        page = self.getPage(bs)
+        stars=page.stars
+        code=page.movie.get("code")
+        self.ImageUtil.downloadSampleImages(links=page.images.sample_image_link,stars=stars,code=code)
+        self.ImageUtil.downloadBigImage(link=page.images.big_image_link,stars=stars,code=code)
+        return page
+    def getPage(self, bs):
+        page=Page()
         movie=Movie()
         director=Director()
         series=Series()
         studio=Studio()
         label=Label()
+        image=Image()
+        stars=[]
+        title=self.AttrsUtil.getTitle(bs)
+        if title:
+            movie.title=title
+        a = bs.find("a", {"class": "bigImage"})
+        if a:
+            bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
+            image.big_image_link=bigImagePath
+        waterfall = bs.find("div", {"id": "sample-waterfall"})
+        if waterfall:
+            imgs = self.AttrsUtil.getSampleImages(waterfall)
+            if imgs:
+                image.sample_image_link=imgs
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -414,41 +409,51 @@ class PageUtil:
                         d = self.AttrsUtil.getDirector(p)
                         director.name=list(d.keys())[0]
                         director.link=d.get(director.name)
-                        movie.director=director.toDict()
                     if "製作商:" in header:
                         s = self.AttrsUtil.getStudio(p)
                         studio.name=list(s.keys())[0]
                         studio.link=s.get(studio.name)
-                        movie.studio=studio.toDict()
                     if "發行商:" in header:
                         l = self.AttrsUtil.getLabel(p)
                         label.name=list(l.keys())[0]
                         label.link=l.get(label.name)
-                        movie.label=label.toDict()
                     if "系列:" in header:
                         s = self.AttrsUtil.getSeries(p)
                         if s:
                             series.name=list(s.keys())[0]
                             series.link=s.get(series.name)
-                            movie.series=series.toDict()
                         else:
                             print("series not found")
-            p = ps[-1]
-            stars = self.AttrsUtil.getStars(p)
-            movie.stars=stars
             p=ps[-3]
             genres = self.AttrsUtil.getGenres(p)
             if genres:
                 categories=[]
                 for k,v in genres.items():
                     categories.append({"name":k,"link":v})
-                movie.categories=categories
+                page.categories=categories
             else:
                 print("genres not found")
-            return movie
+            p = ps[-1]
+            stars = self.AttrsUtil.getStars(p)
+            if stars:
+                t=[]
+                for star in stars:
+                    starDetail=self.parseStarDetailsPage(stars[star])
+                    star.star_link=stars[star]
+                    t.append(starDetail.toDict())
+                stars=t
+            else:
+                print("stars not found")            
         else:
             print("info not found")
-            return None
+        page.series=series.toDict()
+        page.images=image.toDict()
+        page.movie=movie.toDict()
+        page.studio=studio.toDict()
+        page.director=director.toDict()
+        page.label=label.toDict()
+        page.stars=stars.toDict()
+        return page
     def parseStarDetailsPage(self,link):
         driver=self.WebUtil.getWebSite(link)
         bs=BeautifulSoup(driver.page_source,"html.parser")

@@ -14,4 +14,12 @@
 
     <!-- Other operations as needed -->
 
+    <!-- addMovieStarRelations --> 
+
+    <insert id="addMovieStarRelations" parameterType="java.util.List">
+        INSERT INTO movie_star_relation (movie_id, star_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.movieId}, #{relation.starId})
+        </foreach>
+    </insert>
 </mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.base.MovieDao">
+
+    <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO movie (star_id, code, title, release_date, length, link, director_id, studio_id, category_id, series_id)
+        VALUES (#{starId}, #{code}, #{title}, #{releaseDate}, #{length}, #{link}, #{directorId}, #{studioId}, #{categoryId}, #{seriesId})
+    </insert>
+    
+    <!-- 删除电影记录 -->
+    <delete id="deleteMovie" parameterType="Integer">
+        DELETE FROM movie WHERE id = #{id}
+    </delete>
+    
+    <!-- 更新电影记录 -->
+    <update id="updateMovie" parameterType="com.javbus.spider.spider.entity.base.Movie">
+        UPDATE movie SET star_id = #{starId}, code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
+        link = #{link}, director_id = #{directorId}, studio_id = #{studioId}, category_id = #{categoryId}, series_id = #{seriesId}
+        WHERE id = #{id}
+    </update>
+
+    <!-- queryMovieByCode --> 
+
+    <select id="queryMovieByCode" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Movie">
+        select * from movie where code=#{code}
+    </select>    
+
+    <!-- queryMovieByTitle --> 
+
+    <select id="queryMovieByTitle" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Movie">
+        select * from movie where title=#{title}
+    </select>
+    <!-- queryMovieById --> 
+
+    <select id="queryMovieById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Movie">
+        select * from movie where id=#{id}
+    </select>  
+</mapper>

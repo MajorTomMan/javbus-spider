@@ -15,4 +15,12 @@
 
     <!-- Other operations as needed -->
 
+    <!-- addMovieCategoriesRelation --> 
+    <insert id="addMovieCategoriesRelation" parameterType="java.util.List">
+        INSERT INTO movie_category_relation (movie_id, category_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.movieId}, #{item.categoryId})
+        </foreach>
+    </insert>
 </mapper>

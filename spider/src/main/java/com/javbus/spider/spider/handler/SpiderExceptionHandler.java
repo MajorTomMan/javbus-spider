@@ -1,5 +1,6 @@
 package com.javbus.spider.spider.handler;
 
+import java.net.ConnectException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,5 +19,11 @@ public class SpiderExceptionHandler {
         log.error(e.getMessage());
         log.error(e.getClass());
         return R.ok();
+    }
+    @ExceptionHandler(ConnectException.class)
+    public R handleException(ConnectException e){
+        log.error(e.getMessage());
+        log.error(e.getClass());
+        return R.error();
     }
 }

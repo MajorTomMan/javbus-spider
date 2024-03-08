@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.base.StarDao">
+
+    <!-- 插入操作 -->
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Star"> INSERT INTO star(
+        name, star_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place,
+        hobby ) VALUES ( #{name}, #{starLink}, #{photoLink}, #{birthDay}, #{age}, #{height}, #{cup},
+        #{bust}, #{waist}, #{hip}, #{birthPlace}, #{hobby} ) </insert>
+
+    <!-- 删除操作 -->
+    <delete id="delete" parameterType="java.lang.Integer"> DELETE FROM star WHERE id = #{id} </delete>
+
+    <!-- 查询操作 -->
+    <select id="queryStarById" parameterType="java.lang.Integer"
+        resultType="com.javbus.spider.spider.entity.base.Star"> SELECT * FROM star WHERE id = #{id} </select>
+    <select id="queryStarByName" parameterType="java.lang.String"
+        resultType="com.javbus.spider.spider.entity.base.Star"> SELECT * FROM star WHERE name =
+        #{name} </select>
+
+    <!-- 更新操作 -->
+    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Star"> UPDATE star SET
+        name = #{name}, star_link = #{starLink}, photo_link = #{photoLink}, birth_day = #{birthDay},
+        age = #{age}, height = #{height}, cup = #{cup}, bust = #{bust}, waist = #{waist}, hip =
+        #{hip}, birth_place = #{birthPlace}, hobby = #{hobby} WHERE id = #{id} </update>
+
+    <!-- saveStars -->
+    <!-- 插入多个Star -->
+    <insert id="saveStars" parameterType="List"> INSERT INTO star (name, star_link, photo_link,
+        birth_day, age, height, cup, bust, waist, hip, birth_place, hobby) VALUES <foreach
+            collection="list" item="star" separator=","> (#{star.name}, #{star.starLink},
+        #{star.photoLink}, #{star.birthDay}, #{star.age}, #{star.height}, #{star.cup}, #{star.bust},
+        #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby}) </foreach>
+    </insert>
+
+    <!-- queryStarIdsByNames -->
+
+    <select id="queryStarIdsByNames" parameterType="java.util.List" resultType="java.util.List">
+        SELECT id FROM star WHERE name IN <foreach collection="list" item="name" open="("
+            separator="," close=")"> #{name} </foreach>
+    </select>
+
+    <!-- queryStarIdByName --> 
+
+    <select id="queryStarIdByName" parameterType="java.lang.Integer">
+        select id from star where name=#{name}
+    </select>
+</mapper>
