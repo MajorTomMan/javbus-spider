@@ -11,6 +11,10 @@ CREATE TABLE IF NOT EXISTS series (
     link VARCHAR(255) UNIQUE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS genre (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) UNIQUE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS label (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -64,6 +68,7 @@ CREATE TABLE IF NOT EXISTS movie (
     length VARCHAR(255),
     link VARCHAR(255) UNIQUE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 
 CREATE TABLE big_image(
@@ -167,4 +172,13 @@ CREATE TABLE IF NOT EXISTS star_series_relation (
     series_id INT,
     FOREIGN KEY (star_id) REFERENCES star(id),
     FOREIGN KEY (series_id) REFERENCES series(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS genre_category_relation (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    genre_id INT,
+    category_id INT,
+    is_censored BOOLEAN,
+    FOREIGN KEY (genre_id) REFERENCES genre(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

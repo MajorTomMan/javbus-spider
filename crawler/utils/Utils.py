@@ -197,6 +197,21 @@ class AttrsUtil:
             print("genres not found")
             return None
 
+    def getCategories(self, bs):
+        categories = {}
+        ass = bs.find_all("a")
+        if ass:
+            for a in ass:
+                name = a.text.strip()
+                if "食糞" == name:
+                    continue
+                href = a["href"]
+                categories[name] = href
+            return categories
+        else:
+            print("categories not found")
+            return None
+
     def getStars(self, bs):
         names = {}
         spans = bs.find_all("span", {"class": "genre"})

@@ -74,40 +74,45 @@ class search:
             print("send data to " + path + " was failure")
 
     def sendData2Server(self, page):
-        if page.movie:
+        if page.movie and len(page.movie) >= 1:
             self.send(page.movie, "/movie/save")
-        if page.bigimage:
+        if page.bigimage and len(page.bigimage) >= 1:
             movieBigImageVo = {
                 "movie": page.movie,
                 "bigImage": page.bigimage,
             }
             self.send(movieBigImageVo, "/movie/relation/bigimage/save")
-        if page.categories:
+        if page.categories and len(page.categories) >= 1:
             movieCategoryVo = {"movie": page.movie, "categories": page.categories}
             self.send(movieCategoryVo, "/movie/relation/category/save")
-        if page.director:
+        if page.director and len(page.director) >= 1:
             movieDirectVo = {"movie": page.movie, "director": page.director}
             self.send(movieDirectVo, "/movie/relation/director/save")
-        if page.label:
+        if page.label and len(page.label) >= 1:
             movieLabelVo = {"movie": page.movie, "label": page.label}
             self.send(movieLabelVo, "/movie/relation/label/save")
-        if page.sampleimage:
+        if page.sampleimage and len(page.sampleimage) >= 1:
             movieSampleImageVo = {"movie": page.movie, "sampleImages": page.sampleimage}
             self.send(movieSampleImageVo, "/movie/relation/sampleimage/save")
-        if page.stars:
-            movieStarVo = {"movie": page.movie, "stars": page.stars}
-            starCategoryVo = {"stars": page.stars, "categories": page.categories}
-            starDirectorVo = {"stars": page.stars, "director": page.director}
-            starStudioVo = {"stars": page.stars, "studio": page.studio}
-            starSeriesVo = {"stars": page.stars, "series": page.series}
-            self.send(movieStarVo, "/movie/relation/star/save")
-            self.send(starCategoryVo, "/star/relation/category/save")
-            self.send(starDirectorVo, "/star/relation/director/save")
-            self.send(starStudioVo, "/star/relation/studio/save")
-            self.send(starSeriesVo, "/star/relation/series/save")
-        if page.studio:
+        if page.stars and len(page.stars) >= 1:
+            if page.director:
+                starDirectorVo = {"stars": page.stars, "director": page.director}
+                self.send(starDirectorVo, "/star/relation/director/save")
+            if page.studio:
+                starStudioVo = {"stars": page.stars, "studio": page.studio}
+                self.send(starStudioVo, "/star/relation/studio/save")
+            if page.series:
+                starSeriesVo = {"stars": page.stars, "series": page.series}
+                self.send(starSeriesVo, "/star/relation/series/save")
+            if page.movie:
+                movieStarVo = {"movie": page.movie, "stars": page.stars}
+                self.send(movieStarVo, "/movie/relation/star/save")
+            if page.categories and len(page.categories) >= 1:
+                starCategoryVo = {"stars": page.stars, "categories": page.categories}
+                self.send(starCategoryVo, "/star/relation/category/save")
+        if page.studio and len(page.studio) >= 1:
             movieStudioVo = {"movie": page.movie, "studio": page.studio}
             self.send(movieStudioVo, "/movie/relation/studio/save")
-        if page.series:
-            movieSeriesVo = {"movie": page.movie, "studio": page.series}
+        if page.series and len(page.series) >= 1:
+            movieSeriesVo = {"movie": page.movie, "series": page.series}
             self.send(movieSeriesVo, "/movie/relation/series/save")

@@ -1,6 +1,7 @@
 from ProxyPool import proxypool
 from SearchBFS import search
 from IndexBFS import index
+from GenreBFS import GenreBFS
 
 
 if __name__ == "__main__":
@@ -12,6 +13,7 @@ if __name__ == "__main__":
         1. index
         2. search
         3. getProxyIp
+        4. queryGenre
           """
     )
     num = int(input("input:"))
@@ -25,3 +27,6 @@ if __name__ == "__main__":
     elif int(num) == 3:
         print("starting proxy ip")
         proxypool().getPageList()
+    elif int(num) == 4:
+        print("querying genre bfs model")
+        GenreBFS(baseUrl).BFS()

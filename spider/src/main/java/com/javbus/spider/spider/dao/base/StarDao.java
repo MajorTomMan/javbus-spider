@@ -3,7 +3,6 @@ package com.javbus.spider.spider.dao.base;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import com.javbus.spider.spider.entity.base.Star;
 
