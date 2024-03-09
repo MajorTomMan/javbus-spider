@@ -19,6 +19,15 @@ public class StarCategoryRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody StarCategoryVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getCategories() == null || vo.getStars() == null) {
+            return R.error();
+        }
+        if (vo.getCategories().isEmpty()) {
+            return R.error();
+        }
+        if (vo.getStars().isEmpty()) {
+            return R.error();
+        }
         starCategoryRelationService.saveRelation(vo);
         return R.ok();
     }

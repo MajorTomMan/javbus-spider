@@ -3,10 +3,8 @@ package com.javbus.spider.spider.service.relation.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.javbus.spider.spider.dao.base.LabelDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
 import com.javbus.spider.spider.dao.base.SeriesDao;
-import com.javbus.spider.spider.dao.relation.MovieLabelDao;
 import com.javbus.spider.spider.dao.relation.MovieSeriesDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.Series;
@@ -28,7 +26,7 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
         if(vo==null){
             return;
         }
-        Movie movie = movieDao.queryMovieByCode(vo.getCode());
+        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
             return;
         }

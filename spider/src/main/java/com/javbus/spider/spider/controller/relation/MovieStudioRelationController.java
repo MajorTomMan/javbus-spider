@@ -19,6 +19,9 @@ public class MovieStudioRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieStudioVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getStudio() == null || vo.getMovie().getCode() == null) {
+            return R.error();
+        }
         movieStudioRelationService.saveRelation(vo);
         return R.ok();
     }

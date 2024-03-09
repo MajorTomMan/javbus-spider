@@ -27,7 +27,7 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
         if(vo==null){
             return;
         }
-        Movie movie = movieDao.queryMovieByCode(vo.getCode());
+        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
             return;
         }

@@ -11,17 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("movie")
 public class MovieController {
     @Autowired
     private MovieService movieService;
+
     @PostMapping("save")
     public R saveMovie(@RequestBody Movie movie) {
-        //TODO: process POST request
+        // TODO: process POST request
+        if (movie == null) {
+            return R.error();
+        }
         movieService.saveMovie(movie);
         return R.ok();
     }
-    
+
 }

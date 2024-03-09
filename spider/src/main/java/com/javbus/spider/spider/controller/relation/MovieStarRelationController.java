@@ -1,4 +1,5 @@
 package com.javbus.spider.spider.controller.relation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,9 @@ public class MovieStarRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieStarVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getStars() == null || vo.getMovie().getCode() == null) {
+            return R.error();
+        }
         movieStarRelationService.saveRelation(vo);
         return R.ok();
     }

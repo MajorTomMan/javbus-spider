@@ -17,10 +17,13 @@ import com.javbus.spider.spider.utils.R;
 public class SampleImageController {
     @Autowired
     private SampleImageService sampleImageService;
-    
+
     @PostMapping("save")
     public R saveMovie(@RequestBody List<SampleImage> sampleImages) {
         // TODO: process POST request
+        if (sampleImages == null || sampleImages.isEmpty()) {
+            return R.error();
+        }
         sampleImageService.saveSampleImages(sampleImages);
         return R.ok();
     }

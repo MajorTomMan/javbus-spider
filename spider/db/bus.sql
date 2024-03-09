@@ -77,9 +77,9 @@ CREATE TABLE sample_image(
 CREATE TABLE IF NOT EXISTS movie_label_relation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     movie_id INT,
-    studio_id INT,
+    label_id INT,
     FOREIGN KEY (movie_id) REFERENCES movie(id),
-    FOREIGN KEY (studio_id) REFERENCES studio(id)
+    FOREIGN KEY (label_id) REFERENCES label(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS movie_studio_relation (

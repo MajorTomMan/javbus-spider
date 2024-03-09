@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.MovieDao;
-import com.javbus.spider.spider.dao.base.StarDao;
 import com.javbus.spider.spider.dao.base.StudioDao;
-import com.javbus.spider.spider.dao.relation.MovieStarDao;
 import com.javbus.spider.spider.dao.relation.MovieStudioDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.Studio;
@@ -29,7 +27,7 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
         if(vo==null){
             return;
         }
-        Movie movie = movieDao.queryMovieByCode(vo.getCode());
+        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
             return;
         }

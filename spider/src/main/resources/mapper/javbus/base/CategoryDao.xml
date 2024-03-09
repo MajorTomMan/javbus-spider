@@ -36,7 +36,7 @@
 
     <!-- queryCategoryByNames --> 
 
-    <select id="queryCategoryIdsByNames" resultType="java.util.List">
+    <select id="queryCategoryIdsByNames" resultType="java.lang.Integer">
         SELECT id FROM category
         WHERE name IN
         <foreach collection="names" item="name" open="(" separator="," close=")">

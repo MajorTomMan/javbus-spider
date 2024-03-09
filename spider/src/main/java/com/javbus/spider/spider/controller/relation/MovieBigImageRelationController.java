@@ -15,9 +15,12 @@ import com.javbus.spider.spider.utils.R;
 public class MovieBigImageRelationController {
     @Autowired
     private MovieBigImageRelationService movieBigImageRelationService;
-    
+
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieBigImageVo vo) {
+        if (vo == null || vo.getBigImage() == null || vo.getMovie().getCode() == null) {
+            return R.error();
+        }
         // TODO: process POST request
         movieBigImageRelationService.saveRelaton(vo);
         return R.ok();

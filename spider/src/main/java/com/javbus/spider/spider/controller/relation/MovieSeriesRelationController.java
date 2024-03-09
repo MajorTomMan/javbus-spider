@@ -15,10 +15,13 @@ import com.javbus.spider.spider.utils.R;
 public class MovieSeriesRelationController {
     @Autowired
     private MovieSeriesRelationService movieSeriesRelationService;
-    
+
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieSeriesVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getSeries() == null || vo.getMovie().getCode() == null) {
+            return R.error();
+        }
         movieSeriesRelationService.saveRelaton(vo);
         return R.ok();
     }

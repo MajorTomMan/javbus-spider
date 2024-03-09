@@ -19,6 +19,12 @@ public class MovieSampleImageRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieSampleImageVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getSampleImages() == null || vo.getMovie().getCode() == null) {
+            return R.error();
+        }
+        if (vo.getSampleImages().isEmpty()) {
+            return R.error();
+        }
         movieSampleImageRelationService.saveRelation(vo);
         return R.ok();
     }

@@ -7,7 +7,7 @@
         FROM label
         WHERE id = #{id}
     </select>
-    <select id="queryLabelByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Label">
+    <select id="queryLabelByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Label">
         SELECT *
         FROM label
         WHERE name=#{name}

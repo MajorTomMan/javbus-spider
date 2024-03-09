@@ -20,6 +20,9 @@ public class DirectorController {
     @PostMapping("save")
     public R saveDirectory(@RequestBody Director director) {
         // TODO: process POST request
+        if (director == null) {
+            return R.error();
+        }
         directorService.saveDirector(director);
         return R.ok();
     }

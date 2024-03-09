@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.javbus.spider.spider.entity.base.Director;
 import com.javbus.spider.spider.entity.vo.MovieLabelVo;
 import com.javbus.spider.spider.service.relation.MovieLabelRelationService;
 import com.javbus.spider.spider.utils.R;
@@ -19,6 +18,9 @@ public class MovieLabelRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieLabelVo vo) {
         // TODO: process POST request
+        if(vo==null||vo.getLabel()==null||vo.getMovie().getCode()==null){
+            return R.error();
+        }
         movieLabelRelationService.saveRelation(vo);
         return R.ok();
     }

@@ -15,10 +15,13 @@ import com.javbus.spider.spider.utils.R;
 public class LabelController {
     @Autowired
     private LabelService labelService;
-    
+
     @PostMapping("save")
     public R saveLabel(@RequestBody Label label) {
         // TODO: process POST request
+        if (label == null) {
+            return R.error();
+        }
         labelService.saveLabel(label);
         return R.ok();
     }

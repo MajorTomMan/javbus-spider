@@ -27,7 +27,10 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
         if(vo==null){
             return;
         }
-        Movie movie = movieDao.queryMovieByCode(vo.getCode());;
+        else if(vo.getDirector()==null){
+            return;
+        }
+        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());;
         if(movie==null){
             return;
         }

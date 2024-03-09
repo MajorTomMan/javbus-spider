@@ -15,10 +15,13 @@ import com.javbus.spider.spider.utils.R;
 public class StudioController {
     @Autowired
     private StudioService studioService;
-    
+
     @PostMapping("save")
     public R saveStudio(@RequestBody Studio studio) {
         // TODO: process POST request
+        if (studio == null) {
+            return R.error();
+        }
         studioService.saveStudio(studio);
         return R.ok();
     }

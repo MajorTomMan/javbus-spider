@@ -17,10 +17,13 @@ import com.javbus.spider.spider.utils.R;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
-    
+
     @PostMapping("save")
     public R saveCategory(@RequestBody List<Category> categories) {
         // TODO: process POST request
+        if (categories == null || categories.isEmpty()) {
+            return R.error();
+        }
         categoryService.saveCategories(categories);
         return R.ok();
     }

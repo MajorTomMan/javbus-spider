@@ -15,10 +15,13 @@ import com.javbus.spider.spider.utils.R;
 public class BigImageController {
     @Autowired
     private BigImageService bigImageService;
-    
+
     @PostMapping("save")
     public R saveBigImage(@RequestBody BigImage bigImage) {
         // TODO: process POST request
+        if (bigImage == null) {
+            return R.error();
+        }
         bigImageService.saveBigImage(bigImage);
         return R.ok();
     }
