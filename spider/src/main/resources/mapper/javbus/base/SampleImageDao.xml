@@ -6,8 +6,8 @@
     </select>
     <select id="querySampleImageIdsByLinks" parameterType="java.util.List" resultType="java.lang.Integer">
         SELECT id FROM sample_image WHERE link IN
-        <foreach item="link" collection="list" open="(" separator="," close=")">
-            #{link}
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item.link}
         </foreach>
     </select>
     <insert id="saveSampleImages" parameterType="List">

@@ -1,11 +1,8 @@
-import json
-import time
 import warnings
 import os
 from bs4 import BeautifulSoup
 import requests
 
-from selenium import webdriver
 import undetected_chromedriver as uc
 from undetected_chromedriver import ChromeOptions
 from selenium.webdriver.chrome.options import Options
@@ -15,14 +12,12 @@ from utils.attrs.BigImage import BigImage
 
 
 from utils.attrs.Director import Director
-from utils.attrs.Image import Image
 from utils.attrs.Movie import Movie
 from utils.attrs.Page import Page
 from utils.attrs.SampleImage import SampleImage
 from utils.attrs.Star import Star
 from utils.attrs.Studio import Studio
 from utils.attrs.Series import Series
-from utils.attrs.Category import Category
 from utils.attrs.Label import Label
 
 
@@ -294,12 +289,12 @@ class ImageUtil:
         self.basePath = "./images/"
 
     def downloadSampleImages(self, links, stars, code):
-        if stars == None:
+        if stars == None or len(stars) < 1:
             stars = "未知演员"
         elif len(stars) > 1:
-            stars = "-".join([star.get("name") for star in stars])
+            stars = "-".join(stars)
         elif len(stars) == 1:
-            stars = stars[0].get("name")
+            stars = stars[0]
         headers = {"User-Agent": self.ua.random}
         for link in links:
             filename = link.split("/")[-1]
@@ -327,12 +322,12 @@ class ImageUtil:
                 print("image " + response.url + " download failure")
 
     def downloadBigImage(self, link, stars, code):
-        if stars == None:
+        if stars == None or len(stars) < 1:
             stars = "未知演员"
         elif len(stars) > 1:
-            stars = "-".join([star.get("name") for star in stars])
+            stars = "-".join(stars)
         elif len(stars) == 1:
-            stars = stars[0].get("name")
+            stars = stars[0]
         filename = link.split("/")[-1]
         if self.__checkFileIsExists(
             stars=stars, code=code, filename=filename, isBigImage=True
@@ -415,25 +410,30 @@ class PageUtil:
         page.movie["link"] = link
         stars = page.stars
         code = page.movie.get("code")
-        self.ImageUtil.downloadSampleImages(
-            links=page.sampleimage["links"], stars=stars, code=code
-        )
+        links = []
+        for sample in page.sampleimage:
+            for link in sample:
+                links.append(sample[link])
+        names = []
+        if stars:
+            for star in stars:
+                names.append(star.get("name"))
+        self.ImageUtil.downloadSampleImages(links=links, stars=names, code=code)
         self.ImageUtil.downloadBigImage(
-            link=page.bigimage["link"], stars=stars, code=code
+            link=page.bigimage["link"], stars=names, code=code
         )
         return page
 
     def getPage(self, bs):
         page = Page()
         bigimage = BigImage()
-        sampleimage = SampleImage()
         movie = Movie()
         director = Director()
         series = Series()
         studio = Studio()
         label = Label()
-
-        stars = []
+        actors = []
+        samples = []
         title = self.AttrsUtil.getTitle(bs)
         if title:
             movie.title = title
@@ -445,7 +445,10 @@ class PageUtil:
         if waterfall:
             imgs = self.AttrsUtil.getSampleImages(waterfall)
             if imgs:
-                sampleimage.links = imgs
+                for img in imgs:
+                    sample = SampleImage()
+                    sample.link = img
+                    samples.append(sample.toDict())
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -483,12 +486,10 @@ class PageUtil:
             p = ps[-1]
             stars = self.AttrsUtil.getStars(p)
             if stars:
-                t = []
                 for star in stars:
                     starDetail = self.parseStarDetailsPage(stars[star])
-                    star.star_link = stars[star]
-                    t.append(starDetail.toDict())
-                stars = t
+                    starDetail.star_link = stars.get(star)
+                    actors.append(starDetail.toDict())
             if stars:
                 p = ps[-3]
             else:
@@ -506,7 +507,7 @@ class PageUtil:
         if bigimage:
             page.bigimage = bigimage.toDict()
         if bigimage:
-            page.sampleimage = sampleimage.toDict()
+            page.sampleimage = samples
         if movie:
             page.movie = movie.toDict()
         if studio:
@@ -516,7 +517,7 @@ class PageUtil:
         if label:
             page.label = label.toDict()
         if stars:
-            page.stars = stars.toDict()
+            page.stars = actors
         return page
 
     def parseStarDetailsPage(self, link):

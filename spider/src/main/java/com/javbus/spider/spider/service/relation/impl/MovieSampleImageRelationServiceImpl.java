@@ -30,16 +30,18 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
         }
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
-            return;
+            movieDao.saveMovie(movie);
+            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         List<Integer> ids=sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());
         if(ids==null||ids.isEmpty()){
             sampleImageDao.saveSampleImages(vo.getSampleImages());
             ids=sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());
         }
+        final Movie final_movie=movie;
         List<MovieSampleImageRelation> relations=ids.stream().map((id)->{
             MovieSampleImageRelation relation=new MovieSampleImageRelation();
-            relation.setMovieId(movie.getId());
+            relation.setMovieId(final_movie.getId());
             relation.setSampleImageId(id);
             return relation;
         }).collect(Collectors.toList());

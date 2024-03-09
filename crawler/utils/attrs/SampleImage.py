@@ -1,4 +1,5 @@
 class SampleImage:
-    links=[]
+    link = ""
+
     def toDict(self):
         return self.__dict__
