@@ -422,6 +422,7 @@ class PageUtil:
         self.ImageUtil.downloadBigImage(
             link=page.bigimage["link"], stars=names, code=code
         )
+        driver.close()
         return page
 
     def getPage(self, bs):

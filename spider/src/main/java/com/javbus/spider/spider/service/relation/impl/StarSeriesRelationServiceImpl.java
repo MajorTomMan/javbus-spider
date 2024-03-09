@@ -38,17 +38,17 @@ public class StarSeriesRelationServiceImpl implements StarSeriesRelationService 
         }
         Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
         if (series == null) {
-            seriesDao.save(series);
+            seriesDao.save(vo.getSeries());
             series = seriesDao.querySeriesByName(vo.getSeries().getName());
         }
-        final Series final_series=series;
+        final Series final_series = series;
         List<StarSeriesRelation> relations = ids.stream().map((id) -> {
             StarSeriesRelation relation = new StarSeriesRelation();
             relation.setSeriesId(final_series.getId());
             relation.setStarId(id);
             return relation;
         }).collect(Collectors.toList());
-        starSeriesDao.addMovieSeriesRelations(relations);
+        starSeriesDao.addStarSeriesRelations(relations);
     }
 
 }

@@ -6,7 +6,7 @@
         FROM series
         WHERE id = #{id}
     </select>
-    <select id="querySeriesByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Series">
+    <select id="querySeriesByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Series">
         SELECT *
         FROM series
         WHERE name=#{name}

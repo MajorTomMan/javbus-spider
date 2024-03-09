@@ -7,7 +7,7 @@
         FROM director
         WHERE id = #{id}
     </select>
-    <select id="queryDirectorByName" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Director">
+    <select id="queryDirectorByName" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Director">
         SELECT *
         FROM director
         WHERE name=#{name}

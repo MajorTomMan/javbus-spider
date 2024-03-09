@@ -30,6 +30,8 @@ class index:
 
     def __bfs(self, driver):
         bs = BeautifulSoup(driver.page_source, "html.parser")
+        # 当前页面源码已经获取,可以关闭浏览器,防止内存占用过高
+        driver.close()
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
@@ -95,19 +97,24 @@ class index:
             movieSampleImageVo = {"movie": page.movie, "sampleImages": page.sampleimage}
             self.send(movieSampleImageVo, "/movie/relation/sampleimage/save")
         if page.stars and len(page.stars) >= 1:
-            movieStarVo = {"movie": page.movie, "stars": page.stars}
-            starCategoryVo = {"stars": page.stars, "categories": page.categories}
-            starDirectorVo = {"stars": page.stars, "director": page.director}
-            starStudioVo = {"stars": page.stars, "studio": page.studio}
-            starSeriesVo = {"stars": page.stars, "series": page.series}
-            self.send(movieStarVo, "/movie/relation/star/save")
-            self.send(starCategoryVo, "/star/relation/category/save")
-            self.send(starDirectorVo, "/star/relation/director/save")
-            self.send(starStudioVo, "/star/relation/studio/save")
-            self.send(starSeriesVo, "/star/relation/series/save")
+            if page.director:
+                starDirectorVo = {"stars": page.stars, "director": page.director}
+                self.send(starDirectorVo, "/star/relation/director/save")
+            if page.studio:
+                starStudioVo = {"stars": page.stars, "studio": page.studio}
+                self.send(starStudioVo, "/star/relation/studio/save")
+            if page.series:
+                starSeriesVo = {"stars": page.stars, "series": page.series}
+                self.send(starSeriesVo, "/star/relation/series/save")
+            if page.movie:
+                movieStarVo = {"movie": page.movie, "stars": page.stars}
+                self.send(movieStarVo, "/movie/relation/star/save")
+            if page.categories and len(page.categories) >= 1:
+                starCategoryVo = {"stars": page.stars, "categories": page.categories}
+                self.send(starCategoryVo, "/star/relation/category/save")
         if page.studio and len(page.studio) >= 1:
             movieStudioVo = {"movie": page.movie, "studio": page.studio}
             self.send(movieStudioVo, "/movie/relation/studio/save")
         if page.series and len(page.series) >= 1:
-            movieSeriesVo = {"movie": page.movie, "studio": page.series}
+            movieSeriesVo = {"movie": page.movie, "series": page.series}
             self.send(movieSeriesVo, "/movie/relation/series/save")
