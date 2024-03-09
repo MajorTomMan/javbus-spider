@@ -34,6 +34,7 @@ class index:
                     print("now visit website link is "+link)
                     self.links.append(link)
                     page=self.PageUtil.parseDetailPage(link)
+                    self.save2local(vars(page),"./page/data")
                     if page:
                         print("------------------------------page info start--------------------------------------")
                         print(page)
@@ -46,7 +47,7 @@ class index:
                         self.sendData2Server(page.movie,"/movie/save")
                         movieBigImageVo={
                             "code":page.movie["code"],
-                            "bigImage":page.images["big_image_link"],
+                            "bigImage":page.bigimage,
                         }
                         movieCategoryVo={
                             "code":page.movie["code"],
@@ -62,7 +63,7 @@ class index:
                         }
                         movieSampleImageVo={
                             "code":page.movie["code"],
-                            "sampleImages": page.images["sample_image_link"]
+                            "sampleImages": page.sampleimage
                         }
                         movieStarVo={
                             "code":page.movie["code"],
@@ -107,12 +108,12 @@ class index:
             print("all link was visited jump to next page")
         else:
             print("page list not found")
-    def save2local(self,content):
-        with open("./headers/requests.txt") as f:
-            f.write(content)
+    def save2local(self,content,path):
+        with open(path+".json","w",encoding="UTF-8") as f:
+            json.dump(content,f,ensure_ascii=False)
     def sendData2Server(self,data,path):
         response=self.RequestUtil.post(data=data,path=path)
         if response.status_code==200:
-            print("send data was success")
+            print("send "+str(data)+" to "+path+" was success")
         else:
-            print("send data was failure")
+            print("send "+str(data)+" to "+path+" was failure")

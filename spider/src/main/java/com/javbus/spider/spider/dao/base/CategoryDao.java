@@ -11,7 +11,7 @@ import com.javbus.spider.spider.entity.base.Category;
 public interface CategoryDao {
     Category queryCategoryById(Integer id);
     Category queryCategoryByName(String name);
-    List<Integer> queryCategoriesIdsByNames(@Param("names") List<String> names);
+    List<Integer> queryCategoryIdsByNames(@Param("names") List<String> names);
     void saveCategory(Category category);
     void saveCategories(List<Category> categories);
     void delete(Integer id);

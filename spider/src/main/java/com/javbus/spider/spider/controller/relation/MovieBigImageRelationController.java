@@ -11,7 +11,7 @@ import com.javbus.spider.spider.service.relation.MovieBigImageRelationService;
 import com.javbus.spider.spider.utils.R;
 
 @RestController
-@RequestMapping("movie/relation/bigImage")
+@RequestMapping("movie/relation/bigimage")
 public class MovieBigImageRelationController {
     @Autowired
     private MovieBigImageRelationService movieBigImageRelationService;

@@ -36,7 +36,7 @@
 
     <!-- queryCategoryByNames --> 
 
-    <select id="queryCategoriesByNames" resultType="com.javbus.spider.spider.entity.base.Category">
+    <select id="queryCategoryIdsByNames" resultType="java.util.List">
         SELECT id FROM category
         WHERE name IN
         <foreach collection="names" item="name" open="(" separator="," close=")">

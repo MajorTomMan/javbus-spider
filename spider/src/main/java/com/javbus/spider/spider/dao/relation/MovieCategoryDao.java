@@ -9,7 +9,7 @@ import com.javbus.spider.spider.entity.relation.MovieCategoryRelation;
 @Mapper
 public interface MovieCategoryDao {
     void addMovieCategoryRelation(MovieCategoryRelation relation);
-    void addMovieCategoriesRelation(List<MovieCategoryRelation> relation);
+    void addMovieCategoryRelations(List<MovieCategoryRelation> relation);
 
     void deleteMovieCategoryRelation(int movieId, int categoryId);
 }

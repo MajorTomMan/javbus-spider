@@ -4,8 +4,8 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.MovieDao">
 
     <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO movie (star_id, code, title, release_date, length, link, director_id, studio_id, category_id, series_id)
-        VALUES (#{starId}, #{code}, #{title}, #{releaseDate}, #{length}, #{link}, #{directorId}, #{studioId}, #{categoryId}, #{seriesId})
+        INSERT INTO movie (code, title, release_date, length, link)
+        VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link})
     </insert>
     
     <!-- 删除电影记录 -->
@@ -15,9 +15,16 @@
     
     <!-- 更新电影记录 -->
     <update id="updateMovie" parameterType="com.javbus.spider.spider.entity.base.Movie">
-        UPDATE movie SET star_id = #{starId}, code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
-        link = #{link}, director_id = #{directorId}, studio_id = #{studioId}, category_id = #{categoryId}, series_id = #{seriesId}
+        UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
+        link = #{link}
         WHERE id = #{id}
+    </update>
+
+    
+    <update id="updateMovieByCode" parameterType="com.javbus.spider.spider.entity.base.Movie">
+        UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
+        link = #{link}
+        WHERE code = #{code}
     </update>
 
     <!-- queryMovieByCode --> 

@@ -11,12 +11,14 @@ from undetected_chromedriver import ChromeOptions
 from selenium.webdriver.chrome.options import Options
 from fake_useragent import UserAgent
 from selenium.webdriver.common.by import By
+from utils.attrs.BigImage import BigImage
 
 
 from utils.attrs.Director import Director
 from utils.attrs.Image import Image
 from utils.attrs.Movie import Movie
 from utils.attrs.Page import Page
+from utils.attrs.SampleImage import SampleImage
 from utils.attrs.Star import Star
 from utils.attrs.Studio import Studio
 from utils.attrs.Series import Series
@@ -361,19 +363,22 @@ class PageUtil:
         driver = self.WebUtil.getWebSite(link)
         bs = BeautifulSoup(driver.page_source,"html.parser")
         page = self.getPage(bs)
+        page.movie["link"]=link
         stars=page.stars
         code=page.movie.get("code")
-        self.ImageUtil.downloadSampleImages(links=page.images["sample_image_link"],stars=stars,code=code)
-        self.ImageUtil.downloadBigImage(link=page.images["big_image_link"],stars=stars,code=code)
+        self.ImageUtil.downloadSampleImages(links=page.sampleimage["links"],stars=stars,code=code)
+        self.ImageUtil.downloadBigImage(link=page.bigimage["link"],stars=stars,code=code)
         return page
     def getPage(self, bs):
         page=Page()
+        bigimage=BigImage()
+        sampleimage=SampleImage()
         movie=Movie()
         director=Director()
         series=Series()
         studio=Studio()
         label=Label()
-        image=Image()
+        
         stars=[]
         title=self.AttrsUtil.getTitle(bs)
         if title:
@@ -381,12 +386,12 @@ class PageUtil:
         a = bs.find("a", {"class": "bigImage"})
         if a:
             bigImagePath=self.AttrsUtil.getBigImage(a,self.baseUrl)
-            image.big_image_link=bigImagePath
+            bigimage.link=bigImagePath
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
             imgs = self.AttrsUtil.getSampleImages(waterfall)
             if imgs:
-                image.sample_image_link=imgs
+                sampleimage.links=imgs
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -444,8 +449,10 @@ class PageUtil:
             print("info not found")
         if series: 
             page.series=series.toDict()
-        if image: 
-            page.images=image.toDict()
+        if bigimage: 
+            page.bigimage=bigimage.toDict()
+        if bigimage: 
+            page.sampleimage=sampleimage.toDict()
         if movie:
             page.movie=movie.toDict()
         if studio:

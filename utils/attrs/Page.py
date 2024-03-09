@@ -5,8 +5,9 @@ class Page:
     studio = None
     series = None
     stars=None
-    images=None
+    bigimage=None
     categories=None
+    sampleimage=None
     def __str__(self):
         properties = [f"{key}: {value}" for key, value in self.__dict__.items()]
         return "\n".join(properties)

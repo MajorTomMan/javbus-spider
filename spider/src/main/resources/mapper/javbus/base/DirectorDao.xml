@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.DirectorDao">
 
     <select id="queryDirectorById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Director">
-        SELECT id, name
+        SELECT *
         FROM director
         WHERE id = #{id}
     </select>

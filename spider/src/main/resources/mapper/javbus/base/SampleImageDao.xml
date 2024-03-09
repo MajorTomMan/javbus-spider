@@ -4,7 +4,7 @@
     <select id="querySampleImageById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.SampleImage">
         SELECT * FROM sample_image WHERE id=#{id}
     </select>
-    <select id="querySampleImageIdsByLinks" parameterType="java.util.List" resultType="com.javbus.spider.spider.entity.base.SampleImage">
+    <select id="querySampleImageIdsByLinks" parameterType="java.util.List" resultType="java.lang.Integer">
         SELECT id FROM sample_image WHERE link IN
         <foreach item="link" collection="list" open="(" separator="," close=")">
             #{link}

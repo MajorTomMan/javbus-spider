@@ -56,26 +56,22 @@ CREATE TABLE star(
 
 CREATE TABLE IF NOT EXISTS movie (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    code VARCHAR(255),
+    code VARCHAR(255) UNIQUE,
     title VARCHAR(255),
     release_date VARCHAR(255),
     length VARCHAR(255),
-    link VARCHAR(255)
+    link VARCHAR(255) UNIQUE
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 CREATE TABLE big_image(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    movie_id INT,
-    link VARCHAR(255),
-    FOREIGN KEY (movie_id) REFERENCES movie(id)
+    link VARCHAR(255)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE sample_image(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    movie_id INT,
-    link VARCHAR(255),
-    FOREIGN KEY (movie_id) REFERENCES movie(id)
+    link VARCHAR(255)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS movie_label_relation (

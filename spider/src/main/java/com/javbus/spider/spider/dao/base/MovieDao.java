@@ -16,7 +16,7 @@ public interface MovieDao {
     
     Movie queryMovieByCode(String code);
     void updateMovie(Movie movie);
-
+    void updateMovieByCode(Movie movie);
     void deleteMovie(Integer id);
 
 }

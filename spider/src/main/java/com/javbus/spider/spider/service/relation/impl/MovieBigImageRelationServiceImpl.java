@@ -33,7 +33,7 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
         BigImage bigImageResult = bigImageDao.queryBigImageByLink(bigImage.getLink());
         if(bigImageResult==null){
             bigImageDao.saveBigImage(bigImage);
-            bigImage=bigImageDao.queryBigImageByLink(vo.getBigImage().getLink());
+            bigImageResult=bigImageDao.queryBigImageByLink(vo.getBigImage().getLink());
         }
         relation.setBigImageId(bigImageResult.getId());
         relation.setMovieId(movie.getId());

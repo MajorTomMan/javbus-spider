@@ -15,7 +15,6 @@ import com.javbus.spider.spider.entity.relation.MovieCategoryRelation;
 import com.javbus.spider.spider.entity.vo.MovieCategoryVo;
 import com.javbus.spider.spider.service.relation.MovieCategoryRelationService;
 
-import lombok.extern.log4j.Log4j2;
 
 @Service
 public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationService {
@@ -41,10 +40,10 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         List<String> names = categories.stream().map((data) -> {
             return data.getName();
         }).collect(Collectors.toList());
-        List<Integer> ids = categoryDao.queryCategoriesIdsByNames(names);
+        List<Integer> ids = categoryDao.queryCategoryIdsByNames(names);
         if (ids == null || ids.isEmpty()) {
             categoryDao.saveCategories(vo.getCategories());
-            ids = categoryDao.queryCategoriesIdsByNames(names);
+            ids = categoryDao.queryCategoryIdsByNames(names);
         }
         // 设置一对多关系
         List<MovieCategoryRelation> relations = ids.stream().map((id) -> {
@@ -53,7 +52,7 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
             relation.setCategoryId(id);
             return relation;
         }).collect(Collectors.toList());
-        movieCategoryDao.addMovieCategoriesRelation(relations);
+        movieCategoryDao.addMovieCategoryRelations(relations);
     }
 
 }

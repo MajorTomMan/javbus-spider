@@ -24,7 +24,7 @@
 
     <!-- queryBigImageByLink --> 
 
-    <select id="queryBigImageByLink" parameterType="java.lang.Integer">
+    <select id="queryBigImageByLink" parameterType="java.lang.String">
         select * from big_image where link=#{link}
     </select>
 </mapper>

@@ -45,7 +45,7 @@ public class StarCategoryRelationServiceImpl implements StarCategoryRelationServ
         List<String> categoryNames = categories.stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());
-        List<Integer> categoryIds = categoryDao.queryCategoriesIdsByNames(categoryNames);
+        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         if(categoryIds==null||categoryIds.isEmpty()){
             categoryDao.saveCategories(categories);
             categoryIds = starDao.queryStarIdsByNames(categoryNames);

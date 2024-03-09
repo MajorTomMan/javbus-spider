@@ -3,12 +3,12 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieBigImageDao">
     
     <insert id="addMovieBigImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT INTO movie_bigImage_relation (movie_id, big_image_id)
+        INSERT INTO movie_big_image_relation (movie_id, big_image_id)
         VALUES (#{movieId}, #{bigImageId})
     </insert>
 
     <delete id="deleteMovieBigImageRelation">
-        DELETE FROM movie_bigImage_relation
+        DELETE FROM movie_big_image_relation
         WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId}
     </delete>
 </mapper>
