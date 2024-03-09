@@ -51,7 +51,9 @@ class WebUtil:
             driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
         )
         driver.get(url)
-        return driver
+        source = driver.page_source
+        driver.quit()
+        return source
 
     def save2local(self, path, filename, content):
         with open(path + "/" + filename + ".html", "w", encoding="utf-8") as f:
@@ -404,8 +406,8 @@ class PageUtil:
         self.baseUrl = url
 
     def parseDetailPage(self, link):
-        driver = self.WebUtil.getWebSite(link)
-        bs = BeautifulSoup(driver.page_source, "html.parser")
+        source = self.WebUtil.getWebSite(link)
+        bs = BeautifulSoup(source, "html.parser")
         page = self.getPage(bs)
         page.movie["link"] = link
         stars = page.stars
@@ -422,7 +424,6 @@ class PageUtil:
         self.ImageUtil.downloadBigImage(
             link=page.bigimage["link"], stars=names, code=code
         )
-        driver.close()
         return page
 
     def getPage(self, bs):
@@ -522,8 +523,8 @@ class PageUtil:
         return page
 
     def parseStarDetailsPage(self, link):
-        driver = self.WebUtil.getWebSite(link)
-        bs = BeautifulSoup(driver.page_source, "html.parser")
+        source = self.WebUtil.getWebSite(link)
+        bs = BeautifulSoup(source, "html.parser")
         star = Star()
         box = bs.find("div", {"class": "avatar-box"})
         if box:

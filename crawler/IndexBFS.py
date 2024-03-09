@@ -20,18 +20,15 @@ class index:
     def BFS(self):
         if self.baseUrl:
             while self.pageNum <= 5:
-                driver = self.WebUtil.getWebSite(self.baseUrl)
+                source = self.WebUtil.getWebSite(self.baseUrl)
                 print("现在正在第" + str(self.pageNum) + "页")
-                if self.WebUtil.checkisLimitedByAge(driver.title):
-                    return
-                self.__bfs(driver)
+                self.__bfs(source)
                 break
             print("bfs done")
 
-    def __bfs(self, driver):
-        bs = BeautifulSoup(driver.page_source, "html.parser")
+    def __bfs(self, source):
+        bs = BeautifulSoup(source, "html.parser")
         # 当前页面源码已经获取,可以关闭浏览器,防止内存占用过高
-        driver.close()
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
