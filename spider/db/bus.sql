@@ -42,9 +42,9 @@ CREATE TABLE IF NOT EXISTS category (
 
 CREATE TABLE star(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) UNIQUE,
+    name VARCHAR(255),
     star_link VARCHAR(255) UNIQUE,
-    photo_link VARCHAR(255) UNIQUE,
+    photo_link VARCHAR(255),
     birth_day DATE,
     age INT,
     height VARCHAR(20),

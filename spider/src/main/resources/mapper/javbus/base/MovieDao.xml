@@ -4,7 +4,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.MovieDao">
 
     <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO movie (code, title, release_date, length, link)
+        INSERT IGNORE INTO movie (code, title, release_date, length, link)
         VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link})
     </insert>
     

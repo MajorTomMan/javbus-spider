@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieBigImageDao">
     
     <insert id="addMovieBigImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT INTO movie_big_image_relation (movie_id, big_image_id)
+        INSERT IGNORE INTO movie_big_image_relation (movie_id, big_image_id)
         VALUES (#{movieId}, #{bigImageId})
     </insert>
 

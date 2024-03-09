@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieLabelDao">
     
     <insert id="addMovieLabelRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieLabelRelation">
-        INSERT INTO movie_label_relation (movie_id, label_id)
+        INSERT IGNORE INTO movie_label_relation (movie_id, label_id)
         VALUES (#{movieId}, #{labelId})
     </insert>
 

@@ -4,7 +4,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.StarDao">
 
     <!-- 插入操作 -->
-    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Star"> INSERT INTO star(
+    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Star"> INSERT IGNORE INTO star(
         name, star_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place,
         hobby ) VALUES ( #{name}, #{starLink}, #{photoLink}, #{birthDay}, #{age}, #{height}, #{cup},
         #{bust}, #{waist}, #{hip}, #{birthPlace}, #{hobby} ) </insert>
@@ -27,23 +27,27 @@
 
     <!-- saveStars -->
     <!-- 插入多个Star -->
-    <insert id="saveStars" parameterType="List"> INSERT INTO star (name, star_link, photo_link,
-        birth_day, age, height, cup, bust, waist, hip, birth_place, hobby) VALUES <foreach
-            collection="list" item="star" separator=","> (#{star.name}, #{star.starLink},
-        #{star.photoLink}, #{star.birthDay}, #{star.age}, #{star.height}, #{star.cup}, #{star.bust},
-        #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby}) </foreach>
+    <insert id="saveStars" parameterType="List"> INSERT IGNORE INTO star (name, star_link, photo_link,
+        birth_day, age, height, cup, bust, waist, hip, birth_place, hobby) VALUES 
+        <foreach collection="list" item="star" separator=",">
+            (#{star.name}, #{star.starLink},
+            #{star.photoLink}, #{star.birthDay}, #{star.age}, #{star.height}, #{star.cup}, #{star.bust},
+            #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby}) 
+    </foreach>
     </insert>
 
     <!-- queryStarIdsByNames -->
 
-    <select id="queryStarIdsByNames" parameterType="java.util.List" resultType="java.util.List">
-        SELECT id FROM star WHERE name IN <foreach collection="list" item="name" open="("
-            separator="," close=")"> #{name} </foreach>
+    <select id="queryStarIdsByNames" resultType="java.lang.Integer">
+        SELECT id FROM star WHERE name IN 
+        <foreach collection="list" item="names" open="(" separator="," close=")"> 
+            #{names} 
+        </foreach>
     </select>
 
-    <!-- queryStarIdByName --> 
+    <!-- queryStarIdByName -->
 
     <select id="queryStarIdByName" parameterType="java.lang.Integer">
-        select id from star where name=#{name}
+        select id from star where name=#{name} 
     </select>
 </mapper>

@@ -530,7 +530,10 @@ class PageUtil:
             info = box.find("div", {"class": "photo-info"})
             if frame:
                 link = self.AttrsUtil.getPhotoLink(frame)
-                if self.baseUrl.endswith("/"):
+                if "pics.dmm.co.jp" in link:
+                    # 解决目前演员还没有图片的问题
+                    star.photo_link = link
+                elif self.baseUrl.endswith("/"):
                     url = self.baseUrl[:-1]
                     star_link = url + link
                     star.photo_link = star_link

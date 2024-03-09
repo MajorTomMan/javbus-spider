@@ -42,6 +42,8 @@ public class StarCategoryRelationServiceImpl implements StarCategoryRelationServ
             starIds = starDao.queryStarIdsByNames(starNames);
         }
         List<Category> categories = vo.getCategories();
+        // 先保存进数据库保证数据存在
+        categoryDao.saveCategories(categories);
         List<String> categoryNames = categories.stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());

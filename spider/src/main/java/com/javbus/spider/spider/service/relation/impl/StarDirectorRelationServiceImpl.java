@@ -26,9 +26,6 @@ public class StarDirectorRelationServiceImpl implements StarDirectorRelationServ
     @Override
     public void saveRelation(StarDirectorVo vo) {
         // TODO Auto-generated method stub
-        if (vo == null) {
-            return;
-        }
         Director director = directorDao.queryDirectorByName(vo.getDirector().getName());
         if (director == null) {
             directorDao.save(vo.getDirector());

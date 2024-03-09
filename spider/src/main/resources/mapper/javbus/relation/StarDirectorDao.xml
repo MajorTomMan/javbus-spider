@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.StarDirectorDao">
 
     <insert id="addStarDirectorRelation" parameterType="com.javbus.spider.spider.entity.relation.StarDirectorRelation">
-        INSERT INTO star_director_relation (star_id, director_id)
+        INSERT IGNORE INTO star_director_relation (star_id, director_id)
         VALUES (#{starId}, #{directorId})
     </insert>
 
@@ -14,7 +14,7 @@
 
     <insert id="addStarDirectorRelations" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT INTO star_director_relation (star_id, director_id) VALUES
+        INSERT IGNORE INTO star_director_relation (star_id, director_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.starId}, #{relation.directorId})
         </foreach>

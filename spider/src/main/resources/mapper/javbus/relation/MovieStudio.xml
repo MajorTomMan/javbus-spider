@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieStudioDao">
         <!-- 添加电影与工作室关系 -->
         <insert id="addMovieStudioRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieStudioRelation">
-            INSERT INTO movie_studio_relation (movie_id, studio_id)
+            INSERT IGNORE INTO movie_studio_relation (movie_id, studio_id)
             VALUES (#{movieId}, #{studioId})
         </insert>
     

@@ -24,15 +24,10 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
     @Override
     public void saveRelaton(MovieDirectorVo vo) {
         // TODO Auto-generated method stub
-        if(vo==null){
-            return;
-        }
-        else if(vo.getDirector()==null){
-            return;
-        }
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());;
         if(movie==null){
-            return;
+            movieDao.saveMovie(movie);
+            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Director director = directorDao.queryDirectorByName(vo.getDirector().getName());
         if(director==null){

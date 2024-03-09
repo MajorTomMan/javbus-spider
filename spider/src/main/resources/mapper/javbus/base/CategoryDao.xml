@@ -13,12 +13,12 @@
         WHERE name = #{name}
     </select>
     <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category">
-        INSERT INTO category (id, name,link)
+        INSERT IGNORE INTO category (id, name,link)
         VALUES (#{id}, #{name},#{link})
     </insert>
     <!-- 插入多个Category -->
     <insert id="saveCategories" parameterType="List">
-        INSERT INTO category (name,link) VALUES
+        INSERT IGNORE INTO category (name,link) VALUES
         <foreach collection="list" item="category" separator=",">
             (#{category.name},#{category.link})
         </foreach>
@@ -39,8 +39,8 @@
     <select id="queryCategoryIdsByNames" resultType="java.lang.Integer">
         SELECT id FROM category
         WHERE name IN
-        <foreach collection="names" item="name" open="(" separator="," close=")">
-            #{name}
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
         </foreach>
     </select>
 </mapper>

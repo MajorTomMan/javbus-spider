@@ -27,12 +27,10 @@ public class MovieStarRelationServiceImpl implements MovieStarRelationService {
     @Override
     public void saveRelation(MovieStarVo vo) {
         // TODO Auto-generated method stub
-        if (vo == null) {
-            return;
-        }
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if (movie == null) {
-            return;
+            movieDao.saveMovie(movie);
+            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         List<Star> stars = vo.getStars();
         List<String> names = stars.stream().map((star) -> {
@@ -43,9 +41,10 @@ public class MovieStarRelationServiceImpl implements MovieStarRelationService {
             starDao.saveStars(stars);
             ids = starDao.queryStarIdsByNames(names);
         }
+        final Movie final_movie=movie;
         List<MovieStarRelation> relations = ids.stream().map((id) -> {
             MovieStarRelation relation = new MovieStarRelation();
-            relation.setMovieId(movie.getId());
+            relation.setMovieId(final_movie.getId());
             relation.setStarId(id);
             return relation;
         }).collect(Collectors.toList());

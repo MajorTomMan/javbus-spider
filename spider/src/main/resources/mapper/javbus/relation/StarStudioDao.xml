@@ -4,7 +4,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.StarStudioDao">
 
     <insert id="addStarStudioRelation" parameterType="com.javbus.spider.spider.entity.relation.StarStudioRelation">
-        INSERT INTO star_studio_relation (star_id, studio_id)
+        INSERT IGNORE INTO star_studio_relation (star_id, studio_id)
         VALUES (#{starId}, #{studioId})
     </insert>
 
@@ -14,7 +14,7 @@
     </delete>
     <!-- 批量添加明星与工作室关系 -->
     <insert id="addStarStudioRelations" parameterType="java.util.List">
-        INSERT INTO star_studio_relation (star_id, studio_id)
+        INSERT IGNORE INTO star_studio_relation (star_id, studio_id)
         VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.starId}, #{relation.studioId})

@@ -30,7 +30,8 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if (movie == null) {
-            return;
+            movieDao.saveMovie(movie);
+            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         List<Category> categories = vo.getCategories();
         // 根据名字查找ID
@@ -42,10 +43,11 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
             categoryDao.saveCategories(vo.getCategories());
             ids = categoryDao.queryCategoryIdsByNames(names);
         }
+        final Movie final_movie=movie;
         // 设置一对多关系
         List<MovieCategoryRelation> relations = ids.stream().map((id) -> {
             MovieCategoryRelation relation = new MovieCategoryRelation();
-            relation.setMovieId(movie.getId());
+            relation.setMovieId(final_movie.getId());
             relation.setCategoryId(id);
             return relation;
         }).collect(Collectors.toList());

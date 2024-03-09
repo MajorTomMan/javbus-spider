@@ -24,12 +24,10 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     @Override
     public void saveRelation(MovieLabelVo vo) {
         // TODO Auto-generated method stub
-        if(vo==null){
-            return;
-        }
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
-            return;
+            movieDao.saveMovie(movie);
+            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Label label=labelDao.queryLabelByName(vo.getLabel().getName());
         if(label==null){

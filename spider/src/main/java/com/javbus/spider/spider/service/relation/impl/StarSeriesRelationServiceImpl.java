@@ -27,9 +27,6 @@ public class StarSeriesRelationServiceImpl implements StarSeriesRelationService 
     @Override
     public void saveRelation(StarSeriesVo vo) {
         // TODO Auto-generated method stub
-        if (vo == null) {
-            return;
-        }
         List<Star> stars = vo.getStars();
         List<String> names = stars.stream().map((star) -> {
             return star.getName();

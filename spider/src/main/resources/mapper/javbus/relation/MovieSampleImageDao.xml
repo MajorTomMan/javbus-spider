@@ -5,7 +5,7 @@
 
     <insert id="addMovieSampleImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
         <!-- 插入单个关系 -->
-        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
+        INSERT IGNORE INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
         (#{movieId}, #{sampleImageId})
     </insert>
 
@@ -16,7 +16,7 @@
 
     <insert id="addMovieSampleImageRelations" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
+        INSERT IGNORE INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.movieId}, #{relation.sampleImageId})
         </foreach>

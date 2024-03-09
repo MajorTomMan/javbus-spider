@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieSeriesDao">
     <insert id="addMovieSeriesRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT INTO movie_series_relation (movie_id, series_id)
+        INSERT IGNORE INTO movie_series_relation (movie_id, series_id)
         VALUES (#{movieId}, #{seriesId})
     </insert>
 

@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.StarSeriesDao">
     <insert id="addStarSeriesRelation" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT INTO star_series_relation (star_id, series_id) VALUES (#{starId},#{seriesId})
+        INSERT IGNORE INTO star_series_relation (star_id, series_id) VALUES (#{starId},#{seriesId})
     </insert>
     <delete id="deleteStarSeriesRelation">
         <!-- 删除单个关系 -->
@@ -12,7 +12,7 @@
 
     <insert id="addStarSeriesRelations" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT INTO star_series_relation (star_id, series_id) VALUES
+        INSERT IGNORE INTO star_series_relation (star_id, series_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.starId}, #{relation.seriesId})
         </foreach>

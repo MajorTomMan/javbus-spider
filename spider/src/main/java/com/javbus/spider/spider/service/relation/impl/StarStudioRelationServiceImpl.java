@@ -28,9 +28,6 @@ public class StarStudioRelationServiceImpl implements StarStudioRelationService 
     @Override
     public void saveRelation(StarStudioVo vo) {
         // TODO Auto-generated method stub
-        if (vo == null) {
-            return;
-        }
         List<Star> stars = vo.getStars();
         List<String> names = stars.stream().map(star -> star.getName()).collect(Collectors.toList());
         List<Integer> ids = starDao.queryStarIdsByNames(names);

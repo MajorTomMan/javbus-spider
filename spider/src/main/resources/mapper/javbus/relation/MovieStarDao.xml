@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieStarDao">
 
     <insert id="addMovieStarRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieStarRelation">
-        INSERT INTO movie_star_relation (movie_id, star_id)
+        INSERT IGNORE INTO movie_star_relation (movie_id, star_id)
         VALUES (#{movieId}, #{starId})
     </insert>
 
@@ -17,7 +17,7 @@
     <!-- addMovieStarRelations --> 
 
     <insert id="addMovieStarRelations" parameterType="java.util.List">
-        INSERT INTO movie_star_relation (movie_id, star_id) VALUES
+        INSERT IGNORE INTO movie_star_relation (movie_id, star_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.movieId}, #{relation.starId})
         </foreach>
