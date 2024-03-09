@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.relation.StarSeriesDao">
+    <insert id="addStarSeriesRelation" parameterType="List">
+        <!-- 插入多个关系 -->
+        INSERT INTO star_series_relation (star_id, series_id) VALUES (#{starId},#{seriesId})
+    </insert>
+    <delete id="deleteStarSeriesRelation">
+        <!-- 删除单个关系 -->
+        DELETE FROM star_series_relation WHERE star_id = #{starId} AND series_id = #{seriesId}
+    </delete>
+
+    <insert id="addStarSeriesRelations" parameterType="List">
+        <!-- 插入多个关系 -->
+        INSERT INTO star_series_relation (star_id, series_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.starId}, #{relation.seriesId})
+        </foreach>
+    </insert>
+
+</mapper>

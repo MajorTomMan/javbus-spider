@@ -1,6 +1,5 @@
 package com.javbus.spider.spider.entity.relation;
 
-import java.util.List;
 
 import lombok.Data;
 

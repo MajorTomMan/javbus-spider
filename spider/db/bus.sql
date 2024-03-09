@@ -5,7 +5,11 @@ CREATE DATABASE IF NOT EXISTS javbus CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 
 -- 切换到 javbus 数据库
 USE javbus;
-
+CREATE TABLE IF NOT EXISTS series (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) UNIQUE,
+    link VARCHAR(255) UNIQUE
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS label (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE,
@@ -128,6 +132,13 @@ CREATE TABLE IF NOT EXISTS movie_director_relation (
     FOREIGN KEY (director_id) REFERENCES director(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS movie_series_relation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    series_id INT,
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (series_id) REFERENCES series(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS star_director_relation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     star_id INT,
@@ -150,4 +161,12 @@ CREATE TABLE IF NOT EXISTS star_category_relation (
     category_id INT,
     FOREIGN KEY (star_id) REFERENCES star(id),
     FOREIGN KEY (category_id) REFERENCES category(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS star_series_relation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    star_id INT,
+    series_id INT,
+    FOREIGN KEY (star_id) REFERENCES star(id),
+    FOREIGN KEY (series_id) REFERENCES series(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
