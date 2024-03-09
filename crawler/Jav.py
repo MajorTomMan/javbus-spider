@@ -3,23 +3,25 @@ from SearchBFS import search
 from IndexBFS import index
 
 
-if __name__=="__main__":
-    baseUrl="https://www.cdnbus.shop/"
-    print("""
+if __name__ == "__main__":
+    baseUrl = "https://www.cdnbus.shop/"
+    print(
+        """
         welcome to the jav programmer
         pls select at less one choice 
         1. index
         2. search
         3. getProxyIp
-          """)
-    num=int(input("input:"))
-    if int(num)==1:
+          """
+    )
+    num = int(input("input:"))
+    if int(num) == 1:
         print("starting index bfs model")
         index(baseUrl).BFS()
-    elif int(num)==2:
-        name=input("input what you want to search(only name):")
+    elif int(num) == 2:
+        name = input("input what you want to search(only name):")
         print("starting search bfs model")
-        search(baseUrl,name).BFS()
-    elif int(num)==3:
+        search(baseUrl, name).BFS()
+    elif int(num) == 3:
         print("starting proxy ip")
         proxypool().getPageList()

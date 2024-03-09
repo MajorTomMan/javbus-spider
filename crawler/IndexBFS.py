@@ -1,22 +1,22 @@
 import json
+import orjson
 from bs4 import BeautifulSoup
-from utils.Utils import WebUtil, AttrsUtil, ImageUtil, PageUtil
+from utils.Utils import AttrsUtil, PageUtil, WebUtil, RequestUtil
 
 
-class search:
+class index:
     WebUtil = WebUtil()
     PageUtil
     AttrsUtil = AttrsUtil()
+    RequestUtil = RequestUtil()
     links = []
-    attrsList = []
-    searchUrl = ""
     pageNum = 1
+    baseUrl = ""
 
-    def __init__(self, url, name) -> None:
-        self.searchUrl = url + "/search/" + name + "/"
+    def __init__(self, url):
+        self.baseUrl = url + "page/" + str(self.pageNum)
         self.PageUtil = PageUtil(url)
 
-    # 默认是搜索模式
     def BFS(self):
         if self.baseUrl:
             while self.pageNum < 5:
@@ -82,7 +82,7 @@ class search:
                 "bigImage": page.bigimage,
             }
             self.send(movieBigImageVo, "/movie/relation/bigimage/save")
-        if page.category:
+        if page.categories:
             movieCategoryVo = {"movie": page.movie, "categories": page.categories}
             self.send(movieCategoryVo, "/movie/relation/category/save")
         if page.director:
