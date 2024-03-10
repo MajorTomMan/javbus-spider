@@ -1,8 +1,8 @@
 from ProxyPool import proxypool
 from SearchBFS import search
 from IndexBFS import index
-from GenreBFS import GenreBFS
-from StarBFS import StarBFS
+from GenreBFS import genre
+from StarBFS import stars
 
 if __name__ == "__main__":
     baseUrl = "https://www.cdnbus.shop/"
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         proxypool().getPageList()
     elif int(num) == 4:
         print("querying genre bfs model")
-        GenreBFS(baseUrl).BFS()
+        genre(baseUrl).BFS()
     elif int(num) == 5:
         print("querying stars bfs model")
-        StarBFS(baseUrl).BFS()
+        stars(baseUrl).BFS()

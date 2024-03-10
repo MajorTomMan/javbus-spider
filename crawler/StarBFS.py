@@ -5,7 +5,7 @@ from utils.StarUtil import StarUtil
 from utils.WebUtil import WebUtil
 
 
-class StarBFS:
+class stars:
     vos = []
     starUrl = ""
     pageNum = 1

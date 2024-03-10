@@ -1,3 +1,4 @@
+from lib2to3.pgen2 import driver
 import time
 import warnings
 import requests
@@ -20,30 +21,44 @@ options.add_argument("--no-sandbox")
 options.add_argument("--start-maximized")
 options.add_argument("--user-data-dir=/dev/null")
 options.add_argument("--remote-debugging-port=12000")
-options.page_load_strategy = "normal"
-
-driver = Chrome(
-    headless=False,
-    driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
-    options=options,
-    version_main=122,
-)
+options.page_load_strategy = "eager"
 
 
 class WebUtil:
+    driver = None
 
-    def getWebSite(self, link):
-        print("starting request to " + link + " ...........")
-        print("watting for request finished...........")
-        star_time = time.time()
-        driver.get(link)
-        end_time = time.time()
-        print("request finished....")
-        print("spend time was " + str(end_time - star_time))
-        print("driver will be quit")
-        source = driver.page_source
-        driver.quit()
-        return source
+    @classmethod
+    def getWebSite(cls, link):
+        # 使用单例避免目标网站因为Selenium客户端关闭后拒绝连接的问题
+        if cls.driver is None:
+            print("driver is None so it will be initial")
+            cls.driver = Chrome(
+                headless=True,
+                driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
+                options=options,
+                version_main=122,
+            )
+            print("initial finished using model:sington")
+            print("starting request to " + link + " ...........")
+            print("watting for request finished...........")
+            star_time = time.time()
+            cls.driver.get(link)
+            end_time = time.time()
+            print("request finished....")
+            print("spend time was " + str(end_time - star_time))
+            print("driver will be quit")
+            source = cls.driver.page_source
+            return source
+        else:
+            print("starting request to " + link + " ...........")
+            print("watting for request finished...........")
+            star_time = time.time()
+            cls.driver.get(link)
+            end_time = time.time()
+            print("request finished....")
+            print("spend time was " + str(end_time - star_time))
+            source = cls.driver.page_source
+            return source
 
     def save2local(self, path, filename, content):
         with open(path + "/" + filename + ".html", "w", encoding="utf-8") as f:

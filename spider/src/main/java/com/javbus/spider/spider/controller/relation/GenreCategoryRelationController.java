@@ -1,6 +1,5 @@
 package com.javbus.spider.spider.controller.relation;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

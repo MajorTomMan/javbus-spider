@@ -8,7 +8,7 @@ from utils.attrs.Category import Category
 from utils.WebUtil import WebUtil
 
 
-class GenreBFS:
+class genre:
     genreUrl = ""
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()

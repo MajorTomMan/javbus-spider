@@ -1,4 +1,5 @@
 import json
+
 from bs4 import BeautifulSoup
 
 from utils.PageUtil import PageUtil
@@ -11,29 +12,27 @@ class search:
     webUtil = WebUtil()
     pageUtil = None
     attrsUtil = AttrsUtil()
+    requestUtil = RequestUtil()
     links = []
-    attrsList = []
-    searchUrl = ""
     pageNum = 1
+    baseUrl = ""
 
-    def __init__(self, url, name) -> None:
-        self.searchUrl = url + "/search/" + name + "/"
+    def __init__(self, url):
+        self.baseUrl = url + "search/" + str(self.pageNum)
         self.pageUtil = PageUtil(url)
 
-    # 默认是搜索模式
     def BFS(self):
         if self.baseUrl:
-            while self.pageNum < 5:
-                driver = self.webUtil.getWebSite(self.baseUrl)
+            while self.pageNum <= 5:
+                source = self.webUtil.getWebSite(self.baseUrl)
                 print("现在正在第" + str(self.pageNum) + "页")
-                if self.webUtil.checkisLimitedByAge(driver.title):
-                    return
-                self.__bfs(driver)
+                self.__bfs(source)
                 break
             print("bfs done")
 
-    def __bfs(self, driver):
-        bs = BeautifulSoup(driver.page_source, "html.parser")
+    def __bfs(self, source):
+        bs = BeautifulSoup(source, "html.parser")
+        # 当前页面源码已经获取,可以关闭浏览器,防止内存占用过高
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
@@ -41,8 +40,8 @@ class search:
                 if link:
                     print("now visit website link is " + link)
                     self.links.append(link)
-                    page = self.PageUtil.parseDetailPage(link)
-                    self.save2local(page.toDict(), "./page/data")
+                    page = self.pageUtil.parseDetailPage(link)
+                    # self.save2local(page.toDict(), "./page/data")
                     if page:
                         print(
                             "------------------------------page info start--------------------------------------"
@@ -67,11 +66,11 @@ class search:
             print("page list not found")
 
     def save2local(self, content, path):
-        with open(path + ".json", "w", encoding="UTF-8") as f:
+        with open(path + ".json", "w+", encoding="UTF-8") as f:
             json.dump(content, f, ensure_ascii=False)
 
     def send(self, data, path):
-        response = self.RequestUtil.post(data=data, path=path)
+        response = self.requestUtil.post(data=data, path=path)
         if response.status_code == 200:
             print("send data to " + path + " was success")
         else:

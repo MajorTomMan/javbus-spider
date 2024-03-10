@@ -41,7 +41,7 @@ class index:
                     print("now visit website link is " + link)
                     self.links.append(link)
                     page = self.pageUtil.parseDetailPage(link)
-                    self.save2local(page.toDict(), "./page/data")
+                    # self.save2local(page.toDict(), "./page/data")
                     if page:
                         print(
                             "------------------------------page info start--------------------------------------"
@@ -66,7 +66,7 @@ class index:
             print("page list not found")
 
     def save2local(self, content, path):
-        with open(path + ".json", "w", encoding="UTF-8") as f:
+        with open(path + ".json", "w+", encoding="UTF-8") as f:
             json.dump(content, f, ensure_ascii=False)
 
     def send(self, data, path):

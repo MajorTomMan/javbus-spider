@@ -31,7 +31,7 @@ class PageUtil:
         self.baseUrl = url
 
     def parseDetailPage(self, link):
-        print("sleeping in 5 seconds")
+        print("sleeping in 10 seconds")
         time.sleep(5)
         source = self.webUtil.getWebSite(link)
         bs = BeautifulSoup(source, "html.parser")

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.relation.StarCensorDao">
+    <insert id="addStarCensorRelation" parameterType="com.javbus.spider.spider.entity.relation.StarCensorRelation">
+        <!-- 插入单个关系 -->
+        INSERT IGNORE INTO star_censor_relation (star_id,is_censored) VALUES
+        (#{starId}, #{isCensored})
+    </insert>
+
+    <delete id="deleteStarCensorRelation">
+        <!-- 删除单个关系 -->
+        DELETE FROM star_censor_relation WHERE star_id = #{starId} AND is_censored = #{isCensored}
+    </delete>
+
+    <insert id="addStarCensorRelations" parameterType="List">
+        <!-- 插入多个关系 -->
+        INSERT IGNORE INTO star_censor_relation (star_id, is_censored) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.starId}, #{relation.isCensored})
+        </foreach>
+    </insert>
+</mapper>

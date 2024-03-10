@@ -11,7 +11,7 @@ class StarUtil:
     attrsUtil = AttrsUtil()
 
     def getStarDetails(self, link):
-        print("sleeping in 5 seconds")
+        print("sleeping in 10 seconds")
         time.sleep(5)
         source = self.webUtil.getWebSite(link)
         bs = BeautifulSoup(source, "html.parser")
