@@ -16,18 +16,34 @@ class search:
     links = []
     pageNum = 1
     searchUrl = ""
+    isCensored = True
 
-    def __init__(self, url):
-        self.baseUrl = url + "search/" + str(self.pageNum)
+    def __init__(self, url, tag, is_censored):
+        if is_censored == True:
+            self.searchUrl = url + "search/" + tag + "/" + str(self.pageNum)
+        else:
+            self.searchUrl = (
+                url + "uncensored/" + "search/" + tag + "/" + str(self.pageNum)
+            )
         self.pageUtil = PageUtil(url)
+        self.isCensored = is_censored
 
     def BFS(self):
-        if self.baseUrl:
+        if self.searchUrl:
             while self.pageNum <= 5:
-                source = self.webUtil.getWebSite(self.searchUrl)
-                print("现在正在第" + str(self.pageNum) + "页")
-                self.__bfs(source)
-                break
+                source = self.webUtil.getWebSite(self.baseUrl)
+                if source:
+                    bs = BeautifulSoup(source, "html.parser")
+                    ul = bs.find("ul", {"class": "pagination pagination-lg"})
+                    if ul:
+                        self.__bfs(source)
+                    else:
+                        print("final page is reach")
+                        self.__bfs(source)
+                        break
+                else:
+                    print("request page timeout try next page")
+                self.pageNum += 1
             print("bfs done")
 
     def __bfs(self, source):
@@ -39,9 +55,13 @@ class search:
                 if link:
                     print("now visit website link is " + link)
                     self.links.append(link)
-                    page = self.pageUtil.parseDetailPage(link)
+                    try:
+                        page = self.pageUtil.parseDetailPage(link)
+                    except Exception as e:
+                        print(e)
+                    page.movie.is_censored = self.isCensored
                     # self.save2local(page.toDict(), "./page/data")
-                    if page:
+                    if page and page != -1:
                         print(
                             "------------------------------page info start--------------------------------------"
                         )
@@ -59,7 +79,37 @@ class search:
                                 "------------------------------star info ended--------------------------------------"
                             )
                         self.sendData2Server(page=page)
-
+                    elif page == -1:
+                        continue
+                    else:
+                        print("add " + link + " to timeouts")
+                        self.timeouts.append(link)
+            if not self.timeouts and len(self.timeouts) >= 1:
+                for link in self.timeouts:
+                    print("try to request failed link")
+                    print("now visit website link is " + link)
+                    page = self.pageUtil.parseDetailPage(link)
+                    if page:
+                        print(
+                            "------------------------------page info start--------------------------------------"
+                        )
+                        print(page)
+                        print(
+                            "------------------------------page info ended--------------------------------------"
+                        )
+                        if page.stars:
+                            print(
+                                "------------------------------star info start--------------------------------------"
+                            )
+                            for star in page.stars:
+                                print("star: " + str(star))
+                            print(
+                                "------------------------------star info ended--------------------------------------"
+                            )
+                        self.sendData2Server(page)
+                        print("request " + link + " success")
+                    else:
+                        print("request " + link + " failed  link abandon")
             print("all link was visited jump to next page")
         else:
             print("page list not found")
@@ -70,7 +120,9 @@ class search:
 
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
-        if response.status_code == 200:
+        if not response:
+            print("request not response pls check server is open or has expection ")
+        elif response.status_code == 200:
             print("send data to " + path + " was success")
         else:
             print("send data to " + path + " was failure")

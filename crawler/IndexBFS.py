@@ -18,18 +18,30 @@ class index:
     pageNum = 1
     baseUrl = ""
     timeouts = []
+    isCensored = True
 
-    def __init__(self, url):
-        self.baseUrl = url + "page/" + str(self.pageNum)
+    def __init__(self, url, is_censored):
+        if is_censored == True:
+            self.baseUrl = url + "page/" + str(self.pageNum)
+        else:
+            self.baseUrl = url + "uncensored/page/" + str(self.pageNum)
         self.pageUtil = PageUtil(url)
+        self.isCensored = is_censored
 
     def BFS(self):
         if self.baseUrl:
             while self.pageNum <= 5:
                 source = self.webUtil.getWebSite(self.baseUrl)
                 if source:
+                    bs = BeautifulSoup(source, "html.parser")
                     print("now page num is " + str(self.pageNum))
-                    self.__bfs(source)
+                    ul = bs.find("ul", {"class": "pagination pagination-lg"})
+                    if ul:
+                        self.__bfs(source)
+                    else:
+                        print("final page is reach")
+                        self.__bfs(source)
+                        break
                 else:
                     print("request page timeout try next page")
                 self.pageNum += 1
@@ -44,7 +56,11 @@ class index:
                 if link:
                     print("now visit website link is " + link)
                     self.links.append(link)
-                    page = self.pageUtil.parseDetailPage(link)
+                    try:
+                        page = self.pageUtil.parseDetailPage(link)
+                    except Exception as e:
+                        print(e)
+                    page.movie["is_censored"] = self.isCensored
                     # self.save2local(page.toDict(), "./page/data")
                     if page and page != -1:
                         print(

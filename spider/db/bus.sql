@@ -66,7 +66,8 @@ CREATE TABLE IF NOT EXISTS movie (
     title VARCHAR(255),
     release_date VARCHAR(255),
     length VARCHAR(255),
-    link VARCHAR(255) UNIQUE
+    link VARCHAR(255) UNIQUE,
+    is_censored BOOLEAN
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 

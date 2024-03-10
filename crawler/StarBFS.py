@@ -17,10 +17,15 @@ class stars:
     baseUrl = ""
     requestUtil = RequestUtil()
     timeouts = []
+    isCensored = True
 
-    def __init__(self, url) -> None:
+    def __init__(self, url, is_censored) -> None:
         self.baseUrl = url
-        self.starUrl = self.baseUrl + "actresses"
+        if is_censored == True:
+            self.starUrl = self.baseUrl + "actresses"
+        else:
+            self.starUrl = self.baseUrl + "uncensored/actresses"
+        self.isCensored = is_censored
 
     def BFS(self):
         while self.pageNum <= 3:
@@ -83,7 +88,7 @@ class stars:
                                 star.photo_link = self.baseUrl + star.photo_link
                         star.star_link = link
                         self.send(
-                            {"is_censored": True, "stars": stars},
+                            {"is_censored": self.isCensored, "stars": stars},
                             "/star/relation/censor/save",
                         )
                         print(

@@ -13,4 +13,6 @@ public class Movie {
     private String releaseDate;
     private String length;
     private String link;
+    @JsonProperty("is_censored")
+    private Boolean isCensored;
 }

@@ -12,25 +12,49 @@ if __name__ == "__main__":
         pls select at less one choice 
         1. index
         2. search
-        3. getProxyIp
-        4. queryGenre
-        5. stars
+        3. genre
+        4. stars
           """
     )
     num = int(input("input:"))
     if int(num) == 1:
-        print("starting index bfs model")
-        index(baseUrl).BFS()
+        is_censored = input("isCensored:")
+        if is_censored == "y" or is_censored == "yes":
+            print("starting censored index bfs model")
+            index(baseUrl, True).BFS()
+        elif is_censored == "n" or is_censored == "no":
+            print("starting uncensored index bfs model")
+            index(baseUrl, False).BFS()
+        else:
+            print("done")
     elif int(num) == 2:
         name = input("input what you want to search(only name):")
-        print("starting search bfs model")
-        search(baseUrl, name).BFS()
+        is_censored = input("isCensored:")
+        if is_censored == "y" or is_censored == "yes":
+            print("starting censored search bfs model")
+            search(baseUrl, name, True).BFS()
+        elif is_censored == "n" or is_censored == "no":
+            print("starting uncensored search bfs model")
+            search(baseUrl, name, False).BFS()
+        else:
+            print("done")
     elif int(num) == 3:
-        print("starting proxy ip")
-        proxypool().getPageList()
+        is_censored = input("isCensored:")
+        if is_censored == "y" or is_censored == "yes":
+            print("starting censored genre bfs model")
+            genre(baseUrl, True).BFS()
+        elif is_censored == "n" or is_censored == "no":
+            print("starting uncensored genre bfs model")
+            genre(baseUrl, False).BFS()
+        else:
+            print("done")
     elif int(num) == 4:
-        print("querying genre bfs model")
-        genre(baseUrl).BFS()
-    elif int(num) == 5:
-        print("querying stars bfs model")
-        stars(baseUrl).BFS()
+        is_censored = input("isCensored:")
+        if is_censored == "y" or is_censored == "yes":
+            print("starting censored stars bfs model")
+            stars(baseUrl, True).BFS()
+        elif is_censored == "n" or is_censored == "no":
+            print("starting uncensored stars bfs model")
+            stars(baseUrl, False).BFS()
+        else:
+            print("done")

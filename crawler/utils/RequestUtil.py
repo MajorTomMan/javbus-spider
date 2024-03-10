@@ -7,7 +7,7 @@ class RequestUtil:
 
     def post(self, data, path):
         try:
-            requests.post(url=self.baseUrl + path, json=data)
+            return requests.post(url=self.baseUrl + path, json=data)
         except ConnectionError as connectionError:
             print(connectionError)
         except TimeoutError as timeoutError:
@@ -17,7 +17,7 @@ class RequestUtil:
 
     def get(self, path):
         try:
-            requests.get(self.baseUrl + path)
+            return requests.get(self.baseUrl + path)
         except ConnectionError as connectionError:
             print(connectionError)
         except TimeoutError as timeoutError:

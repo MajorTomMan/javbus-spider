@@ -120,6 +120,7 @@ class AttrsUtil:
             for a in ass:
                 tag = a.text.strip()
                 if tag in self.ban.tags:
+                    print("found ban tag skipping")
                     continue
                 href = a["href"]
                 categories[tag] = href

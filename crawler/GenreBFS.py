@@ -9,13 +9,18 @@ from utils.WebUtil import WebUtil
 
 
 class genre:
-    genreUrl = ""
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()
     request = RequestUtil()
+    genreUrl = ""
+    isCensored = True
 
-    def __init__(self, url) -> None:
-        self.genreUrl = url + "genre/"
+    def __init__(self, url, is_censored):
+        if is_censored == True:
+            self.genreUrl = url + "genre/"
+        else:
+            self.genreUrl = url + "uncensored/genre"
+        self.isCensored = is_censored
 
     def BFS(self):
         if self.genreUrl:
@@ -49,10 +54,25 @@ class genre:
                     vos = {
                         "genre": {"name": key},
                         "categories": categories,
-                        "is_censored": True,
+                        "is_censored": self.isCensored,
                     }
                     if vos and len(vos) >= 1:
-                        self.request.post(vos, "/genre/relation/category/save")
+                        response = self.request.post(
+                            vos, "/genre/relation/category/save"
+                        )
+                        if response:
+                            if response.status_code == 200:
+                                print(
+                                    "send data to /genre/relation/category/save was success "
+                                )
+                            else:
+                                print(
+                                    "send data to /genre/relation/category/save was failure "
+                                )
+                        else:
+                            print(
+                                "request not response pls check server is open or has expection "
+                            )
             else:
                 print("boxs not found")
         else:

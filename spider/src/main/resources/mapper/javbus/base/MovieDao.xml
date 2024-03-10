@@ -4,8 +4,8 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.MovieDao">
 
     <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie" >
-        INSERT IGNORE INTO movie (code, title, release_date, length, link)
-        VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link})
+        INSERT IGNORE INTO movie (code, title, release_date, length, link, is_censored)
+        VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link}, #{isCensored})
     </insert>
     
     <!-- 删除电影记录 -->
@@ -16,14 +16,14 @@
     <!-- 更新电影记录 -->
     <update id="updateMovie" parameterType="com.javbus.spider.spider.entity.base.Movie">
         UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
-        link = #{link}
+        link = #{link}, is_censored=#{isCensored}
         WHERE id = #{id}
     </update>
 
     
     <update id="updateMovieByCode" parameterType="com.javbus.spider.spider.entity.base.Movie">
         UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
-        link = #{link}
+        link = #{link}, is_censored=#{isCensored}
         WHERE code = #{code}
     </update>
 
