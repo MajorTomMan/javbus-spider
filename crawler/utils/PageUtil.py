@@ -49,10 +49,16 @@ class PageUtil:
                 if stars:
                     for star in stars:
                         names.append(star.get("name"))
-                self.imageUtil.downloadSampleImages(links=links, stars=names, code=code)
-                self.imageUtil.downloadBigImage(
-                    link=page.bigimage["link"], stars=names, code=code
-                )
+                try:
+                    self.imageUtil.downloadSampleImages(
+                        links=links, stars=names, code=code
+                    )
+                    self.imageUtil.downloadBigImage(
+                        link=page.bigimage["link"], stars=names, code=code
+                    )
+                except Exception as e:
+                    print(e)
+                    print(page)
                 return page
             else:
                 return -1
