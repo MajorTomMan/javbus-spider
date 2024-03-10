@@ -1,12 +1,16 @@
 import json
 from bs4 import BeautifulSoup
-from utils.Utils import WebUtil, AttrsUtil, ImageUtil, PageUtil
+
+from utils.PageUtil import PageUtil
+from utils.WebUtil import WebUtil
+from utils.RequestUtil import RequestUtil
+from utils.AttrsUtil import AttrsUtil
 
 
 class search:
-    WebUtil = WebUtil()
-    PageUtil
-    AttrsUtil = AttrsUtil()
+    webUtil = WebUtil()
+    pageUtil = None
+    attrsUtil = AttrsUtil()
     links = []
     attrsList = []
     searchUrl = ""
@@ -14,15 +18,15 @@ class search:
 
     def __init__(self, url, name) -> None:
         self.searchUrl = url + "/search/" + name + "/"
-        self.PageUtil = PageUtil(url)
+        self.pageUtil = PageUtil(url)
 
     # 默认是搜索模式
     def BFS(self):
         if self.baseUrl:
             while self.pageNum < 5:
-                driver = self.WebUtil.getWebSite(self.baseUrl)
+                driver = self.webUtil.getWebSite(self.baseUrl)
                 print("现在正在第" + str(self.pageNum) + "页")
-                if self.WebUtil.checkisLimitedByAge(driver.title):
+                if self.webUtil.checkisLimitedByAge(driver.title):
                     return
                 self.__bfs(driver)
                 break
@@ -33,7 +37,7 @@ class search:
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
-                link = self.AttrsUtil.getLink(brick)
+                link = self.attrsUtil.getLink(brick)
                 if link:
                     print("now visit website link is " + link)
                     self.links.append(link)

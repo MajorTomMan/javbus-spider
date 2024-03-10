@@ -1,26 +1,30 @@
 import json
-import orjson
+
 from bs4 import BeautifulSoup
-from utils.Utils import AttrsUtil, PageUtil, WebUtil, RequestUtil
+
+from utils.PageUtil import PageUtil
+from utils.WebUtil import WebUtil
+from utils.RequestUtil import RequestUtil
+from utils.AttrsUtil import AttrsUtil
 
 
 class index:
-    WebUtil = WebUtil()
-    PageUtil
-    AttrsUtil = AttrsUtil()
-    RequestUtil = RequestUtil()
+    webUtil = WebUtil()
+    pageUtil = None
+    attrsUtil = AttrsUtil()
+    requestUtil = RequestUtil()
     links = []
     pageNum = 1
     baseUrl = ""
 
     def __init__(self, url):
         self.baseUrl = url + "page/" + str(self.pageNum)
-        self.PageUtil = PageUtil(url)
+        self.pageUtil = PageUtil(url)
 
     def BFS(self):
         if self.baseUrl:
             while self.pageNum <= 5:
-                source = self.WebUtil.getWebSite(self.baseUrl)
+                source = self.webUtil.getWebSite(self.baseUrl)
                 print("现在正在第" + str(self.pageNum) + "页")
                 self.__bfs(source)
                 break
@@ -32,11 +36,11 @@ class index:
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
-                link = self.AttrsUtil.getLink(brick)
+                link = self.attrsUtil.getLink(brick)
                 if link:
                     print("now visit website link is " + link)
                     self.links.append(link)
-                    page = self.PageUtil.parseDetailPage(link)
+                    page = self.pageUtil.parseDetailPage(link)
                     self.save2local(page.toDict(), "./page/data")
                     if page:
                         print(
@@ -66,7 +70,7 @@ class index:
             json.dump(content, f, ensure_ascii=False)
 
     def send(self, data, path):
-        response = self.RequestUtil.post(data=data, path=path)
+        response = self.requestUtil.post(data=data, path=path)
         if response.status_code == 200:
             print("send data to " + path + " was success")
         else:

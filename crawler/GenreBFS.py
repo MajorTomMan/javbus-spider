@@ -1,9 +1,11 @@
-from os import name
-from unicodedata import category
 from bs4 import BeautifulSoup
+from utils.RequestUtil import RequestUtil
+from utils.AttrsUtil import AttrsUtil
+
+
 from utils.attrs.Category import Category
 
-from utils.Utils import AttrsUtil, RequestUtil, WebUtil
+from utils.WebUtil import WebUtil
 
 
 class GenreBFS:
@@ -13,7 +15,7 @@ class GenreBFS:
     request = RequestUtil()
 
     def __init__(self, url) -> None:
-        self.genreUrl = url + "/genre/"
+        self.genreUrl = url + "genre/"
 
     def BFS(self):
         if self.genreUrl:
