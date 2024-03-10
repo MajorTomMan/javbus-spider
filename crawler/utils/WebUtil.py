@@ -2,7 +2,7 @@ import time
 import warnings
 from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
-
+from selenium.common.exceptions import TimeoutException
 import undetected_chromedriver as uc
 
 options = ChromeOptions()
@@ -17,7 +17,6 @@ options.add_argument("--disable-web-security")
 options.add_argument("--ignore-certificate-errors")
 options.add_argument("--no-sandbox")
 options.add_argument("--start-maximized")
-options.add_argument("--user-data-dir=/dev/null")
 options.add_argument("--remote-debugging-port=12000")
 # 使用eager加快加载速度
 options.page_load_strategy = "eager"
@@ -30,7 +29,7 @@ class WebUtil:
     def getWebSite(cls, link):
         # 使用单例避免目标网站因为Selenium客户端关闭后拒绝连接的问题
         if cls.driver is None:
-            print("driver is None so it will be initial")
+            print("driver initial")
             cls.driver = Chrome(
                 headless=True,
                 driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
@@ -39,7 +38,6 @@ class WebUtil:
             )
             cls.driver.set_page_load_timeout(60)
             cls.driver.set_script_timeout(60)
-
             print("initial finished using model:sington")
             print("starting request to " + link + " ...........")
             print("watting for request finished...........")
@@ -51,20 +49,23 @@ class WebUtil:
                 print("spend time was " + str(end_time - star_time))
                 source = cls.driver.page_source
                 return source
-            except TimeoutError:
+            except TimeoutException:
                 print("request to " + link + " timeout in 1 miniutes")
-                print("return data is None")
                 return None
         else:
-            print("starting request to " + link + " ...........")
-            print("watting for request finished...........")
-            star_time = time.time()
-            cls.driver.get(link)
-            end_time = time.time()
-            print("request finished....")
-            print("spend time was " + str(end_time - star_time))
-            source = cls.driver.page_source
-            return source
+            try:
+                print("starting request to " + link + " ...........")
+                print("watting for request finished...........")
+                star_time = time.time()
+                cls.driver.get(link)
+                end_time = time.time()
+                print("request finished....")
+                print("spend time was " + str(end_time - star_time))
+                source = cls.driver.page_source
+                return source
+            except TimeoutException:
+                print("request to " + link + " timeout in 1 miniutes")
+                return None
 
     def save2local(self, path, filename, content):
         with open(path + "/" + filename + ".html", "w", encoding="utf-8") as f:

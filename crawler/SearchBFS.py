@@ -15,7 +15,7 @@ class search:
     requestUtil = RequestUtil()
     links = []
     pageNum = 1
-    baseUrl = ""
+    searchUrl = ""
 
     def __init__(self, url):
         self.baseUrl = url + "search/" + str(self.pageNum)
@@ -24,7 +24,7 @@ class search:
     def BFS(self):
         if self.baseUrl:
             while self.pageNum <= 5:
-                source = self.webUtil.getWebSite(self.baseUrl)
+                source = self.webUtil.getWebSite(self.searchUrl)
                 print("现在正在第" + str(self.pageNum) + "页")
                 self.__bfs(source)
                 break
@@ -32,7 +32,6 @@ class search:
 
     def __bfs(self, source):
         bs = BeautifulSoup(source, "html.parser")
-        # 当前页面源码已经获取,可以关闭浏览器,防止内存占用过高
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:

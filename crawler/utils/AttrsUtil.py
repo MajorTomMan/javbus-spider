@@ -1,4 +1,9 @@
+from utils.attrs.BanList import Ban
+
+
 class AttrsUtil:
+    ban = Ban()
+
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})
         if a:
@@ -98,8 +103,11 @@ class AttrsUtil:
                 a = genre.find("a")
                 if a:
                     href = a["href"]
-                    g = a.text.strip()
-                    genres[g] = href
+                    tag = a.text.strip()
+                    if tag in self.ban.tags:
+                        print("found ban tag in movie")
+                        return -1
+                    genres[tag] = href
             return genres
         else:
             print("genres not found")
@@ -110,11 +118,11 @@ class AttrsUtil:
         ass = bs.find_all("a")
         if ass:
             for a in ass:
-                name = a.text.strip()
-                if "食糞" == name:
+                tag = a.text.strip()
+                if tag in self.ban.tags:
                     continue
                 href = a["href"]
-                categories[name] = href
+                categories[tag] = href
             return categories
         else:
             print("categories not found")

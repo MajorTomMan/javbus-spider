@@ -6,7 +6,21 @@ class RequestUtil:
     headers = {"Content-Type": "application/json"}
 
     def post(self, data, path):
-        return requests.post(url=self.baseUrl + path, json=data)
+        try:
+            requests.post(url=self.baseUrl + path, json=data)
+        except ConnectionError as connectionError:
+            print(connectionError)
+        except TimeoutError as timeoutError:
+            print(timeoutError)
+        except Exception as e:
+            print(e)
 
     def get(self, path):
-        return requests.get(self.baseUrl + path)
+        try:
+            requests.get(self.baseUrl + path)
+        except ConnectionError as connectionError:
+            print(connectionError)
+        except TimeoutError as timeoutError:
+            print(timeoutError)
+        except Exception as e:
+            print(e)

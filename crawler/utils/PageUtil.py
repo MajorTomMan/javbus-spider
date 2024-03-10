@@ -32,26 +32,33 @@ class PageUtil:
 
     def parseDetailPage(self, link):
         print("sleeping in 10 seconds")
-        time.sleep(5)
+        time.sleep(10)
         source = self.webUtil.getWebSite(link)
-        bs = BeautifulSoup(source, "html.parser")
-        page = self.getPage(bs)
-        page.movie["link"] = link
-        stars = page.stars
-        code = page.movie.get("code")
-        links = []
-        for sample in page.sampleimage:
-            for link in sample:
-                links.append(sample[link])
-        names = []
-        if stars:
-            for star in stars:
-                names.append(star.get("name"))
-        self.imageUtil.downloadSampleImages(links=links, stars=names, code=code)
-        self.imageUtil.downloadBigImage(
-            link=page.bigimage["link"], stars=names, code=code
-        )
-        return page
+        if source:
+            bs = BeautifulSoup(source, "html.parser")
+            page = self.getPage(bs)
+            if page != -1:
+                page.movie["link"] = link
+                stars = page.stars
+                code = page.movie.get("code")
+                links = []
+                for sample in page.sampleimage:
+                    for link in sample:
+                        links.append(sample[link])
+                names = []
+                if stars:
+                    for star in stars:
+                        names.append(star.get("name"))
+                self.imageUtil.downloadSampleImages(links=links, stars=names, code=code)
+                self.imageUtil.downloadBigImage(
+                    link=page.bigimage["link"], stars=names, code=code
+                )
+                return page
+            else:
+                return -1
+        else:
+            print("request " + link + " timeout")
+            return None
 
     def getPage(self, bs):
         page = Page()
@@ -130,11 +137,14 @@ class PageUtil:
             else:
                 p = ps[-2]
             genres = self.attrsUtil.getGenres(p)
-            if genres:
+            if genres and genres != -1:
                 categories = []
                 for k, v in genres.items():
                     categories.append({"name": k, "link": v})
                 page.categories = categories
+            elif genres == -1:
+                print("skipping this page")
+                return -1
         else:
             print("info not found")
         if series:

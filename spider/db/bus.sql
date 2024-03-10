@@ -187,5 +187,5 @@ CREATE TABLE IF NOT EXISTS star_censor_relation (
     id INT PRIMARY KEY AUTO_INCREMENT,
     star_id INT,
     is_censored BOOLEAN,
-    FOREIGN KEY (star_id) REFERENCES star(id),
+    FOREIGN KEY (star_id) REFERENCES star(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

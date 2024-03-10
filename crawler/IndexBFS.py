@@ -1,3 +1,4 @@
+from asyncio import timeouts
 import json
 
 from bs4 import BeautifulSoup
@@ -16,6 +17,7 @@ class index:
     links = []
     pageNum = 1
     baseUrl = ""
+    timeouts = []
 
     def __init__(self, url):
         self.baseUrl = url + "page/" + str(self.pageNum)
@@ -35,7 +37,6 @@ class index:
 
     def __bfs(self, source):
         bs = BeautifulSoup(source, "html.parser")
-        # 当前页面源码已经获取,可以关闭浏览器,防止内存占用过高
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
@@ -45,7 +46,7 @@ class index:
                     self.links.append(link)
                     page = self.pageUtil.parseDetailPage(link)
                     # self.save2local(page.toDict(), "./page/data")
-                    if page:
+                    if page and page != -1:
                         print(
                             "------------------------------page info start--------------------------------------"
                         )
@@ -63,7 +64,37 @@ class index:
                                 "------------------------------star info ended--------------------------------------"
                             )
                         self.sendData2Server(page=page)
-
+                    elif page == -1:
+                        continue
+                    else:
+                        print("add " + link + " to timeouts")
+                        self.timeouts.append(link)
+            if not self.timeouts and len(self.timeouts) >= 1:
+                for link in self.timeouts:
+                    print("try to request failed link")
+                    print("now visit website link is " + link)
+                    page = self.pageUtil.parseDetailPage(link)
+                    if page:
+                        print(
+                            "------------------------------page info start--------------------------------------"
+                        )
+                        print(page)
+                        print(
+                            "------------------------------page info ended--------------------------------------"
+                        )
+                        if page.stars:
+                            print(
+                                "------------------------------star info start--------------------------------------"
+                            )
+                            for star in page.stars:
+                                print("star: " + str(star))
+                            print(
+                                "------------------------------star info ended--------------------------------------"
+                            )
+                        self.sendData2Server(page)
+                        print("request " + link + " success")
+                    else:
+                        print("request " + link + " failed  link abandon")
             print("all link was visited jump to next page")
         else:
             print("page list not found")
@@ -74,7 +105,9 @@ class index:
 
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
-        if response.status_code == 200:
+        if not response:
+            print("request not response pls check server is open or has expection ")
+        elif response.status_code == 200:
             print("send data to " + path + " was success")
         else:
             print("send data to " + path + " was failure")
