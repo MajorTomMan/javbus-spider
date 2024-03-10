@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from crawler.utils.RequestUtil import RequestUtil
 
 from utils.AttrsUtil import AttrsUtil
 from utils.StarUtil import StarUtil
@@ -13,6 +14,7 @@ class stars:
     starUtil = StarUtil()
     attrsUtil = AttrsUtil()
     baseUrl = ""
+    requestUtil = RequestUtil()
 
     def __init__(self, url) -> None:
         self.baseUrl = url
@@ -52,7 +54,7 @@ class stars:
             print("bricks not found")
 
     def send(self, data, path):
-        response = self.RequestUtil.post(data=data, path=path)
+        response = self.requestUtil.post(data=data, path=path)
         if response.status_code == 200:
             print("send data to " + path + " was success")
         else:

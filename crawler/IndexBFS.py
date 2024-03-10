@@ -25,9 +25,12 @@ class index:
         if self.baseUrl:
             while self.pageNum <= 5:
                 source = self.webUtil.getWebSite(self.baseUrl)
-                print("现在正在第" + str(self.pageNum) + "页")
-                self.__bfs(source)
-                break
+                if source:
+                    print("now page num is " + str(self.pageNum))
+                    self.__bfs(source)
+                else:
+                    print("request page timeout try next page")
+                self.pageNum += 1
             print("bfs done")
 
     def __bfs(self, source):

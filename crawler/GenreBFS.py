@@ -20,7 +20,8 @@ class genre:
     def BFS(self):
         if self.genreUrl:
             source = self.webUtil.getWebSite(self.genreUrl)
-            self.__bfs(source)
+            if source:
+                self.__bfs(source)
             print("bfs done")
 
     def __bfs(self, source):
