@@ -20,6 +20,7 @@ class search:
     searchUrl = ""
     isCensored = True
     tag = ""
+    timeouts = []
 
     def __init__(self, url, tag, is_censored):
         self.baseUrl = url
