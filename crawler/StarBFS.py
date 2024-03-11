@@ -61,7 +61,6 @@ class stars:
                     print(star.toDict())
                     print("----------------star info over-----------------------------")
                     stars.append(star.toDict())
-                    self.send(stars, "/star/save")
                 else:
                     self.timeouts.append(
                         {"name": star_dict["name"], "link": star_dict["star_link"]}
@@ -73,6 +72,7 @@ class stars:
                         + star_dict["star_link"]
                         + " timeout  add it to timeouts"
                     )
+            self.send(stars, "/star/save")
             if self.timeouts and len(self.timeouts) >= 1:
                 print("try to request timeout list")
                 for link in self.timeouts:
