@@ -14,7 +14,7 @@ class StarUtil:
 
     def getStarDetails(self, link):
         self.logUtil.log("sleeping in 10 seconds")
-        time.sleep(5)
+        time.sleep(10)
         source = self.webUtil.getWebSite(link)
         if source:
             bs = BeautifulSoup(source, "html.parser")

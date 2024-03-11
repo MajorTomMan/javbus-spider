@@ -19,21 +19,29 @@ class search:
     pageNum = 1
     searchUrl = ""
     isCensored = True
+    tag = ""
 
     def __init__(self, url, tag, is_censored):
-        if is_censored == True:
-            self.searchUrl = url + "search/" + tag + "/" + str(self.pageNum)
-        else:
-            self.searchUrl = (
-                url + "uncensored/" + "search/" + tag + "/" + str(self.pageNum)
-            )
+        self.baseUrl = url
         self.pageUtil = PageUtil(url, is_censored)
         self.isCensored = is_censored
+        self.tag = tag
 
     def BFS(self):
-        if self.searchUrl:
+        if self.baseUrl:
             while self.pageNum <= 5:
-                source = self.webUtil.getWebSite(self.searchUrl)
+                if self.isCensored:
+                    url = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
+                else:
+                    url = (
+                        self.baseUrl
+                        + "uncensored/"
+                        + "search/"
+                        + self.tag
+                        + "/"
+                        + str(self.pageNum)
+                    )
+                source = self.webUtil.getWebSite(url)
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
                     ul = bs.find("ul", {"class": "pagination pagination-lg"})

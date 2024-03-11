@@ -24,17 +24,21 @@ class index:
     isCensored = True
 
     def __init__(self, url, is_censored):
-        if is_censored == True:
-            self.baseUrl = url + "page/" + str(self.pageNum)
-        else:
-            self.baseUrl = url + "uncensored/page/" + str(self.pageNum)
+        self.baseUrl = url
         self.pageUtil = PageUtil(url, is_censored)
         self.isCensored = is_censored
 
     def BFS(self):
         if self.baseUrl:
             while self.pageNum <= 5:
-                source = self.webUtil.getWebSite(self.baseUrl)
+                if self.isCensored:
+                    source = self.webUtil.getWebSite(
+                        self.baseUrl + "censered/page/" + str(self.pageNum)
+                    )
+                else:
+                    source = self.webUtil.getWebSite(
+                        self.baseUrl + "uncensered/page/" + str(self.pageNum)
+                    )
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
                     self.logUtil.log("now page num is " + str(self.pageNum))

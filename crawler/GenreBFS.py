@@ -60,6 +60,7 @@ class genre:
                         "genre": {"name": key},
                         "categories": categories,
                     }
+                    self.logUtil.log(vos)
                     if vos and len(vos) >= 1:
                         response = self.request.post(
                             vos, "/genre/relation/category/save"

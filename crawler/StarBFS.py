@@ -21,17 +21,17 @@ class stars:
     timeouts = []
     isCensored = True
 
-    def __init__(self, url, is_censored) -> None:
+    def __init__(self, url, is_censored):
         self.baseUrl = url
-        if is_censored == True:
-            self.starUrl = self.baseUrl + "actresses"
-        else:
-            self.starUrl = self.baseUrl + "uncensored/actresses"
         self.isCensored = is_censored
 
     def BFS(self):
         while self.pageNum <= 3:
-            source = self.webUtil.getWebSite(self.starUrl)
+            if self.isCensored:
+                url = self.baseUrl + "actresses/" + str(self.pageNum)
+            else:
+                url = self.baseUrl + "uncensored/actresses/" + str(self.pageNum)
+            source = self.webUtil.getWebSite(url)
             self.logUtil.log("现在正在第" + str(self.pageNum) + "页")
             self.__bfs(source)
             self.pageNum += 1

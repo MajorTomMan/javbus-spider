@@ -2,7 +2,7 @@ import time
 import warnings
 from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 import undetected_chromedriver as uc
 
 from utils.LogUtil import LogUtil
@@ -55,6 +55,9 @@ class WebUtil:
             except TimeoutException:
                 cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
                 return None
+            except WebDriverException as e:
+                cls.logUtil.log(e.msg)
+                return None
         else:
             try:
                 cls.logUtil.log("starting request to " + link + " ...........")
@@ -68,6 +71,9 @@ class WebUtil:
                 return source
             except TimeoutException:
                 cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
+                return None
+            except WebDriverException as e:
+                cls.logUtil.log(e.msg)
                 return None
 
     def save2local(cls, path, filename, content):

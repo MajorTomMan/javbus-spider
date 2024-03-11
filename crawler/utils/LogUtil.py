@@ -12,9 +12,11 @@ class LogUtil:
         if log:
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # 判断传入实参是否是对象类型
-            if hasattr(log, "__dict__"):
-                log = log.__dict__
+            if isinstance(log, Exception):
+                print(f"Exception: {str(log)}\n")
 
+            elif hasattr(log, "__dict__"):
+                log = log.__dict__
             with open(self.logPath, "a", encoding="utf-8") as file:
                 self.log_recursive(log, current_time, file)
 
