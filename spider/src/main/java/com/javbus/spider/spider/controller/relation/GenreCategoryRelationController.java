@@ -1,6 +1,5 @@
 package com.javbus.spider.spider.controller.relation;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +19,9 @@ public class GenreCategoryRelationController {
     @PostMapping("save")
     public R saveGenre(@RequestBody GenreCategoryVo vo) {
         // TODO: process POST request
+        if (vo == null || vo.getCategories() == null || vo.getGenre() == null) {
+            return R.error();
+        }
         genreCategoryRelationService.saveRelation(vo);
         return R.ok();
     }

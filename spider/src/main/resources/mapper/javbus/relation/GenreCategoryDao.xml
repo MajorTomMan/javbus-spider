@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.GenreCategoryDao">
     <insert id="addGenreCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_relation (genre_id, category_id,is_censored)
-        VALUES (#{genreId}, #{categoryId},#{isCensored})
+        INSERT IGNORE INTO genre_category_relation (genre_id, category_id)
+        VALUES (#{genreId}, #{categoryId})
     </insert>
     <insert id="addGenreCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_relation (genre_id, category_id,is_censored) VALUES
+        INSERT IGNORE INTO genre_category_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
-            (#{relation.genreId}, #{relation.categoryId}, #{relation.isCensored})
+            (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
     <delete id="deleteGenreCategoryRelation">

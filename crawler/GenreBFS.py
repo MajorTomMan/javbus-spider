@@ -51,12 +51,12 @@ class genre:
                         category = Category()
                         category.name = k
                         category.link = v
+                        category.is_censored = self.isCensored
                         categories.append(category.toDict())
                     key = genres[index]
                     vos = {
                         "genre": {"name": key},
                         "categories": categories,
-                        "is_censored": self.isCensored,
                     }
                     if vos and len(vos) >= 1:
                         response = self.request.post(
