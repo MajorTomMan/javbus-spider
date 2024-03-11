@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from utils.LogUtil import LogUtil
 from utils.RequestUtil import RequestUtil
 from utils.AttrsUtil import AttrsUtil
 
@@ -12,6 +13,7 @@ class genre:
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()
     request = RequestUtil()
+    logUtil = LogUtil()
     genreUrl = ""
     isCensored = True
 
@@ -27,7 +29,7 @@ class genre:
             source = self.webUtil.getWebSite(self.genreUrl)
             if source:
                 self.__bfs(source)
-            print("bfs done")
+            self.logUtil.log("bfs done")
 
     def __bfs(self, source):
         if not source:
@@ -64,18 +66,18 @@ class genre:
                         )
                         if response:
                             if response.status_code == 200:
-                                print(
+                                self.logUtil.log(
                                     "send data to /genre/relation/category/save was success "
                                 )
                             else:
-                                print(
+                                self.logUtil.log(
                                     "send data to /genre/relation/category/save was failure "
                                 )
                         else:
-                            print(
+                            self.logUtil.log(
                                 "request not response pls check server is open or has expection "
                             )
             else:
-                print("boxs not found")
+                self.logUtil.log("boxs not found")
         else:
-            print("h4s not found")
+            self.logUtil.log("h4s not found")

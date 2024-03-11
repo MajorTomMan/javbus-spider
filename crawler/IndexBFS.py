@@ -2,6 +2,7 @@ from asyncio import timeouts
 import json
 
 from bs4 import BeautifulSoup
+from utils.LogUtil import LogUtil
 
 from utils.PageUtil import PageUtil
 from utils.WebUtil import WebUtil
@@ -14,6 +15,8 @@ class index:
     pageUtil = None
     attrsUtil = AttrsUtil()
     requestUtil = RequestUtil()
+    logUtil = LogUtil()
+
     links = []
     pageNum = 1
     baseUrl = ""
@@ -34,18 +37,18 @@ class index:
                 source = self.webUtil.getWebSite(self.baseUrl)
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
-                    print("now page num is " + str(self.pageNum))
+                    self.logUtil.log("now page num is " + str(self.pageNum))
                     ul = bs.find("ul", {"class": "pagination pagination-lg"})
                     if ul:
                         self.__bfs(source)
                     else:
-                        print("final page is reach")
+                        self.logUtil.log("final page is reach")
                         self.__bfs(source)
                         break
                 else:
-                    print("request page timeout try next page")
+                    self.logUtil.log("request page timeout try next page")
                 self.pageNum += 1
-            print("bfs done")
+            self.logUtil.log("bfs done")
 
     def __bfs(self, source):
         if not source:
@@ -57,68 +60,59 @@ class index:
             for brick in bricks:
                 link = self.attrsUtil.getLink(brick)
                 if link:
-                    print("now visit website link is " + link)
+                    self.logUtil.log("now visit website link is " + link)
                     self.links.append(link)
                     try:
                         page = self.pageUtil.parseDetailPage(
                             link,
                         )
                     except Exception as e:
-                        print(e)
+                        self.logUtil.log(e)
                     # self.save2local(page.toDict(), "./page/data")
                     if page and page != -1:
                         page.movie["is_censored"] = self.isCensored
-                        print(
+                        self.logUtil.log(
                             "------------------------------page info start--------------------------------------"
                         )
-                        print(page)
-                        print(
+                        self.logUtil.log(page)
+                        self.logUtil.log(
                             "------------------------------page info ended--------------------------------------"
                         )
                         if page.stars:
-                            print(
+                            self.logUtil.log(
                                 "------------------------------star info start--------------------------------------"
                             )
                             for star in page.stars:
-                                print("star: " + str(star))
-                            print(
+                                self.logUtil.log("star: " + str(star))
+                            self.logUtil.log(
                                 "------------------------------star info ended--------------------------------------"
                             )
                         self.sendData2Server(page=page)
                     elif page == -1:
                         continue
                     else:
-                        print("add " + link + " to timeouts")
+                        self.logUtil.log("add " + link + " to timeouts")
                         self.timeouts.append(link)
             if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
-                    print("try to request failed link")
-                    print("now visit website link is " + link)
+                    self.logUtil.log("try to request failed link")
+                    self.logUtil.log("now visit website link is " + link)
                     page = self.pageUtil.parseDetailPage(link)
                     if page:
-                        print(
+                        self.logUtil.log(
                             "------------------------------page info start--------------------------------------"
                         )
-                        print(page)
-                        print(
+                        self.logUtil.log(page)
+                        self.logUtil.log(
                             "------------------------------page info ended--------------------------------------"
                         )
-                        if page.stars:
-                            print(
-                                "------------------------------star info start--------------------------------------"
-                            )
-                            for star in page.stars:
-                                print("star: " + str(star))
-                            print(
-                                "------------------------------star info ended--------------------------------------"
-                            )
                         self.sendData2Server(page)
-                        print("request " + link + " success")
+                        self.logUtil.log("request " + link + " success")
                     else:
-                        print("request " + link + " failed  link abandon")
-            print("all link was visited jump to next page")
+                        self.logUtil.log("request " + link + " failed  link abandon")
+            self.logUtil.log("all link was visited jump to next page")
         else:
-            print("page list not found")
+            self.logUtil.log("page list not found")
 
     def save2local(self, content, path):
         with open(path + ".json", "w+", encoding="UTF-8") as f:
@@ -127,11 +121,13 @@ class index:
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
         if not response:
-            print("request not response pls check server is open or has expection ")
+            self.logUtil.log(
+                "request not response pls check server is open or has expection "
+            )
         elif response.status_code == 200:
-            print("send data to " + path + " was success")
+            self.logUtil.log("send data to " + path + " was success")
         else:
-            print("send data to " + path + " was failure")
+            self.logUtil.log("send data to " + path + " was failure")
 
     def sendData2Server(self, page):
         if page.movie and len(page.movie) >= 1:

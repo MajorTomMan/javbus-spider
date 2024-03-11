@@ -1,6 +1,7 @@
 import time
 from bs4 import BeautifulSoup
 from utils.AttrsUtil import AttrsUtil
+from utils.LogUtil import LogUtil
 from utils.WebUtil import WebUtil
 
 from utils.attrs.Star import Star
@@ -9,9 +10,10 @@ from utils.attrs.Star import Star
 class StarUtil:
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()
+    logUtil = LogUtil()
 
     def getStarDetails(self, link):
-        print("sleeping in 10 seconds")
+        self.logUtil.log("sleeping in 10 seconds")
         time.sleep(5)
         source = self.webUtil.getWebSite(link)
         if source:
@@ -25,7 +27,7 @@ class StarUtil:
                     link = self.attrsUtil.getPhotoLink(frame)
                     star.photo_link = link
                 else:
-                    print("photo link not found")
+                    self.logUtil.log("photo link not found")
                 if info:
                     name = self.attrsUtil.getName(info)
                     if name:
@@ -70,8 +72,8 @@ class StarUtil:
                                     star.hobby = hobby
                 return star
             else:
-                print("star detail page not found")
+                self.logUtil.log("star detail page not found")
                 return None
         else:
-            print("star request " + link + " timeout")
+            self.logUtil.log("star request " + link + " timeout")
             return None

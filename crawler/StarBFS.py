@@ -1,5 +1,6 @@
 import time
 from bs4 import BeautifulSoup
+from utils.LogUtil import LogUtil
 from utils.RequestUtil import RequestUtil
 
 from utils.AttrsUtil import AttrsUtil
@@ -8,14 +9,15 @@ from utils.WebUtil import WebUtil
 
 
 class stars:
-    vos = []
-    starUrl = ""
-    pageNum = 1
     webUtil = WebUtil()
     starUtil = StarUtil()
     attrsUtil = AttrsUtil()
-    baseUrl = ""
+    logUtil = LogUtil()
     requestUtil = RequestUtil()
+    vos = []
+    starUrl = ""
+    pageNum = 1
+    baseUrl = ""
     timeouts = []
     isCensored = True
 
@@ -30,10 +32,10 @@ class stars:
     def BFS(self):
         while self.pageNum <= 3:
             source = self.webUtil.getWebSite(self.starUrl)
-            print("现在正在第" + str(self.pageNum) + "页")
+            self.logUtil.log("现在正在第" + str(self.pageNum) + "页")
             self.__bfs(source)
             self.pageNum += 1
-        print("bfs done")
+        self.logUtil.log("bfs done")
 
     def __bfs(self, source):
         if not source:
@@ -54,18 +56,20 @@ class stars:
                             star.photo_link = self.baseUrl + star.photo_link
                     star.star_link = star_dict["star_link"]
                     star.is_censored = self.isCensored
-                    print("info of " + star.name + " was collected")
-                    print(
+                    self.logUtil.log("info of " + star.name + " was collected")
+                    self.logUtil.log(
                         "----------------star info start-----------------------------"
                     )
-                    print(star.toDict())
-                    print("----------------star info over-----------------------------")
+                    self.logUtil.log(star.toDict())
+                    self.logUtil.log(
+                        "----------------star info over-----------------------------"
+                    )
                     stars.append(star.toDict())
                 else:
                     self.timeouts.append(
                         {"name": star_dict["name"], "link": star_dict["star_link"]}
                     )
-                    print(
+                    self.logUtil.log(
                         "request "
                         + star_dict["name"]
                         + ":"
@@ -74,7 +78,7 @@ class stars:
                     )
             self.send(stars, "/star/save")
             if self.timeouts and len(self.timeouts) >= 1:
-                print("try to request timeout list")
+                self.logUtil.log("try to request timeout list")
                 for link in self.timeouts:
                     star = self.starUtil.getStarDetails(link)
                     if star:
@@ -89,27 +93,29 @@ class stars:
                             {"stars": stars},
                             "/star/save",
                         )
-                        print(
+                        self.logUtil.log(
                             "retry "
                             + self.timeouts["name"]
                             + self.timeouts["link"]
                             + " was success"
                         )
                     else:
-                        print(
+                        self.logUtil.log(
                             "retry "
                             + self.timeouts["name"]
                             + self.timeouts["link"]
                             + " was failure name abandon"
                         )
         else:
-            print("bricks not found")
+            self.logUtil.log("bricks not found")
 
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
         if not response:
-            print("request not response pls check server is open or has expection ")
+            self.logUtil.log(
+                "request not response pls check server is open or has expection "
+            )
         elif response.status_code == 200:
-            print("send data to " + path + " was success")
+            self.logUtil.log("send data to " + path + " was success")
         else:
-            print("send data to " + path + " was failure")
+            self.logUtil.log("send data to " + path + " was failure")

@@ -2,10 +2,13 @@ import os
 from fake_useragent import UserAgent
 import requests
 
+from utils.LogUtil import LogUtil
+
 
 class ImageUtil:
     ua = None
     basePath = ""
+    logUtil = LogUtil()
 
     def __init__(self) -> None:
         self.ua = UserAgent()
@@ -24,16 +27,16 @@ class ImageUtil:
             if self.__checkFileIsExists(
                 stars=stars, code=code, filename=filename, isBigImage=False
             ):
-                print(
+                self.logUtil.log(
                     "local sample file "
                     + filename
                     + " already exists skipping download"
                 )
                 continue
             response = requests.get(link, headers=headers)
-            print("image response code is " + str(response.status_code))
+            self.logUtil.log("image response code is " + str(response.status_code))
             if response.status_code == 200:
-                print("image " + response.url + " download success")
+                self.logUtil.log("image " + response.url + " download success")
                 self.__save2Local(
                     response=response,
                     stars=stars,
@@ -42,7 +45,7 @@ class ImageUtil:
                     isBigImage=False,
                 )
             else:
-                print("image " + response.url + " download failure")
+                self.logUtil.log("image " + response.url + " download failure")
 
     def downloadBigImage(self, link, stars, code):
         if stars == None or len(stars) < 1:
@@ -55,16 +58,16 @@ class ImageUtil:
         if self.__checkFileIsExists(
             stars=stars, code=code, filename=filename, isBigImage=True
         ):
-            print(
+            self.logUtil.log(
                 "local bigImage file " + filename + " already exists skipping download"
             )
             return
         headers = {"User-Agent": self.ua.random}
         response = requests.get(link, headers=headers)
-        print("image response code is " + str(response.status_code))
-        print("image response url is " + response.url)
+        self.logUtil.log("image response code is " + str(response.status_code))
+        self.logUtil.log("image response url is " + response.url)
         if response.status_code == 200:
-            print("image " + response.url + " download success")
+            self.logUtil.log("image " + response.url + " download success")
             url = response.url
             paths = url.split("/")
             filename = paths[-1]
@@ -76,7 +79,7 @@ class ImageUtil:
                 isBigImage=True,
             )
         else:
-            print("image " + response.url + " download failure")
+            self.logUtil.log("image " + response.url + " download failure")
 
     def __save2Local(self, response, stars, code, filename, isBigImage):
         if not isBigImage:
@@ -84,20 +87,20 @@ class ImageUtil:
         else:
             targetFolder = self.basePath + stars + "/" + code + "/" + "bigImage" + "/"
         path = targetFolder + filename
-        print("current image store path is " + path)
+        self.logUtil.log("current image store path is " + path)
         if self.__checkFolderIsExists(targetFolder):
             self.__save(response, path)
         else:
-            print("create folder " + targetFolder)
+            self.logUtil.log("create folder " + targetFolder)
             os.makedirs(targetFolder)
             self.__save(response, path)
-        print("image " + path + " is downloaded")
+        self.logUtil.log("image " + path + " is downloaded")
 
     def __checkFolderIsExists(self, path):
         if os.path.exists(path):
-            print(path + " exists")
+            self.logUtil.log(path + " exists")
             return True
-        print(path + " not exists")
+        self.logUtil.log(path + " not exists")
         return False
 
     def __checkFileIsExists(self, stars, code, filename, isBigImage):

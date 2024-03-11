@@ -1,15 +1,17 @@
+from utils.LogUtil import LogUtil
 from utils.attrs.BanList import Ban
 
 
 class AttrsUtil:
     ban = Ban()
+    logUtil = LogUtil()
 
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})
         if a:
             link = a["href"]
             return link
-        print("link not found")
+        self.logUtil.log("link not found")
         return None
 
     def getTitle(self, bs):
@@ -18,7 +20,7 @@ class AttrsUtil:
             title = h3.text
             return title
         else:
-            print("title not found")
+            self.logUtil.log("title not found")
             return None
 
     def getBigImage(self, bs, url):
@@ -30,7 +32,7 @@ class AttrsUtil:
             imgPath = url + img
             return imgPath
         else:
-            print("img not found")
+            self.logUtil.log("img not found")
             return None
 
     def getSampleImages(self, bs):
@@ -42,7 +44,7 @@ class AttrsUtil:
                 sampleImgs.append(href)
             return sampleImgs
         else:
-            print("sampleImage not found")
+            self.logUtil.log("sampleImage not found")
 
     def getCode(self, bs):
         span = bs.find("span", {"style": "color:#CC0000;"})
@@ -50,7 +52,7 @@ class AttrsUtil:
             code = span.text.strip()
             return code
         else:
-            print("code not found")
+            self.logUtil.log("code not found")
             return None
 
     def getReleaseDate(self, bs):
@@ -68,7 +70,7 @@ class AttrsUtil:
             director[name] = href
             return director
         else:
-            print("director not found")
+            self.logUtil.log("director not found")
             return None
 
     def getStudio(self, bs):
@@ -80,7 +82,7 @@ class AttrsUtil:
             studio[name] = href
             return studio
         else:
-            print("studio not found")
+            self.logUtil.log("studio not found")
             return None
 
     def getLabel(self, bs):
@@ -92,7 +94,7 @@ class AttrsUtil:
             labels[name] = href
             return labels
         else:
-            print("label not found")
+            self.logUtil.log("label not found")
             return None
 
     def getGenres(self, bs):
@@ -105,12 +107,12 @@ class AttrsUtil:
                     href = a["href"]
                     tag = a.text.strip()
                     if tag in self.ban.tags:
-                        print("found ban tag in movie")
+                        self.logUtil.log("found ban tag in movie")
                         return -1
                     genres[tag] = href
             return genres
         else:
-            print("genres not found")
+            self.logUtil.log("genres not found")
             return None
 
     def getCategories(self, bs):
@@ -120,13 +122,13 @@ class AttrsUtil:
             for a in ass:
                 tag = a.text.strip()
                 if tag in self.ban.tags:
-                    print("found ban tag skipping")
+                    self.logUtil.log("found ban tag skipping")
                     continue
                 href = a["href"]
                 categories[tag] = href
             return categories
         else:
-            print("categories not found")
+            self.logUtil.log("categories not found")
             return None
 
     def getStars(self, bs):
@@ -141,7 +143,7 @@ class AttrsUtil:
                     names[name] = link
             return names
         else:
-            print("stars not found")
+            self.logUtil.log("stars not found")
             return None
 
     def getSeries(self, bs):
@@ -153,7 +155,7 @@ class AttrsUtil:
             series[serie] = href
             return series
         else:
-            print("series not found")
+            self.logUtil.log("series not found")
             return None
 
     def getPhotoLink(self, bs):
@@ -213,7 +215,7 @@ class AttrsUtil:
             name = span.text
             return name.strip()
         else:
-            print("name not found")
+            self.logUtil.log("name not found")
             return None
 
     def getSingleStarLink(self, bs):
@@ -229,5 +231,5 @@ class AttrsUtil:
                     "star_link": box["href"],
                 }
         else:
-            print("page stars not found")
+            self.logUtil.log("page stars not found")
             return None

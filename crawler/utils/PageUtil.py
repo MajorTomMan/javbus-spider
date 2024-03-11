@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 from utils.AttrsUtil import AttrsUtil
 from utils.ImageUtil import ImageUtil
+from utils.LogUtil import LogUtil
 from utils.StarUtil import StarUtil
 from utils.WebUtil import WebUtil
 
@@ -12,7 +13,6 @@ from utils.attrs.Director import Director
 from utils.attrs.Movie import Movie
 from utils.attrs.Page import Page
 from utils.attrs.SampleImage import SampleImage
-from utils.attrs.Star import Star
 from utils.attrs.Studio import Studio
 from utils.attrs.Series import Series
 from utils.attrs.Label import Label
@@ -25,6 +25,7 @@ class PageUtil:
     imageUtil = ImageUtil()
     attrsUtil = AttrsUtil()
     starUtil = StarUtil()
+    logUtil = LogUtil()
     baseUrl = ""
     isCensored = ""
 
@@ -33,7 +34,7 @@ class PageUtil:
         self.isCensored = is_censored
 
     def parseDetailPage(self, link):
-        print("sleeping in 10 seconds")
+        self.logUtil.log("sleeping in 10 seconds")
         time.sleep(10)
         source = self.webUtil.getWebSite(link)
         if source:
@@ -59,13 +60,13 @@ class PageUtil:
                         link=page.bigimage["link"], stars=names, code=code
                     )
                 except Exception as e:
-                    print(e)
-                    print(page)
+                    self.logUtil.log(e)
+                    self.logUtil.log(page)
                 return page
             else:
                 return -1
         else:
-            print("request " + link + " timeout")
+            self.logUtil.log("request " + link + " timeout")
             return None
 
     def getPage(self, bs):
@@ -126,7 +127,7 @@ class PageUtil:
                             series.name = list(s.keys())[0]
                             series.link = s.get(series.name)
                         else:
-                            print("series not found")
+                            self.logUtil.log("series not found")
             p = ps[-1]
             stars = self.attrsUtil.getStars(p)
             if stars:
@@ -154,10 +155,10 @@ class PageUtil:
                     )
                 page.categories = categories
             elif genres == -1:
-                print("skipping this page")
+                self.logUtil.log("skipping this page")
                 return -1
         else:
-            print("info not found")
+            self.logUtil.log("info not found")
         if series:
             page.series = series.toDict()
         if bigimage:

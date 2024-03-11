@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 import undetected_chromedriver as uc
 
+from utils.LogUtil import LogUtil
+
 options = ChromeOptions()
 warnings.simplefilter("ignore", ResourceWarning)
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -24,12 +26,13 @@ options.page_load_strategy = "eager"
 
 class WebUtil:
     driver = None
+    logUtil = LogUtil()
 
     @classmethod
     def getWebSite(cls, link):
         # 使用单例避免目标网站因为Selenium客户端关闭后拒绝连接的问题
         if cls.driver is None:
-            print("driver initial")
+            cls.logUtil.log("driver initial")
             cls.driver = Chrome(
                 headless=True,
                 driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
@@ -38,40 +41,40 @@ class WebUtil:
             )
             cls.driver.set_page_load_timeout(60)
             cls.driver.set_script_timeout(60)
-            print("initial finished using model:sington")
-            print("starting request to " + link + " ...........")
-            print("watting for request finished...........")
+            cls.logUtil.log("initial finished using model:sington")
+            cls.logUtil.log("starting request to " + link + " ...........")
+            cls.logUtil.log("watting for request finished...........")
             try:
                 star_time = time.time()
                 cls.driver.get(link)
                 end_time = time.time()
-                print("request finished....")
-                print("spend time was " + str(end_time - star_time))
+                cls.logUtil.log("request finished....")
+                cls.logUtil.log("spend time was " + str(end_time - star_time))
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
-                print("request to " + link + " timeout in 1 miniutes")
+                cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
                 return None
         else:
             try:
-                print("starting request to " + link + " ...........")
-                print("watting for request finished...........")
+                cls.logUtil.log("starting request to " + link + " ...........")
+                cls.logUtil.log("watting for request finished...........")
                 star_time = time.time()
                 cls.driver.get(link)
                 end_time = time.time()
-                print("request finished....")
-                print("spend time was " + str(end_time - star_time))
+                cls.logUtil.log("request finished....")
+                cls.logUtil.log("spend time was " + str(end_time - star_time))
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
-                print("request to " + link + " timeout in 1 miniutes")
+                cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
                 return None
 
-    def save2local(self, path, filename, content):
+    def save2local(cls, path, filename, content):
         with open(path + "/" + filename + ".html", "w", encoding="utf-8") as f:
             f.write(content)
 
-    def checkisLimitedByAge(self, content):
+    def checkisLimitedByAge(cls, content):
         if "Age" in content:
             return True
         elif "Verification" in content:
@@ -79,7 +82,7 @@ class WebUtil:
         else:
             return False
 
-    def usingSeleniumToFix(self, driver):
+    def usingSeleniumToFix(cls, driver):
         checkbox = driver.find_element(
             By.XPATH, "/html/body/div[5]/div/div/div[2]/form/div/label/input"
         )
@@ -91,4 +94,4 @@ class WebUtil:
             if submit:
                 submit.click()
         else:
-            print("checkbox not found")
+            cls.logUtil.log("checkbox not found")

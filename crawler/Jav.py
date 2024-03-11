@@ -1,4 +1,3 @@
-from ProxyPool import proxypool
 from SearchBFS import search
 from IndexBFS import index
 from GenreBFS import genre
