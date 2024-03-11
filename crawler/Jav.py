@@ -4,8 +4,8 @@ from GenreBFS import genre
 from StarBFS import stars
 
 if __name__ == "__main__":
-    # baseUrl = "https://www.cdnbus.shop/"
-    baseUrl = "https://www.javbus.com/"
+    baseUrl = "https://www.cdnbus.shop/"
+    # baseUrl = "https://www.javbus.com/"
     print(
         """
         welcome to the jav programmer
