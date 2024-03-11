@@ -49,14 +49,14 @@ class WebUtil:
                 cls.driver.get(link)
                 end_time = time.time()
                 cls.logUtil.log("request finished....")
-                cls.logUtil.log("spend time was " + str(end_time - star_time))
+                cls.logUtil.log("request spend time was " + str(end_time - star_time))
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
                 cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
                 return None
             except WebDriverException as e:
-                cls.logUtil.log(e.msg)
+                cls.logUtil.log(e)
                 return None
         else:
             try:
@@ -66,14 +66,14 @@ class WebUtil:
                 cls.driver.get(link)
                 end_time = time.time()
                 cls.logUtil.log("request finished....")
-                cls.logUtil.log("spend time was " + str(end_time - star_time))
+                cls.logUtil.log("request spend time was " + str(end_time - star_time))
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
                 cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
                 return None
             except WebDriverException as e:
-                cls.logUtil.log(e.msg)
+                cls.logUtil.log(e)
                 return None
 
     def save2local(cls, path, filename, content):

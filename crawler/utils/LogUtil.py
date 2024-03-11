@@ -1,20 +1,18 @@
 import datetime
-from os import write
-from utils.attrs.Category import Category
-from utils.attrs.Page import Page
-from utils.attrs.Star import Star
+import traceback
+from utils.MailUtil import MailUtil
 
 
 class LogUtil:
     logPath = "./spider.log"
+    mailUtil = MailUtil()
 
     def log(self, log):
         if log:
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # 判断传入实参是否是对象类型
             if isinstance(log, Exception):
-                print(f"Exception: {str(log)}\n")
-
+                log = f"Exception: {str(log)}\n"
             elif hasattr(log, "__dict__"):
                 log = log.__dict__
             with open(self.logPath, "a", encoding="utf-8") as file:
