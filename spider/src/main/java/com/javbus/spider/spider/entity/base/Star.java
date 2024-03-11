@@ -26,4 +26,6 @@ public class Star {
     @JsonProperty("birth_place")
     private String birthPlace;
     private String hobby;
+    @JsonProperty("is_censored")
+    private Boolean isCensored;
 }

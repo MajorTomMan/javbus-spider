@@ -41,7 +41,6 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
             GenreCategoryRelation relation = new GenreCategoryRelation();
             relation.setGenreId(genreid);
             relation.setCategoryId(id);
-            relation.setIsCensored(vo.getIsCensored());
             return relation;
         }).collect(Collectors.toList());
         genreCategoryDao.addGenreCategoryRelations(relations);

@@ -36,6 +36,8 @@ class stars:
         print("bfs done")
 
     def __bfs(self, source):
+        if not source:
+            return
         stars = []
         bs = BeautifulSoup(source, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
@@ -51,6 +53,7 @@ class stars:
                         else:
                             star.photo_link = self.baseUrl + star.photo_link
                     star.star_link = star_dict["star_link"]
+                    star.is_censored = self.isCensored
                     print("info of " + star.name + " was collected")
                     print(
                         "----------------star info start-----------------------------"
@@ -58,12 +61,7 @@ class stars:
                     print(star.toDict())
                     print("----------------star info over-----------------------------")
                     stars.append(star.toDict())
-                    self.send(
-                        {"is_censored": True, "stars": stars},
-                        "/star/relation/censor/save",
-                    )
-                    # 清除数据以便于下次使用
-                    stars.clear()
+                    self.send(stars, "/star/save")
                 else:
                     self.timeouts.append(
                         {"name": star_dict["name"], "link": star_dict["star_link"]}
@@ -75,7 +73,7 @@ class stars:
                         + star_dict["star_link"]
                         + " timeout  add it to timeouts"
                     )
-            if not self.timeouts and len(self.timeouts) >= 1:
+            if self.timeouts and len(self.timeouts) >= 1:
                 print("try to request timeout list")
                 for link in self.timeouts:
                     star = self.starUtil.getStarDetails(link)
@@ -88,8 +86,8 @@ class stars:
                                 star.photo_link = self.baseUrl + star.photo_link
                         star.star_link = link
                         self.send(
-                            {"is_censored": self.isCensored, "stars": stars},
-                            "/star/relation/censor/save",
+                            {"stars": stars},
+                            "/star/save",
                         )
                         print(
                             "retry "

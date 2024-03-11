@@ -30,6 +30,8 @@ class genre:
             print("bfs done")
 
     def __bfs(self, source):
+        if not source:
+            return
         genres = []
         bs = BeautifulSoup(source, "html.parser")
         titles = bs.find_all("h4", {"class": "modal-title"})

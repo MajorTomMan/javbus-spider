@@ -8,8 +8,10 @@ import com.javbus.spider.spider.entity.base.Star;
 
 @Mapper
 public interface StarDao {
-    void save(Star star);
+    void saveStar(Star star);
+
     Integer queryStarIdByName(Integer id);
+
     Star queryStarById(Integer id);
 
     Star queryStarByName(String name);

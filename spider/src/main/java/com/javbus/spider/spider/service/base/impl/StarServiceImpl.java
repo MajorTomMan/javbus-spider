@@ -16,7 +16,7 @@ public class StarServiceImpl implements StarService {
     @Override
     public void saveStar(Star star) {
         // TODO Auto-generated method stub
-        starDao.save(star);
+        starDao.saveStar(star);
     }
     @Override
     public void saveStars(List<Star> stars) {

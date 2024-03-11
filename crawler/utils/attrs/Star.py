@@ -1,16 +1,18 @@
 class Star:
-    name=""
-    star_link=""
-    photo_link=""
-    birth_day=""
-    age=""
-    height=""
-    cup=""
-    bust=""
-    waist=""
-    hip=""
-    birth_place=""
-    hobby=""
+    name = ""
+    star_link = ""
+    photo_link = ""
+    birth_day = ""
+    age = ""
+    height = ""
+    cup = ""
+    bust = ""
+    waist = ""
+    hip = ""
+    birth_place = ""
+    hobby = ""
+    is_censored = ""
+
     def __str__(self):
         return (
             f"Name: {self.name}\n"
@@ -26,5 +28,6 @@ class Star:
             f"Birth Place: {self.birth_place}\n"
             f"Hobby: {self.hobby}"
         )
+
     def toDict(self):
         return self.__dict__

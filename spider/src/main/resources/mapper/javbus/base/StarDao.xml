@@ -4,10 +4,10 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.StarDao">
 
     <!-- 插入操作 -->
-    <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Star"> INSERT IGNORE INTO star(
+    <insert id="saveStar" parameterType="com.javbus.spider.spider.entity.base.Star"> INSERT IGNORE INTO star(
         name, star_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place,
-        hobby ) VALUES ( #{name}, #{starLink}, #{photoLink}, #{birthDay}, #{age}, #{height}, #{cup},
-        #{bust}, #{waist}, #{hip}, #{birthPlace}, #{hobby} ) </insert>
+        hobby, is_censored ) VALUES ( #{name}, #{starLink}, #{photoLink}, #{birthDay}, #{age}, #{height}, #{cup},
+        #{bust}, #{waist}, #{hip}, #{birthPlace}, #{hobby},#{isCensored} ) </insert>
 
     <!-- 删除操作 -->
     <delete id="delete" parameterType="java.lang.Integer"> DELETE FROM star WHERE id = #{id} </delete>
@@ -28,11 +28,11 @@
     <!-- saveStars -->
     <!-- 插入多个Star -->
     <insert id="saveStars" parameterType="List"> INSERT IGNORE INTO star (name, star_link, photo_link,
-        birth_day, age, height, cup, bust, waist, hip, birth_place, hobby) VALUES 
+        birth_day, age, height, cup, bust, waist, hip, birth_place, hobby,is_censored) VALUES 
         <foreach collection="list" item="star" separator=",">
             (#{star.name}, #{star.starLink},
             #{star.photoLink}, #{star.birthDay}, #{star.age}, #{star.height}, #{star.cup}, #{star.bust},
-            #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby}) 
+            #{star.waist}, #{star.hip}, #{star.birthPlace}, #{star.hobby}, #{star.isCensored}) 
     </foreach>
     </insert>
 

@@ -5,6 +5,7 @@ class Movie:
     release_date = ""
     length = ""
     link = ""
+    is_censored = ""
 
     def toDict(self):
         return self.__dict__

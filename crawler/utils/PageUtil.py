@@ -26,9 +26,11 @@ class PageUtil:
     attrsUtil = AttrsUtil()
     starUtil = StarUtil()
     baseUrl = ""
+    isCensored = ""
 
-    def __init__(self, url) -> None:
+    def __init__(self, url, is_censored) -> None:
         self.baseUrl = url
+        self.isCensored = is_censored
 
     def parseDetailPage(self, link):
         print("sleeping in 10 seconds")
@@ -137,6 +139,7 @@ class PageUtil:
                                 url = self.baseUrl[:-1]
                                 starDetail.photo_link = url + starDetail.photo_link
                         starDetail.star_link = stars.get(star)
+                        starDetail.is_censored = self.isCensored
                         actors.append(starDetail.toDict())
             if stars:
                 p = ps[-3]
@@ -146,7 +149,9 @@ class PageUtil:
             if genres and genres != -1:
                 categories = []
                 for k, v in genres.items():
-                    categories.append({"name": k, "link": v})
+                    categories.append(
+                        {"name": k, "link": v, "is_censored": self.isCensored}
+                    )
                 page.categories = categories
             elif genres == -1:
                 print("skipping this page")

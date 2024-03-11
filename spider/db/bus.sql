@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS studio (
 CREATE TABLE IF NOT EXISTS category (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE,
-    link VARCHAR(255) UNIQUE
+    link VARCHAR(255) UNIQUE,
+    is_censored BOOLEAN
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
@@ -57,7 +58,8 @@ CREATE TABLE star(
     waist VARCHAR(20),
     hip VARCHAR(20),
     birth_place VARCHAR(255),
-    hobby VARCHAR(255)
+    hobby VARCHAR(255),
+    is_censored BOOLEAN
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS movie (

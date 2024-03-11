@@ -1,10 +1,14 @@
 package com.javbus.spider.spider.entity.base;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
 public class Category {
     private Integer id;
     private String name;
-    private String link; 
+    private String link;
+    @JsonProperty("is_censored")
+    private Boolean isCensored;
 }

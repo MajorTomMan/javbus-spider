@@ -25,13 +25,13 @@ class search:
             self.searchUrl = (
                 url + "uncensored/" + "search/" + tag + "/" + str(self.pageNum)
             )
-        self.pageUtil = PageUtil(url)
+        self.pageUtil = PageUtil(url, is_censored)
         self.isCensored = is_censored
 
     def BFS(self):
         if self.searchUrl:
             while self.pageNum <= 5:
-                source = self.webUtil.getWebSite(self.baseUrl)
+                source = self.webUtil.getWebSite(self.searchUrl)
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
                     ul = bs.find("ul", {"class": "pagination pagination-lg"})
@@ -47,6 +47,8 @@ class search:
             print("bfs done")
 
     def __bfs(self, source):
+        if not source:
+            return
         bs = BeautifulSoup(source, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
@@ -59,9 +61,9 @@ class search:
                         page = self.pageUtil.parseDetailPage(link)
                     except Exception as e:
                         print(e)
-                    page.movie.is_censored = self.isCensored
                     # self.save2local(page.toDict(), "./page/data")
                     if page and page != -1:
+                        page.movie["is_censored"] = self.isCensored
                         print(
                             "------------------------------page info start--------------------------------------"
                         )
@@ -84,7 +86,7 @@ class search:
                     else:
                         print("add " + link + " to timeouts")
                         self.timeouts.append(link)
-            if not self.timeouts and len(self.timeouts) >= 1:
+            if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
                     print("try to request failed link")
                     print("now visit website link is " + link)

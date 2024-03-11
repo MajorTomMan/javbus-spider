@@ -13,14 +13,14 @@
         WHERE name = #{name}
     </select>
     <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category">
-        INSERT IGNORE INTO category (id, name,link)
-        VALUES (#{id}, #{name},#{link})
+        INSERT IGNORE INTO category (id, name,link,is_censored)
+        VALUES (#{id}, #{name},#{link},#{isCensored})
     </insert>
     <!-- 插入多个Category -->
     <insert id="saveCategories" parameterType="List">
-        INSERT IGNORE INTO category (name,link) VALUES
+        INSERT IGNORE INTO category (name,link,is_censored) VALUES
         <foreach collection="list" item="category" separator=",">
-            (#{category.name},#{category.link})
+            (#{category.name},#{category.link},#{category.isCensored})
         </foreach>
     </insert>
     <delete id="delete" parameterType="java.lang.Integer">
