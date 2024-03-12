@@ -24,8 +24,6 @@ class AttrsUtil:
             return None
 
     def getBigImage(self, bs):
-        if url.endswith("/"):
-            url = url[:-1]
         imgs = bs.find("img")
         if imgs:
             img = imgs["src"]
