@@ -33,9 +33,15 @@ class stars:
             else:
                 url = self.baseUrl + "uncensored/actresses/" + str(self.pageNum)
             source = self.webUtil.getWebSite(url)
-            self.logUtil.log("现在正在第" + str(self.pageNum) + "页")
-            self.__bfs(source)
-            self.pageNum += 1
+            self.logUtil.log("now page num is " + str(self.pageNum))
+            bs = BeautifulSoup(source, "html.parser")
+            ul = bs.find("ul", {"class": "pagination pagination-lg"})
+            if ul:
+                self.__bfs(source)
+            else:
+                self.logUtil.log("final page is reach")
+                self.__bfs(source)
+                break
         end_time = time.time()
         self.logUtil.log("bfs done")
         self.logUtil.log("thread running time is " + str(end_time - star_time))

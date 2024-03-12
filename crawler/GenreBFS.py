@@ -26,9 +26,12 @@ class genre:
         self.isCensored = is_censored
 
     def BFS(self):
+        source = None
         star_time = time.time()
         if self.genreUrl:
-            source = self.webUtil.getWebSite(self.genreUrl)
+            while not source:
+                source = self.webUtil.getWebSite(self.genreUrl)
+                self.logUtil.log("retry to connecting " + self.genreUrl)
             if source:
                 self.__bfs(source)
             self.logUtil.log("bfs done")
