@@ -28,7 +28,6 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
     public void saveRelation(GenreCategoryVo vo) {
         // TODO Auto-generated method stub
         Genre genre = vo.getGenre();
-        ;
         genreDao.saveGenre(vo.getGenre());
         Integer genreid = genreDao.queryGenreIdByName(genre.getName());
         List<Category> categories = vo.getCategories();

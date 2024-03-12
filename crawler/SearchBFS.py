@@ -60,7 +60,7 @@ class search:
                 self.pageNum += 1
             end_time = time.time()
             self.logUtil.log("bfs done")
-            self.logUtil.log("thread running time is" + str(end_time - star_time))
+            self.logUtil.log("thread running time is " + str(end_time - star_time))
 
     def __bfs(self, source):
         if not source:
@@ -111,7 +111,7 @@ class search:
                                 "------------------------------star info start--------------------------------------"
                             )
                             for star in page.stars:
-                                self.logUtil.log("star: " + str(star))
+                                self.logUtil.log(star)
                             self.logUtil.log(
                                 "------------------------------star info ended--------------------------------------"
                             )

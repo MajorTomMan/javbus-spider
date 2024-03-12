@@ -26,7 +26,7 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(movie);
+            movieDao.saveMovie(vo.getMovie());
             movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         BigImage bigImage = vo.getBigImage();

@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from utils.AttrsUtil import AttrsUtil
 from utils.LogUtil import LogUtil
 from utils.WebUtil import WebUtil
+from utils.attrs.CompanyLinks import CompanyLinks
 
 from utils.attrs.Star import Star
 
@@ -11,6 +12,7 @@ class StarUtil:
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()
     logUtil = LogUtil()
+    companys = CompanyLinks()
 
     def getStarDetails(self, link):
         self.logUtil.log("sleeping in 10 seconds")
@@ -77,3 +79,10 @@ class StarUtil:
         else:
             self.logUtil.log("star request " + link + " timeout")
             return None
+
+    def matchLinkIsCompanyLink(self, link):
+        if isinstance(link, str):
+            for company in self.companys.values:
+                if company in link:
+                    return True
+        return False

@@ -26,7 +26,7 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());;
         if(movie==null){
-            movieDao.saveMovie(movie);
+            movieDao.saveMovie(vo.getMovie());
             movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Director director = directorDao.queryDirectorByName(vo.getDirector().getName());

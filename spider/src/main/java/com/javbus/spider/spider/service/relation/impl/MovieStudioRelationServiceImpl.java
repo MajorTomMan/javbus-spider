@@ -12,25 +12,25 @@ import com.javbus.spider.spider.entity.relation.MovieStudioRelation;
 import com.javbus.spider.spider.entity.vo.MovieStudioVo;
 import com.javbus.spider.spider.service.relation.MovieStudioRelationService;
 
-
 @Service
-public class MovieStudioRelationServiceImpl implements MovieStudioRelationService{
+public class MovieStudioRelationServiceImpl implements MovieStudioRelationService {
     @Autowired
     private MovieStudioDao movieStudioDao;
     @Autowired
     private StudioDao studioDao;
     @Autowired
     private MovieDao movieDao;
+
     @Override
     public void saveRelation(MovieStudioVo vo) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
-        if(movie==null){
-            movieDao.saveMovie(movie);
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
+        if (movie == null) {
+            movieDao.saveMovie(vo.getMovie());
+            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Studio studio = studioDao.queryStudioByName(vo.getStudio().getName());
-        if(studio==null){
+        if (studio == null) {
             studioDao.save(vo.getStudio());
             studio = studioDao.queryStudioByName(vo.getStudio().getName());
         }
@@ -39,5 +39,5 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
         relation.setStudioId(studio.getId());
         movieStudioDao.addMovieStudioRelation(relation);
     }
-    
+
 }

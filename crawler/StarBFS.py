@@ -38,7 +38,7 @@ class stars:
             self.pageNum += 1
         end_time = time.time()
         self.logUtil.log("bfs done")
-        self.logUtil.log("thread running time is" + str(end_time - star_time))
+        self.logUtil.log("thread running time is " + str(end_time - star_time))
 
     def __bfs(self, source):
         if not source:
@@ -51,12 +51,12 @@ class stars:
                 star_dict = self.attrsUtil.getSingleStarLink(brick)
                 star = self.starUtil.getStarDetails(star_dict["star_link"])
                 if star:
-                    if not "pics.dmm.co.jp" in star_dict["photo_link"]:
+                    if not self.starUtil.matchLinkIsCompanyLink(
+                        star_dict["photo_link"]
+                    ):
                         if self.baseUrl.endswith("/"):
                             url = self.baseUrl[:-1]
                             star.photo_link = url + star.photo_link
-                        else:
-                            star.photo_link = self.baseUrl + star.photo_link
                     star.star_link = star_dict["star_link"]
                     star.is_censored = self.isCensored
                     self.logUtil.log("info of " + star.name + " was collected")
@@ -85,7 +85,9 @@ class stars:
                 for link in self.timeouts:
                     star = self.starUtil.getStarDetails(link)
                     if star:
-                        if not "pics.dmm.co.jp" in star_dict["photo_link"]:
+                        if self.starUtil.matchLinkIsCompanyLink(
+                            star_dict["photo_link"]
+                        ):
                             if self.baseUrl.endswith("/"):
                                 url = self.baseUrl[:-1]
                                 star.photo_link = url + star.photo_link

@@ -7,6 +7,7 @@ from utils.ImageUtil import ImageUtil
 from utils.LogUtil import LogUtil
 from utils.StarUtil import StarUtil
 from utils.WebUtil import WebUtil
+from utils.attrs.CompanyLinks import CompanyLinks
 
 
 from utils.attrs.Director import Director
@@ -28,6 +29,7 @@ class PageUtil:
     logUtil = LogUtil()
     baseUrl = ""
     isCensored = ""
+    companys = CompanyLinks()
 
     def __init__(self, url, is_censored) -> None:
         self.baseUrl = url
@@ -94,14 +96,14 @@ class PageUtil:
         a = bs.find("a", {"class": "bigImage"})
         if a:
             bigImageLink = self.attrsUtil.getBigImage(a)
-            if "pics.dmm.co.jp" in bigImageLink:
-                bigimage.link = bigImageLink
-            else:
+            if not self.matchLinkIsCompanyLink(bigImageLink):
                 if self.baseUrl.endswith("/"):
                     url = self.baseUrl[:-1]
                     bigimage.link = url + bigImageLink
                 else:
                     bigimage.link = self.baseUrl + bigImageLink
+            else:
+                bigimage.link = bigImageLink
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
             imgs = self.attrsUtil.getSampleImages(waterfall)
@@ -109,14 +111,12 @@ class PageUtil:
                 for img in imgs:
                     sample = SampleImage()
                     # 防止获取的图片地址来源于Dmm而导致脚本运行错误
-                    if "pics.dmm.co.jp" in img:
-                        sample.link = img
-                    else:
+                    if not self.matchLinkIsCompanyLink(img):
                         if self.baseUrl.endswith("/"):
                             url = self.baseUrl[:-1]
-                            sample.link = url + sample
-                        else:
-                            sample.link = self.baseUrl + sample
+                            sample.link = url + img
+                    else:
+                        sample.link = img
                     samples.append(sample.toDict())
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
@@ -159,7 +159,7 @@ class PageUtil:
                     starDetail = self.starUtil.getStarDetails(stars[star])
                     if starDetail:
                         # 解决演员还没有图片的问题
-                        if not "pics.dmm.co.jp" in starDetail.photo_link:
+                        if not self.matchLinkIsCompanyLink(starDetail.photo_link):
                             if self.baseUrl.endswith("/"):
                                 url = self.baseUrl[:-1]
                                 starDetail.photo_link = url + starDetail.photo_link
@@ -200,3 +200,10 @@ class PageUtil:
         if stars:
             page.stars = actors
         return page
+
+    def matchLinkIsCompanyLink(self, link):
+        if isinstance(link, str):
+            for company in self.companys.values:
+                if company in link:
+                    return True
+        return False

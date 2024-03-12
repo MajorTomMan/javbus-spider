@@ -30,7 +30,7 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
         }
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
-            movieDao.saveMovie(movie);
+            movieDao.saveMovie(vo.getMovie());
             movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         List<Integer> ids=sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());

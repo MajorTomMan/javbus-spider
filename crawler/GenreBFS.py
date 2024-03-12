@@ -33,7 +33,7 @@ class genre:
                 self.__bfs(source)
             self.logUtil.log("bfs done")
         end_time = time.time()
-        self.logUtil.log("thread running time is" + str(end_time - star_time))
+        self.logUtil.log("thread running time is " + str(end_time - star_time))
 
     def __bfs(self, source):
         if not source:

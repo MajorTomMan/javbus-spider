@@ -25,7 +25,7 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if(movie==null){
-            movieDao.saveMovie(movie);
+            movieDao.saveMovie(vo.getMovie());
             movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
