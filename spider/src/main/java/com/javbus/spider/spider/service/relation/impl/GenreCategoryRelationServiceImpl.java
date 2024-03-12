@@ -37,6 +37,7 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
+        
         List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
             GenreCategoryRelation relation = new GenreCategoryRelation();
             relation.setGenreId(genreid);

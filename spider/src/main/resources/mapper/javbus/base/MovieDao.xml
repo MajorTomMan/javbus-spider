@@ -1,46 +1,45 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.javbus.spider.spider.dao.base.MovieDao">
+    <!-- movieResultMap.xml -->
+    <resultMap id="movieResultMap" type="com.javbus.spider.spider.entity.base.Movie">
+        <id property="id" column="id" />
+        <result property="code" column="code" />
+        <result property="title" column="title" />
+        <result property="releaseDate" column="release_date" />
+        <result property="length" column="length" />
+        <result property="link" column="link" />
+        <result property="isCensored" column="is_censored" />
+    </resultMap>
+    <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie"> INSERT IGNORE
+        INTO movie (code, title, release_date, length, link, is_censored) VALUES (#{code}, #{title},
+        #{releaseDate}, #{length}, #{link}, #{isCensored}) </insert>
 
-    <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie" >
-        INSERT IGNORE INTO movie (code, title, release_date, length, link, is_censored)
-        VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link}, #{isCensored})
-    </insert>
-    
     <!-- 删除电影记录 -->
-    <delete id="deleteMovie" parameterType="Integer">
-        DELETE FROM movie WHERE id = #{id}
-    </delete>
-    
+    <delete id="deleteMovie" parameterType="Integer"> DELETE FROM movie WHERE id = #{id} </delete>
+
     <!-- 更新电影记录 -->
-    <update id="updateMovie" parameterType="com.javbus.spider.spider.entity.base.Movie">
-        UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
-        link = #{link}, is_censored=#{isCensored}
-        WHERE id = #{id}
-    </update>
+    <update id="updateMovie" parameterType="com.javbus.spider.spider.entity.base.Movie"> UPDATE
+        movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length =
+        #{length}, link = #{link}, is_censored=#{isCensored} WHERE id = #{id} </update>
 
-    
+
     <update id="updateMovieByCode" parameterType="com.javbus.spider.spider.entity.base.Movie">
-        UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length = #{length},
-        link = #{link}, is_censored=#{isCensored}
-        WHERE code = #{code}
-    </update>
+        UPDATE movie SET code = #{code}, title = #{title}, release_date = #{releaseDate}, length =
+        #{length}, link = #{link}, is_censored=#{isCensored} WHERE code = #{code} </update>
 
-    <!-- queryMovieByCode --> 
+    <!-- queryMovieByCode -->
 
-    <select id="queryMovieByCode" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Movie">
-        select * from movie where code=#{code}
-    </select>    
+    <select id="queryMovieByCode" parameterType="java.lang.String"
+        resultMap="movieResultMap"> select * from movie where code=#{code} </select>
 
-    <!-- queryMovieByTitle --> 
+    <!-- queryMovieByTitle -->
 
-    <select id="queryMovieByTitle" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.Movie">
-        select * from movie where title=#{title}
-    </select>
-    <!-- queryMovieById --> 
+    <select id="queryMovieByTitle" parameterType="java.lang.String"
+        resultMap="movieResultMap"> select * from movie where title=#{title} </select>
+    <!-- queryMovieById -->
 
-    <select id="queryMovieById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.Movie">
-        select * from movie where id=#{id}
-    </select>  
+    <select id="queryMovieById" parameterType="java.lang.Integer"
+        resultMap="movieResultMap"> select * from movie where id=#{id} </select>
 </mapper>

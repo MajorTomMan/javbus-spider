@@ -50,7 +50,7 @@ public class StarCategoryRelationServiceImpl implements StarCategoryRelationServ
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         if(categoryIds==null||categoryIds.isEmpty()){
             categoryDao.saveCategories(categories);
-            categoryIds = starDao.queryStarIdsByNames(categoryNames);
+            categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         }
         List<StarCategoryRelation> relations = new ArrayList<>();
         // 处理多对多关系

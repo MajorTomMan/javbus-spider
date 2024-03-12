@@ -28,21 +28,15 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
     @Override
     public void saveRelation(MovieCategoryVo vo) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(vo.getMovie());
+        categoryDao.saveCategories(vo.getCategories());
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(movie);
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
-        }
         List<Category> categories = vo.getCategories();
         // 根据名字查找ID
         List<String> names = categories.stream().map((data) -> {
             return data.getName();
         }).collect(Collectors.toList());
         List<Integer> ids = categoryDao.queryCategoryIdsByNames(names);
-        if (ids == null || ids.isEmpty()) {
-            categoryDao.saveCategories(vo.getCategories());
-            ids = categoryDao.queryCategoryIdsByNames(names);
-        }
         final Movie final_movie=movie;
         // 设置一对多关系
         List<MovieCategoryRelation> relations = ids.stream().map((id) -> {
@@ -53,5 +47,4 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         }).collect(Collectors.toList());
         movieCategoryDao.addMovieCategoryRelations(relations);
     }
-
 }
