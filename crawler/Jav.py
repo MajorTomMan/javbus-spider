@@ -1,14 +1,16 @@
-from SearchBFS import search
-from IndexBFS import index
+from re import search
+import threading
+import time
 from GenreBFS import genre
+
+from IndexBFS import index
 from StarBFS import stars
 
 if __name__ == "__main__":
     baseUrl = "https://www.cdnbus.shop/"
-    # baseUrl = "https://www.javbus.com/"
     print(
         """
-        welcome to the jav programmer
+        welcome to the jav program
         pls select at less one choice 
         1. index
         2. search
@@ -17,44 +19,60 @@ if __name__ == "__main__":
           """
     )
     num = int(input("input:"))
-    if int(num) == 1:
-        is_censored = input("isCensored:")
-        if is_censored == "y" or is_censored == "yes":
-            print("starting censored index bfs model")
-            index(baseUrl, True).BFS()
-        elif is_censored == "n" or is_censored == "no":
-            print("starting uncensored index bfs model")
-            index(baseUrl, False).BFS()
-        else:
-            print("done")
-    elif int(num) == 2:
+
+    def run_bfs(model, is_censored):
+        print(f"starting {model} BFS model")
+        model(baseUrl, is_censored).BFS()
+
+    if num == 1:
+        threads = [
+            threading.Thread(
+                target=run_bfs, args=(index, True), name="thread_name:index/censored"
+            ),
+            threading.Thread(
+                target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
+            ),
+        ]
+    elif num == 2:
         name = input("input what you want to search(only name):")
-        is_censored = input("isCensored:")
-        if is_censored == "y" or is_censored == "yes":
-            print("starting censored search bfs model")
-            search(baseUrl, name, True).BFS()
-        elif is_censored == "n" or is_censored == "no":
-            print("starting uncensored search bfs model")
-            search(baseUrl, name, False).BFS()
-        else:
-            print("done")
-    elif int(num) == 3:
-        is_censored = input("isCensored:")
-        if is_censored == "y" or is_censored == "yes":
-            print("starting censored genre bfs model")
-            genre(baseUrl, True).BFS()
-        elif is_censored == "n" or is_censored == "no":
-            print("starting uncensored genre bfs model")
-            genre(baseUrl, False).BFS()
-        else:
-            print("done")
-    elif int(num) == 4:
-        is_censored = input("isCensored:")
-        if is_censored == "y" or is_censored == "yes":
-            print("starting censored stars bfs model")
-            stars(baseUrl, True).BFS()
-        elif is_censored == "n" or is_censored == "no":
-            print("starting uncensored stars bfs model")
-            stars(baseUrl, False).BFS()
-        else:
-            print("done")
+        threads = [
+            threading.Thread(
+                target=run_bfs,
+                args=(search, name, True),
+                name="thread_name:search/censored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(search, name, False),
+                name="thread_name:search/uncensored",
+            ),
+        ]
+    elif num == 3:
+        threads = [
+            threading.Thread(
+                target=run_bfs, args=(genre, True), name="thread_name:genre/censored"
+            ),
+            threading.Thread(
+                target=run_bfs, args=(genre, False), name="thread_name:genre/uncensored"
+            ),
+        ]
+    elif num == 4:
+        threads = [
+            threading.Thread(
+                target=run_bfs, args=(stars, True), name="thread_name:stars/censored"
+            ),
+            threading.Thread(
+                target=run_bfs, args=(stars, False), name="thread_name:stars/uncensored"
+            ),
+        ]
+
+    for thread in threads:
+        # 在第一个线程之外，等待前一个线程至少10秒
+        if thread != threads[0]:
+            time.sleep(10)
+        thread.start()
+    # 等待所有线程完成
+    for thread in threads:
+        thread.join()
+
+    print("All threads have finished.")

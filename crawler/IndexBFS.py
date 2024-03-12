@@ -33,11 +33,11 @@ class index:
             while self.pageNum <= 5:
                 if self.isCensored:
                     source = self.webUtil.getWebSite(
-                        self.baseUrl + "censered/page/" + str(self.pageNum)
+                        self.baseUrl + "page/" + str(self.pageNum)
                     )
                 else:
                     source = self.webUtil.getWebSite(
-                        self.baseUrl + "uncensered/page/" + str(self.pageNum)
+                        self.baseUrl + "uncensored/page/" + str(self.pageNum)
                     )
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
@@ -66,6 +66,7 @@ class index:
                 if link:
                     self.logUtil.log("now visit website link is " + link)
                     self.links.append(link)
+                    page = None
                     try:
                         page = self.pageUtil.parseDetailPage(
                             link,

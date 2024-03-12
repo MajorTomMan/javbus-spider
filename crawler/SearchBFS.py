@@ -44,6 +44,7 @@ class search:
                     )
                 source = self.webUtil.getWebSite(url)
                 if source:
+                    self.logUtil.log("now page num is " + str(self.pageNum))
                     bs = BeautifulSoup(source, "html.parser")
                     ul = bs.find("ul", {"class": "pagination pagination-lg"})
                     if ul:

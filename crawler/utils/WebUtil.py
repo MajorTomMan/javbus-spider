@@ -19,7 +19,7 @@ options.add_argument("--disable-web-security")
 options.add_argument("--ignore-certificate-errors")
 options.add_argument("--no-sandbox")
 options.add_argument("--start-maximized")
-options.add_argument("--remote-debugging-port=12000")
+# options.add_argument("--remote-debugging-port=12000")
 # 使用eager加快加载速度
 options.page_load_strategy = "eager"
 

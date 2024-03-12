@@ -79,6 +79,7 @@ class PageUtil:
         label = Label()
         actors = []
         samples = []
+        stars = []
         title = self.attrsUtil.getTitle(bs)
         if title:
             movie.title = title
