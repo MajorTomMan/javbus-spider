@@ -60,8 +60,10 @@ class PageUtil:
                         link=page.bigimage["link"], stars=names, code=code
                     )
                 except Exception as e:
-                    self.logUtil.log("Error while downloading images: " + e)
-                    self.logUtil.log("Failed page details: " + page)
+                    self.logUtil.log("Error while downloading images: ")
+                    self.logUtil.log(e)
+                    self.logUtil.log("Failed page details: ")
+                    self.logUtil.log(page)
                 return page
             else:
                 return -1

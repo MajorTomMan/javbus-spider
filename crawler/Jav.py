@@ -67,9 +67,9 @@ if __name__ == "__main__":
         ]
 
     for thread in threads:
-        # 在第一个线程之外，等待前一个线程至少10秒
+        # 在第一个线程之外，等待前一个线程至少20秒
         if thread != threads[0]:
-            time.sleep(10)
+            time.sleep(20)
         thread.start()
     # 等待所有线程完成
     for thread in threads:

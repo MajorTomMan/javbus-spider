@@ -39,8 +39,8 @@ class WebUtil:
                 options=options,
                 version_main=122,
             )
-            cls.driver.set_page_load_timeout(60)
-            cls.driver.set_script_timeout(60)
+            cls.driver.set_page_load_timeout(120)
+            cls.driver.set_script_timeout(120)
             cls.logUtil.log("initial finished using model:sington")
             cls.logUtil.log("starting request to " + link + " ...........")
             cls.logUtil.log("watting for request finished...........")
@@ -53,7 +53,7 @@ class WebUtil:
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
-                cls.logUtil.log("request to " + link + " timeout in 1 miniutes")
+                cls.logUtil.log("request to " + link + " timeout in 2 miniutes")
                 return None
             except WebDriverException as e:
                 cls.logUtil.log(e)
