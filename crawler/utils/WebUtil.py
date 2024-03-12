@@ -43,7 +43,7 @@ class WebUtil:
             cls.driver.set_script_timeout(120)
             cls.logUtil.log("initial finished using model:sington")
             cls.logUtil.log("starting request to " + link + " ...........")
-            cls.logUtil.log("waitting for request finished...........")
+            cls.logUtil.log("waiting for request finished...........")
             try:
                 star_time = time.time()
                 cls.driver.get(link)
@@ -61,7 +61,7 @@ class WebUtil:
         else:
             try:
                 cls.logUtil.log("starting request to " + link + " ...........")
-                cls.logUtil.log("waitting for request finished...........")
+                cls.logUtil.log("waiting for request finished...........")
                 star_time = time.time()
                 cls.driver.get(link)
                 end_time = time.time()
