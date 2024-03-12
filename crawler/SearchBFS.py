@@ -1,4 +1,5 @@
 import json
+import time
 
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
@@ -30,6 +31,7 @@ class search:
 
     def BFS(self):
         if self.baseUrl:
+            star_time = time.time()
             while self.pageNum <= 5:
                 if self.isCensored:
                     url = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
@@ -56,7 +58,9 @@ class search:
                 else:
                     self.logUtil.log("request page timeout try next page")
                 self.pageNum += 1
+            end_time = time.time()
             self.logUtil.log("bfs done")
+            self.logUtil.log("thread running time is" + str(end_time - star_time))
 
     def __bfs(self, source):
         if not source:

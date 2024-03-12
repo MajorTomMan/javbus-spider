@@ -1,3 +1,4 @@
+import time
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
 from utils.RequestUtil import RequestUtil
@@ -25,11 +26,14 @@ class genre:
         self.isCensored = is_censored
 
     def BFS(self):
+        star_time = time.time()
         if self.genreUrl:
             source = self.webUtil.getWebSite(self.genreUrl)
             if source:
                 self.__bfs(source)
             self.logUtil.log("bfs done")
+        end_time = time.time()
+        self.logUtil.log("thread running time is" + str(end_time - star_time))
 
     def __bfs(self, source):
         if not source:
