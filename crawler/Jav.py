@@ -1,7 +1,7 @@
 import threading
 import time
 from GenreBFS import genre
-from searchBFS import search
+from SearchBFS import search
 from IndexBFS import index
 from StarBFS import stars
 
