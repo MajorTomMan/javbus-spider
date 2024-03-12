@@ -32,7 +32,7 @@ class index:
     def BFS(self):
         if self.baseUrl:
             star_time = time.time()
-            while self.pageNum <= 5:
+            while True:
                 if self.isCensored:
                     source = self.webUtil.getWebSite(
                         self.baseUrl + "page/" + str(self.pageNum)

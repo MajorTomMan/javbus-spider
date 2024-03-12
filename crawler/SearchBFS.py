@@ -32,7 +32,7 @@ class search:
     def BFS(self):
         if self.baseUrl:
             star_time = time.time()
-            while self.pageNum <= 5:
+            while True:
                 if self.isCensored:
                     url = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
                 else:

@@ -27,7 +27,7 @@ class stars:
 
     def BFS(self):
         star_time = time.time()
-        while self.pageNum <= 3:
+        while True:
             if self.isCensored:
                 url = self.baseUrl + "actresses/" + str(self.pageNum)
             else:
