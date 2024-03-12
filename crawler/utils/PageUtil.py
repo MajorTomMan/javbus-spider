@@ -87,15 +87,30 @@ class PageUtil:
             movie.title = title
         a = bs.find("a", {"class": "bigImage"})
         if a:
-            bigImagePath = self.attrsUtil.getBigImage(a, self.baseUrl)
-            bigimage.link = bigImagePath
+            bigImageLink = self.attrsUtil.getBigImage(a)
+            if "pics.dmm.co.jp" in bigImageLink:
+                bigimage.link = bigImageLink
+            else:
+                if self.baseUrl.endswith("/"):
+                    url = self.baseUrl[:-1]
+                    bigimage.link = url + bigImageLink
+                else:
+                    bigimage.link = self.baseUrl + bigImageLink
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
             imgs = self.attrsUtil.getSampleImages(waterfall)
             if imgs:
                 for img in imgs:
                     sample = SampleImage()
-                    sample.link = img
+                    # 防止获取的图片地址来源于Dmm而导致脚本运行错误
+                    if "pics.dmm.co.jp" in img:
+                        sample.link = img
+                    else:
+                        if self.baseUrl.endswith("/"):
+                            url = self.baseUrl[:-1]
+                            sample.link = url + sample
+                        else:
+                            sample.link = self.baseUrl + sample
                     samples.append(sample.toDict())
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:

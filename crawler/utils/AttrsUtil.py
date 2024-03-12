@@ -23,14 +23,13 @@ class AttrsUtil:
             self.logUtil.log("title not found")
             return None
 
-    def getBigImage(self, bs, url):
+    def getBigImage(self, bs):
         if url.endswith("/"):
             url = url[:-1]
         imgs = bs.find("img")
         if imgs:
             img = imgs["src"]
-            imgPath = url + img
-            return imgPath
+            return img
         else:
             self.logUtil.log("img not found")
             return None

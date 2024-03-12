@@ -67,7 +67,7 @@ if __name__ == "__main__":
         ]
 
     for thread in threads:
-        # 在第一个线程之外，等待前一个线程至少20秒
+        # 在第一个线程之外，等待前一个线程至少20秒,防止瘫痪对方服务器而察觉爬虫
         if thread != threads[0]:
             time.sleep(20)
         thread.start()
