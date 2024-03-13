@@ -33,10 +33,13 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
             seriesDao.save(vo.getSeries());
             series = seriesDao.querySeriesByName(vo.getSeries().getName());
         }
-        MovieSeriesRelation relation = new MovieSeriesRelation();
-        relation.setMovieId(movie.getId());
-        relation.setSeriesId(series.getId());
-        movieSeriesDao.addMovieSeriesRelation(relation);
+        MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(), series.getId());
+        if(movieSeriesRelation==null){
+            MovieSeriesRelation relation = new MovieSeriesRelation();
+            relation.setMovieId(movie.getId());
+            relation.setSeriesId(series.getId());
+            movieSeriesDao.addMovieSeriesRelation(relation);
+        }
     }
     
 }

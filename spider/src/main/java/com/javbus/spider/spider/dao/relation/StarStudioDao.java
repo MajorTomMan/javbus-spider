@@ -13,4 +13,6 @@ public interface StarStudioDao {
     void deleteStarStudioRelation(int starId, int studioId);
 
     void addStarStudioRelations(List<StarStudioRelation> relations);
+    StarStudioRelation queryStarStudioRelation(int starId, int studioId);
+    List<StarStudioRelation> queryStarStudioRelations(List<Integer> starIds, Integer studioIds);
 }

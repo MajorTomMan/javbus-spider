@@ -17,5 +17,15 @@
             (#{relation.starId}, #{relation.seriesId})
         </foreach>
     </insert>
+    <select id="queryStarSeriesRelation">
+        SELECT * FROM star_series_relation WHERE star_id = #{starId} AND series_id = #{seriesId}
+    </select>
 
+    <select id="queryStarSeriesRelations">
+        SELECT * FROM star_series_relation WHERE star_id IN 
+        <foreach collection="starIds" item="starId" open="(" separator="," close=")">
+            {#starId}
+        </foreach>
+        AND series_id = #{seriesId}
+    </select>
 </mapper>

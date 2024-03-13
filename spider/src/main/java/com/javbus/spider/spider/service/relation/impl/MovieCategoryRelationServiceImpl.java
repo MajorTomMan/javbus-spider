@@ -36,15 +36,18 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         List<String> names = categories.stream().map((data) -> {
             return data.getName();
         }).collect(Collectors.toList());
-        List<Integer> ids = categoryDao.queryCategoryIdsByNames(names);
+        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
         final Movie final_movie=movie;
         // 设置一对多关系
-        List<MovieCategoryRelation> relations = ids.stream().map((id) -> {
-            MovieCategoryRelation relation = new MovieCategoryRelation();
-            relation.setMovieId(final_movie.getId());
-            relation.setCategoryId(id);
-            return relation;
-        }).collect(Collectors.toList());
-        movieCategoryDao.addMovieCategoryRelations(relations);
+        List<MovieCategoryRelation> movieCategoryRelations = movieCategoryDao.queryMovieCategoryRelations(movie.getId(), categoryIds);
+        if(movieCategoryRelations==null){
+            List<MovieCategoryRelation> relations = categoryIds.stream().map((id) -> {
+                MovieCategoryRelation relation = new MovieCategoryRelation();
+                relation.setMovieId(final_movie.getId());
+                relation.setCategoryId(id);
+                return relation;
+            }).collect(Collectors.toList());
+            movieCategoryDao.addMovieCategoryRelations(relations);
+        }
     }
 }

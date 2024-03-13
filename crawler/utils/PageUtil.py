@@ -54,24 +54,24 @@ class PageUtil:
                 if stars:
                     for star in stars:
                         names.append(star.get("name"))
-                try:
-                    self.imageUtil.downloadSampleImages(
-                        links=links, stars=names, code=code
-                    )
-                    self.imageUtil.downloadBigImage(
-                        link=page.bigimage["link"], stars=names, code=code
-                    )
-                except Exception as e:
-                    self.logUtil.log(
-                        "-------------image error info start------------------"
-                    )
-                    self.logUtil.log("Error while downloading images: ")
-                    self.logUtil.log(e)
-                    self.logUtil.log("Failed page details: ")
-                    self.logUtil.log(page)
-                    self.logUtil.log(
-                        "-------------image error info end------------------"
-                    )
+                # try:
+                # self.imageUtil.downloadSampleImages(
+                #    links=links, stars=names, code=code
+                # )
+                # self.imageUtil.downloadBigImage(
+                #    link=page.bigimage["link"], stars=names, code=code
+                # )
+                # except Exception as e:
+                # self.logUtil.log(
+                #    "-------------image error info start------------------"
+                # )
+                # self.logUtil.log("Error while downloading images: ")
+                # self.logUtil.log(e)
+                # self.logUtil.log("Failed page details: ")
+                # self.logUtil.log(page)
+                # self.logUtil.log(
+                #    "-------------image error info end------------------"
+                # )
                 return page
             else:
                 return -1

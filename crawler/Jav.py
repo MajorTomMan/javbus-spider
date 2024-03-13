@@ -28,9 +28,9 @@ if __name__ == "__main__":
             threading.Thread(
                 target=run_bfs, args=(index, True), name="thread_name:index/censored"
             ),
-            threading.Thread(
-                target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
-            ),
+            #            threading.Thread(
+            #               target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
+            #            ),
         ]
     elif num == 2:
         name = input("input what you want to search(only name):")

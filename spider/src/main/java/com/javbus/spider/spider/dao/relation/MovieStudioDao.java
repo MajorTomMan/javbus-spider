@@ -9,4 +9,5 @@ public interface MovieStudioDao {
     void addMovieStudioRelation(MovieStudioRelation relation);
 
     void deleteMovieStudioRelation(int movieId, int studioId);
+    MovieStudioRelation queryMovieStudioRelation(int movieId, int studioId);
 }

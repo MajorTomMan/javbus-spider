@@ -30,24 +30,28 @@ public class StarStudioRelationServiceImpl implements StarStudioRelationService 
         // TODO Auto-generated method stub
         List<Star> stars = vo.getStars();
         List<String> names = stars.stream().map(star -> star.getName()).collect(Collectors.toList());
-        List<Integer> ids = starDao.queryStarIdsByNames(names);
-        if (ids == null || ids.isEmpty()) {
+        List<Integer> starIds = starDao.queryStarIdsByNames(names);
+        if (starIds == null || starIds.isEmpty()) {
             starDao.saveStars(stars);
-            ids = starDao.queryStarIdsByNames(names);
+            starIds = starDao.queryStarIdsByNames(names);
         }
         Studio studio = studioDao.queryStudioByName(vo.getStudio().getName());
-        if(studio==null){
+        if (studio == null) {
             studioDao.save(vo.getStudio());
             studio = studioDao.queryStudioByName(vo.getStudio().getName());
         }
-        final Studio final_studio = studio;
-        List<StarStudioRelation> relations=ids.stream().map((id)->{
-           StarStudioRelation relation = new StarStudioRelation();
-           relation.setStarId(id);
-           relation.setStudioId(final_studio.getId());
-           return relation;
-        }).collect(Collectors.toList());
-        starStudioDao.addStarStudioRelations(relations);
+        List<StarStudioRelation> starStudioRelations = starStudioDao.queryStarStudioRelations(starIds, studio.getId());
+        if (starStudioRelations == null || starStudioRelations.isEmpty()) {
+            final Studio final_studio = studio;
+            List<StarStudioRelation> relations = starIds.stream().map((id) -> {
+                StarStudioRelation relation = new StarStudioRelation();
+                relation.setStarId(id);
+                relation.setStudioId(final_studio.getId());
+                return relation;
+            }).collect(Collectors.toList());
+            starStudioDao.addStarStudioRelations(relations);
+        }
+        
     }
 
 }

@@ -12,4 +12,8 @@
         DELETE FROM movie_director_relation
         WHERE movie_id = #{movieId} AND director_id = #{directorId}
     </delete>
+    <select id="queryMovieDirectorRelation" resultType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
+        Select movie_director_relation
+        WHERE movie_id = #{movieId} AND director_id = #{directorId}
+    </select>
 </mapper>

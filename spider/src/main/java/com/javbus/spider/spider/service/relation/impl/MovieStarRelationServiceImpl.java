@@ -30,25 +30,28 @@ public class MovieStarRelationServiceImpl implements MovieStarRelationService {
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         if (movie == null) {
             movieDao.saveMovie(vo.getMovie());
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         List<Star> stars = vo.getStars();
         List<String> names = stars.stream().map((star) -> {
             return star.getName();
         }).collect(Collectors.toList());
-        List<Integer> ids = starDao.queryStarIdsByNames(names);
-        if (ids == null || ids.isEmpty()) {
+        List<Integer> starIds = starDao.queryStarIdsByNames(names);
+        if (starIds == null || starIds.isEmpty()) {
             starDao.saveStars(stars);
-            ids = starDao.queryStarIdsByNames(names);
+            starIds = starDao.queryStarIdsByNames(names);
         }
-        final Movie final_movie=movie;
-        List<MovieStarRelation> relations = ids.stream().map((id) -> {
-            MovieStarRelation relation = new MovieStarRelation();
-            relation.setMovieId(final_movie.getId());
-            relation.setStarId(id);
-            return relation;
-        }).collect(Collectors.toList());
-        movieStarDao.addMovieStarRelations(relations);
+        final Movie final_movie = movie;
+        List<MovieStarRelation> movieStarRelations = movieStarDao.queryMovieStarRelations(movie.getId(), starIds);
+        if(movieStarRelations==null||movieStarRelations.isEmpty()){
+            List<MovieStarRelation> relations = starIds.stream().map((id) -> {
+                MovieStarRelation relation = new MovieStarRelation();
+                relation.setMovieId(final_movie.getId());
+                relation.setStarId(id);
+                return relation;
+            }).collect(Collectors.toList());
+            movieStarDao.addMovieStarRelations(relations);
+        }
     }
 
 }

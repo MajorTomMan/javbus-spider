@@ -12,7 +12,6 @@ import com.javbus.spider.spider.entity.relation.MovieDirectorRelation;
 import com.javbus.spider.spider.entity.vo.MovieDirectorVo;
 import com.javbus.spider.spider.service.relation.MovieDirectorRelationService;
 
-
 @Service
 public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationService {
     @Autowired
@@ -21,22 +20,26 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
     private DirectorDao directorDao;
     @Autowired
     private MovieDao movieDao;
+
     @Override
     public void saveRelaton(MovieDirectorVo vo) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());;
-        if(movie==null){
+        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        if (movie == null) {
             movieDao.saveMovie(vo.getMovie());
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Director director = directorDao.queryDirectorByName(vo.getDirector().getName());
-        if(director==null){
+        if (director == null) {
             directorDao.save(vo.getDirector());
-            director=directorDao.queryDirectorByName(vo.getDirector().getName());
+            director = directorDao.queryDirectorByName(vo.getDirector().getName());
         }
-        MovieDirectorRelation relation=new MovieDirectorRelation();
-        relation.setMovieId(movie.getId());
-        relation.setDirectorId(director.getId());
-        movieDirectorDao.addMovieDirectorRelation(relation);
+        MovieDirectorRelation movieDirectorRelation = movieDirectorDao.queryMovieDirectorRelation(movie.getId(),director.getId());
+        if(movieDirectorRelation==null){
+            MovieDirectorRelation relation = new MovieDirectorRelation();
+            relation.setMovieId(movie.getId());
+            relation.setDirectorId(director.getId());
+            movieDirectorDao.addMovieDirectorRelation(relation);
+        }
     }
 }

@@ -23,4 +23,11 @@
             (#{item.movieId}, #{item.categoryId})
         </foreach>
     </insert>
+    <select id="queryMovieCategoryRelations" resultType="com.javbus.spider.spider.entity.relation.MovieCategoryRelation">
+        SELECT * FROM movie_category_relation 
+        WHERE movie_id = #{movieId} AND category_id IN 
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </select>
 </mapper>

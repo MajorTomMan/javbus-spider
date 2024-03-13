@@ -34,10 +34,13 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
             studioDao.save(vo.getStudio());
             studio = studioDao.queryStudioByName(vo.getStudio().getName());
         }
-        MovieStudioRelation relation = new MovieStudioRelation();
-        relation.setMovieId(movie.getId());
-        relation.setStudioId(studio.getId());
-        movieStudioDao.addMovieStudioRelation(relation);
+        MovieStudioRelation movieStudioRelation = movieStudioDao.queryMovieStudioRelation(movie.getId(), studio.getId());
+        if(movieStudioRelation==null){
+            MovieStudioRelation relation = new MovieStudioRelation();
+            relation.setMovieId(movie.getId());
+            relation.setStudioId(studio.getId());
+            movieStudioDao.addMovieStudioRelation(relation);
+        }
     }
 
 }

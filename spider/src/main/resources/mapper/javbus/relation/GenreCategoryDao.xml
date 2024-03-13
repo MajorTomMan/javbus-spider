@@ -13,6 +13,12 @@
     </insert>
     <delete id="deleteGenreCategoryRelation">
         DELETE FROM genre_category_relation
-        WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId}
+        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
+    <select id="queryGenreCategoryRelations" resultType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+        select * from genre_category_relation WHERE genre_id = #{genreId} AND category_id IN 
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryIds}
+        </foreach>
+    </select>
 </mapper>

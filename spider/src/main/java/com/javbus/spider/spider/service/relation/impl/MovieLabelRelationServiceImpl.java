@@ -34,10 +34,14 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
             labelDao.save(vo.getLabel());
             label=labelDao.queryLabelByName(vo.getLabel().getName());
         }
-        MovieLabelRelation relation=new MovieLabelRelation();
-        relation.setLabelId(label.getId());
-        relation.setMovieId(movie.getId());
-        movieLabelDao.addMovieLabelRelation(relation);
+        MovieLabelRelation movieDirectorRelation = movieLabelDao.queryMovieDirectorRelation(movie.getId(),label.getId());
+        if(movieDirectorRelation==null){
+            MovieLabelRelation relation=new MovieLabelRelation();
+            relation.setLabelId(label.getId());
+            relation.setMovieId(movie.getId());
+            movieLabelDao.addMovieLabelRelation(relation);
+        }
+
     }
     
 }

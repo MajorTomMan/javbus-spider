@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieBigImageDao">
-    
-    <insert id="addMovieBigImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT IGNORE INTO movie_big_image_relation (movie_id, big_image_id)
-        VALUES (#{movieId}, #{bigImageId})
-    </insert>
 
-    <delete id="deleteMovieBigImageRelation">
-        DELETE FROM movie_big_image_relation
-        WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId}
-    </delete>
+    <insert id="addMovieBigImageRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation"> INSERT
+        IGNORE INTO movie_big_image_relation (movie_id, bigImageId) VALUES (#{movieId},
+        #{bigImageId}) </insert>
+
+    <delete id="deleteMovieBigImageRelation"> DELETE FROM movie_big_image_relation WHERE movie_id =
+        #{movieId} AND big_image_id = #{bigImageId} </delete>
+
+    <select id="queryMovieBigImageRelation" resultType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation"> select * from movie_big_image_relation WHERE movie_id =
+        #{movieId} AND big_image_id = #{bigImageId} </select>
 </mapper>

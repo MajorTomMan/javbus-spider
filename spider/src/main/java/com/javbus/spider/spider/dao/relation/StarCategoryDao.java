@@ -14,4 +14,6 @@ public interface StarCategoryDao {
     void deleteStarCategoryRelation(int starId, int categoryId);
 
     void addStarCategoryRelations(List<StarCategoryRelation> relations);
+    List<StarCategoryRelation> queryStarCategoryRelations(List<Integer> starIds,List<Integer> categoryIds);
+    List<StarCategoryRelation> queryStarCategoryRelationsByStarId(Integer starId,List<Integer> categoryIds);
 }

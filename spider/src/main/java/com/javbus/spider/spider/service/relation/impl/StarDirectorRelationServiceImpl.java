@@ -34,19 +34,23 @@ public class StarDirectorRelationServiceImpl implements StarDirectorRelationServ
         List<String> names = vo.getStars().stream().map((star) -> {
             return star.getName();
         }).collect(Collectors.toList());
-        List<Integer> ids = starDao.queryStarIdsByNames(names);
-        if (ids == null || ids.isEmpty()) {
+        List<Integer> starIds = starDao.queryStarIdsByNames(names);
+        if (starIds == null || starIds.isEmpty()) {
             starDao.saveStars(vo.getStars());
-            ids = starDao.queryStarIdsByNames(names);
+            starIds = starDao.queryStarIdsByNames(names);
         }
-        final Director final_Director=director;
-        List<StarDirectorRelation> relations = ids.stream().map((id) -> {
-            StarDirectorRelation relation = new StarDirectorRelation();
-            relation.setDirectorId(final_Director.getId());
-            relation.setStarId(id);
-            return relation;
-        }).collect(Collectors.toList());
-        starDirectorDao.addStarDirectorRelations(relations);
+        List<StarDirectorRelation> starDirectorRelations = starDirectorDao.queryStarDirectorRelations(starIds, director.getId());
+        if(starDirectorRelations==null|| starDirectorRelations.isEmpty()){
+            final Director final_Director = director;
+            List<StarDirectorRelation> relations = starIds.stream().map((id) -> {
+                StarDirectorRelation relation = new StarDirectorRelation();
+                relation.setDirectorId(final_Director.getId());
+                relation.setStarId(id);
+                return relation;
+            }).collect(Collectors.toList());
+            starDirectorDao.addStarDirectorRelations(relations);
+        }
+
     }
 
 }

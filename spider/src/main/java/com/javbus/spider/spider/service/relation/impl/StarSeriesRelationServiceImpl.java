@@ -31,24 +31,28 @@ public class StarSeriesRelationServiceImpl implements StarSeriesRelationService 
         List<String> names = stars.stream().map((star) -> {
             return star.getName();
         }).collect(Collectors.toList());
-        List<Integer> ids = starDao.queryStarIdsByNames(names);
-        if (ids == null || ids.isEmpty()) {
+        List<Integer> starIds = starDao.queryStarIdsByNames(names);
+        if (starIds == null || starIds.isEmpty()) {
             starDao.saveStars(stars);
-            ids = starDao.queryStarIdsByNames(names);
+            starIds = starDao.queryStarIdsByNames(names);
         }
         Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
         if (series == null) {
             seriesDao.save(vo.getSeries());
             series = seriesDao.querySeriesByName(vo.getSeries().getName());
         }
-        final Series final_series = series;
-        List<StarSeriesRelation> relations = ids.stream().map((id) -> {
-            StarSeriesRelation relation = new StarSeriesRelation();
-            relation.setSeriesId(final_series.getId());
-            relation.setStarId(id);
-            return relation;
-        }).collect(Collectors.toList());
-        starSeriesDao.addStarSeriesRelations(relations);
+        List<StarSeriesRelation> starSeriesRelations = starSeriesDao.queryStarSeriesRelations(starIds, series.getId());
+        if (starSeriesRelations == null || starSeriesRelations.isEmpty()) {
+            final Series final_series = series;
+            List<StarSeriesRelation> relations = starIds.stream().map((id) -> {
+                StarSeriesRelation relation = new StarSeriesRelation();
+                relation.setSeriesId(final_series.getId());
+                relation.setStarId(id);
+                return relation;
+            }).collect(Collectors.toList());
+            starSeriesDao.addStarSeriesRelations(relations);
+        }
+
     }
 
 }

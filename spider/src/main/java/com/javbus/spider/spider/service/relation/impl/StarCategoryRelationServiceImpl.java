@@ -34,7 +34,7 @@ public class StarCategoryRelationServiceImpl implements StarCategoryRelationServ
             return star.getName();
         }).collect(Collectors.toList());
         List<Integer> starIds = starDao.queryStarIdsByNames(starNames);
-        if(starIds==null||starIds.isEmpty()){
+        if (starIds == null || starIds.isEmpty()) {
             starDao.saveStars(stars);
             starIds = starDao.queryStarIdsByNames(starNames);
         }
@@ -45,21 +45,25 @@ public class StarCategoryRelationServiceImpl implements StarCategoryRelationServ
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        if(categoryIds==null||categoryIds.isEmpty()){
+        if (categoryIds == null || categoryIds.isEmpty()) {
             categoryDao.saveCategories(categories);
             categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         }
-        List<StarCategoryRelation> relations = new ArrayList<>();
-        // 处理多对多关系
-        for (Integer starId : starIds) {
-            for (Integer categoryId : categoryIds) {
-                StarCategoryRelation relation = new StarCategoryRelation();
-                relation.setCategoryId(categoryId);
-                relation.setStarId(starId);
-                relations.add(relation);
+        List<StarCategoryRelation> starCategoryRelations = starCategoryDao.queryStarCategoryRelations(starIds, categoryIds);
+        if(starCategoryRelations==null||starCategoryRelations.isEmpty()){
+            List<StarCategoryRelation> relations = new ArrayList<>();
+            // 处理多对多关系
+            for (Integer starId : starIds) {
+                for (Integer categoryId : categoryIds) {
+                    StarCategoryRelation relation = new StarCategoryRelation();
+                    relation.setCategoryId(categoryId);
+                    relation.setStarId(starId);
+                    relations.add(relation);
+                }
             }
+            starCategoryDao.addStarCategoryRelations(relations);
         }
-        starCategoryDao.addStarCategoryRelations(relations);
+
     }
 
 }

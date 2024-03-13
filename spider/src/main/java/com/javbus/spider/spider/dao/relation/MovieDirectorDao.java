@@ -9,4 +9,6 @@ public interface MovieDirectorDao {
     void addMovieDirectorRelation(MovieDirectorRelation relation);
 
     void deleteMovieDirectorRelation(int starId, int directorId);
+
+    MovieDirectorRelation queryMovieDirectorRelation(int starId, int directorId);
 }

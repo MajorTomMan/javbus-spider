@@ -9,4 +9,5 @@ public interface MovieLabelDao {
     void addMovieLabelRelation(MovieLabelRelation relation);
 
     void deleteMovieLabelRelation(int movieId, int labelId);
+    MovieLabelRelation queryMovieDirectorRelation(int movieId, int labelId);
 }

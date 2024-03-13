@@ -29,21 +29,24 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         // TODO Auto-generated method stub
         Genre genre = vo.getGenre();
         genreDao.saveGenre(vo.getGenre());
-        Integer genreid = genreDao.queryGenreIdByName(genre.getName());
+        Integer genreId = genreDao.queryGenreIdByName(genre.getName());
         List<Category> categories = vo.getCategories();
         categoryDao.saveCategories(categories);
         List<String> categoryNames = categories.stream().map(category -> {
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        
-        List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
-            GenreCategoryRelation relation = new GenreCategoryRelation();
-            relation.setGenreId(genreid);
-            relation.setCategoryId(id);
-            return relation;
-        }).collect(Collectors.toList());
-        genreCategoryDao.addGenreCategoryRelations(relations);
+        List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryRelations(genreId,
+                categoryIds);
+        if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
+            List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
+                GenreCategoryRelation relation = new GenreCategoryRelation();
+                relation.setGenreId(genreId);
+                relation.setCategoryId(id);
+                return relation;
+            }).collect(Collectors.toList());
+            genreCategoryDao.addGenreCategoryRelations(relations);
+        }
     }
 
 }

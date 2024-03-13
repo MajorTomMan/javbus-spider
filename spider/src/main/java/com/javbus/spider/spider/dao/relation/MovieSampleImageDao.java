@@ -13,4 +13,6 @@ public interface MovieSampleImageDao {
     void deleteMovieSampleImageRelation(int movieId, int sampleImageId);
 
     void addMovieSampleImageRelations(List<MovieSampleImageRelation> relations);
+
+    List<MovieSampleImageRelation> queryMovieSampleImageRelatios(Integer movieId,List<Integer> categoryIds);
 }

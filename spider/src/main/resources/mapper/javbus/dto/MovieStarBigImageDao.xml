@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.dto.MovieStarBigImageDao">
+
+    <!-- queryImageDao --> 
+    <select id="queryImageDao" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.dto.ImageDTO">
+        select 
+            DISTINCT name,code,big_image.link
+        from 
+            star,movie,big_image,movie_big_image_relation,movie_star_relation
+        where 
+            movie.id=#{movieId}
+            and movie.id=movie_star_relation.movie_id and star.id=movie_star_relation.star_id
+            and movie.id=movie_big_image_relation.movie_id and big_image.id=movie_big_image_relation.big_image_id
+    </select>
+</mapper>

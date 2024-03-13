@@ -18,5 +18,21 @@
         DELETE FROM star_category_relation
         WHERE star_id = #{starId} AND category_id = #{categoryId}
     </delete>
-
+    <select id="queryStarCategoryRelationsByStarId" resultType="com.javbus.spider.spider.entity.relation.StarCategoryRelation">
+        SELECT * FROM star_category_relation WHERE star_id=#{starId}
+        AND category_id IN
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            (#categoryId)
+        </foreach>
+    </select>
+    <select id="queryStarCategoryRelations" resultType="com.javbus.spider.spider.entity.relation.StarCategoryRelation">
+        SELECT * FROM star_category_relation WHERE star_id IN 
+        <foreach collection="starIds" item="starId" open="(" separator="," close=")">
+            {#starId}
+        </foreach>
+        AND category_id IN
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </select>
 </mapper>

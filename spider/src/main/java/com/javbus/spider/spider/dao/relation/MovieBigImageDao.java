@@ -10,4 +10,5 @@ public interface MovieBigImageDao {
     void addMovieBigImageRelation(MovieBigImageRelation relation);
 
     void deleteMovieBigImageRelation(int movieId, int bigImageId);
+    MovieBigImageRelation queryMovieBigImageRelation(int movieId, int bigImageId);
 }

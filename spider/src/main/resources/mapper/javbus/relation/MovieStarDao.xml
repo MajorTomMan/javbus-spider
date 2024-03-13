@@ -11,15 +11,20 @@
         DELETE FROM movie_star_relation
         WHERE movie_id = #{movieId} AND star_id = #{starId}
     </delete>
-
-    <!-- Other operations as needed -->
-
-    <!-- addMovieStarRelations --> 
-
     <insert id="addMovieStarRelations" parameterType="java.util.List">
         INSERT IGNORE INTO movie_star_relation (movie_id, star_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.movieId}, #{relation.starId})
         </foreach>
     </insert>
+    <select id="queryMovieStarRelation"
+        resultType="com.javbus.spider.spider.entity.relation.MovieStarRelation"> SELECT *
+        FROM movie_star_relation WHERE movie_id = #{movieId} AND series_id = #{seriesId} </select>
+    <select id="queryMovieStarRelations"
+        resultType="com.javbus.spider.spider.entity.relation.MovieStarRelation"> SELECT *
+        FROM movie_star_relation WHERE movie_id = #{movieId} AND star_id IN 
+            <foreach collection="starIds" item="starId" open="(" separator="," close=")">
+                #{starId}
+            </foreach>
+     </select>
 </mapper>

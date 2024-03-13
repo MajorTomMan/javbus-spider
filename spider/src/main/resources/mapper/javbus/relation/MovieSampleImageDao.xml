@@ -21,4 +21,13 @@
             (#{relation.movieId}, #{relation.sampleImageId})
         </foreach>
     </insert>
+    <select id="queryMovieSampleImageRelation" resultType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
+        SELECT * FROM movie_sample_image_relation WHERE movie_id = #{movieId} AND sample_image_id = #{sampleImageId}
+    </select>
+    <select id="queryMovieSampleImageRelations" resultType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
+        SELECT * FROM movie_sample_image_relation WHERE movie_id=#{movieId} AND sample_image_id IN
+        <foreach collection="sampleImageIds" item="sampleImageId" open="(" separator="," close=")">
+            #{sampleImageId}
+        </foreach>
+    </select>
 </mapper>

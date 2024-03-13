@@ -11,4 +11,6 @@ public interface StarSeriesDao {
     void addStarSeriesRelation(StarSeriesRelation relation);
     void addStarSeriesRelations(List<StarSeriesRelation> relations);
     void deleteStarSeriesRelation(int movieId, int seriesId);
+    StarSeriesRelation queryStarSeriesRelation(int movieId, int seriesId);
+    List<StarSeriesRelation> queryStarSeriesRelations(List<Integer> starIds, Integer seriesId);
 }
