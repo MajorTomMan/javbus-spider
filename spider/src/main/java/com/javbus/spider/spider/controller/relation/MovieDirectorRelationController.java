@@ -19,7 +19,7 @@ public class MovieDirectorRelationController {
     @PostMapping("save")
     public R saveRelation(@RequestBody MovieDirectorVo vo) {
         // TODO: process POST request
-        if (vo == null || vo.getDirector() == null || vo.getMovie().getCode() == null ) {
+        if (vo == null || vo.getDirector() == null || vo.getMovie().getCode() == null) {
             return R.error();
         }
         movieDirectorRelationService.saveRelaton(vo);

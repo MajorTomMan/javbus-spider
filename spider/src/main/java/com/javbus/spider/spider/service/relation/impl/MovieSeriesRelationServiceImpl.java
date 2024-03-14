@@ -20,26 +20,28 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
     private SeriesDao seriesDao;
     @Autowired
     private MovieDao movieDao;
+
     @Override
     public void saveRelaton(MovieSeriesVo vo) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
-        if(movie==null){
+        if (movie == null) {
             movieDao.saveMovie(vo.getMovie());
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
         Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
-        if(series==null){
+        if (series == null) {
             seriesDao.save(vo.getSeries());
             series = seriesDao.querySeriesByName(vo.getSeries().getName());
         }
-        MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(), series.getId());
-        if(movieSeriesRelation==null){
+        MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(),
+                series.getId());
+        if (movieSeriesRelation == null) {
             MovieSeriesRelation relation = new MovieSeriesRelation();
             relation.setMovieId(movie.getId());
             relation.setSeriesId(series.getId());
             movieSeriesDao.addMovieSeriesRelation(relation);
         }
     }
-    
+
 }

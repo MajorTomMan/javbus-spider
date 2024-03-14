@@ -1,4 +1,5 @@
 import json
+import threading
 import time
 
 from bs4 import BeautifulSoup
@@ -22,6 +23,7 @@ class search:
     isCensored = True
     tag = ""
     timeouts = []
+    lock = threading.Lock()
 
     def __init__(self, url, tag, is_censored):
         self.baseUrl = url
@@ -78,21 +80,22 @@ class search:
                     except Exception as e:
                         self.logUtil.log(e)
                     # self.save2local(page.toDict(), "./page/data")
-                    if page and page != -1:
-                        page.movie["is_censored"] = self.isCensored
-                        self.logUtil.log(
-                            "------------------------------page info start--------------------------------------"
-                        )
-                        self.logUtil.log(page)
-                        self.logUtil.log(
-                            "------------------------------page info ended--------------------------------------"
-                        )
-                        self.sendData2Server(page=page)
-                    elif page == -1:
-                        continue
-                    else:
-                        self.logUtil.log("add " + link + " to timeouts")
-                        self.timeouts.append(link)
+                    with search.lock:
+                        if page and page != -1:
+                            page.movie["is_censored"] = self.isCensored
+                            self.logUtil.log(
+                                "------------------------------page info start--------------------------------------"
+                            )
+                            self.logUtil.log(page)
+                            self.logUtil.log(
+                                "------------------------------page info ended--------------------------------------"
+                            )
+                        elif page == -1:
+                            continue
+                        else:
+                            self.logUtil.log("add " + link + " to timeouts")
+                            self.timeouts.append(link)
+                    self.sendData2Server(page=page)
             if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
                     self.logUtil.log("try to request failed link")

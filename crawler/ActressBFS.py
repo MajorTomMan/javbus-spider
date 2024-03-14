@@ -1,4 +1,6 @@
+import threading
 import time
+from warnings import catch_warnings
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
 from utils.RequestUtil import RequestUtil
@@ -20,6 +22,7 @@ class actresses:
     baseUrl = ""
     timeouts = []
     isCensored = True
+    lock = threading.Lock()
 
     def __init__(self, url, is_censored):
         self.baseUrl = url
@@ -50,15 +53,20 @@ class actresses:
     def __bfs(self, source):
         if not source:
             return
-        actresses = []
+        actressList = []
         bs = BeautifulSoup(source, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
                 actress_dict = self.attrsUtil.getSingleActressLink(brick)
-                actress = self.actressUtil.getActressDetails(
-                    actress_dict["actress_link"]
-                )
+                try:
+                    actress = self.actressUtil.getActressDetails(
+                        actress_dict["actress_link"]
+                    )
+                except Exception as e:
+                    self.logUtil.log(e)
+                    self.logUtil.log(actress_dict)
+                    self.logUtil.log(actress)
                 if actress:
                     if not self.actressUtil.matchLinkIsCompanyLink(
                         actress_dict["photo_link"]
@@ -68,15 +76,16 @@ class actresses:
                             actress.photo_link = url + actress.photo_link
                     actress.actress_link = actress_dict["actress_link"]
                     actress.is_censored = self.isCensored
-                    self.logUtil.log("info of " + actress.name + " was collected")
-                    self.logUtil.log(
-                        "----------------actress info start-----------------------------"
-                    )
-                    self.logUtil.log(actress)
-                    self.logUtil.log(
-                        "----------------actress info over-----------------------------"
-                    )
-                    actresses.append(actress.toDict())
+                    with actresses.lock:
+                        self.logUtil.log("info of " + actress.name + " was collected")
+                        self.logUtil.log(
+                            "----------------actress info start-----------------------------"
+                        )
+                        self.logUtil.log(actress)
+                        self.logUtil.log(
+                            "----------------actress info over-----------------------------"
+                        )
+                    actressList.append(actress.toDict())
                 else:
                     self.timeouts.append(
                         {
@@ -91,7 +100,7 @@ class actresses:
                         + actress_dict["actress_link"]
                         + " timeout  add it to timeouts"
                     )
-            self.send(actresses, "/actress/save")
+            self.send(actressList, "/actress/save")
             if self.timeouts and len(self.timeouts) >= 1:
                 self.logUtil.log("try to request timeout list")
                 for link in self.timeouts:
@@ -107,7 +116,7 @@ class actresses:
                                 actress.photo_link = self.baseUrl + actress.photo_link
                         actress.actress_link = link
                         self.send(
-                            {"actress": actresses},
+                            {"actress": actressList},
                             "/actress/save",
                         )
                         self.logUtil.log(

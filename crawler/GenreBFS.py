@@ -1,3 +1,4 @@
+import threading
 import time
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
@@ -17,6 +18,7 @@ class genre:
     logUtil = LogUtil()
     genreUrl = ""
     isCensored = True
+    lock = threading.Lock()
 
     def __init__(self, url, is_censored):
         if is_censored == True:
@@ -67,7 +69,8 @@ class genre:
                         "genre": {"name": key},
                         "categories": categories,
                     }
-                    self.logUtil.log(vos)
+                    with genre.lock:
+                        self.logUtil.log(vos)
                     if vos and len(vos) >= 1:
                         response = self.request.post(
                             vos, "/genre/relation/category/save"

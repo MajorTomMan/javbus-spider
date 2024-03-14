@@ -31,4 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### no need to update folder ###
 images/
+logs/
