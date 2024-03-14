@@ -184,3 +184,43 @@ CREATE TABLE IF NOT EXISTS genre_category_relation (
     FOREIGN KEY (genre_id) REFERENCES genre(id),
     FOREIGN KEY (category_id) REFERENCES category(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '类型-分类关系表';
+
+
+ALTER TABLE movie_label_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_studio_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_big_image_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_sample_image_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_category_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_actress_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_director_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE movie_series_relation
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+
+ALTER TABLE actress_director_relation
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+
+ALTER TABLE actress_studio_relation
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+
+ALTER TABLE actress_category_relation
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+
+ALTER TABLE actress_series_relation
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+
+#ALTER TABLE genre_category_relation
+#ADD FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE;
