@@ -80,6 +80,7 @@ class WebUtil:
             except TimeoutException:
                 cls.logUtil.log("request to " + new_url + " timeout in 2 minutes")
                 cls.logUtil.log("waiting 5 seconds to request")
+                time.sleep(5)
                 continue
             except WebDriverException as e:
                 cls.logUtil.log(e)
