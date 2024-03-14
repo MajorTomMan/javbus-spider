@@ -72,7 +72,7 @@ class actresses:
                     self.logUtil.log(
                         "----------------actress info start-----------------------------"
                     )
-                    self.logUtil.log(actress.toDict())
+                    self.logUtil.log(actress)
                     self.logUtil.log(
                         "----------------actress info over-----------------------------"
                     )

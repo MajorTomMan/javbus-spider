@@ -29,10 +29,14 @@ if __name__ == "__main__":
     if num == 1:
         threads = [
             threading.Thread(
-                target=run_bfs, args=(index, True), name="thread_name:index/censored"
+                target=run_bfs,
+                args=(index, None, True),
+                name="thread_name:index/censored",
             ),
             threading.Thread(
-                target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
+                target=run_bfs,
+                args=(index, None, False),
+                name="thread_name:index/uncensored",
             ),
         ]
     elif num == 2:
