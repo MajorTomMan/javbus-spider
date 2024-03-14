@@ -3,7 +3,7 @@ import time
 from GenreBFS import genre
 from SearchBFS import search
 from IndexBFS import index
-from StarBFS import stars
+from ActressBFS import actresses
 
 if __name__ == "__main__":
     baseUrl = "https://www.cdnbus.shop/"
@@ -14,54 +14,65 @@ if __name__ == "__main__":
         1. index
         2. search
         3. genre
-        4. stars
+        4. actress
           """
     )
     num = int(input("input:"))
 
-    def run_bfs(model, is_censored):
+    def run_bfs(model, keyword, is_censored):
         print(f"starting {model} BFS model")
-        model(baseUrl, is_censored).BFS()
+        if keyword:
+            model(baseUrl, keyword, is_censored).BFS()
+        else:
+            model(baseUrl, is_censored).BFS()
 
     if num == 1:
         threads = [
             threading.Thread(
                 target=run_bfs, args=(index, True), name="thread_name:index/censored"
             ),
-            #            threading.Thread(
-            #               target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
-            #            ),
+            threading.Thread(
+                target=run_bfs, args=(index, False), name="thread_name:index/uncensored"
+            ),
         ]
     elif num == 2:
-        name = input("input what you want to search(only name):")
+        keyword = input("input what keyword you want to search:")
         threads = [
             threading.Thread(
                 target=run_bfs,
-                args=(search, name, True),
+                args=(search, keyword, True),
                 name="thread_name:search/censored",
             ),
             threading.Thread(
                 target=run_bfs,
-                args=(search, name, False),
+                args=(search, keyword, False),
                 name="thread_name:search/uncensored",
             ),
         ]
     elif num == 3:
         threads = [
             threading.Thread(
-                target=run_bfs, args=(genre, True), name="thread_name:genre/censored"
+                target=run_bfs,
+                args=(genre, None, True),
+                name="thread_name:genre/censored",
             ),
             threading.Thread(
-                target=run_bfs, args=(genre, False), name="thread_name:genre/uncensored"
+                target=run_bfs,
+                args=(genre, None, False),
+                name="thread_name:genre/uncensored",
             ),
         ]
     elif num == 4:
         threads = [
             threading.Thread(
-                target=run_bfs, args=(stars, True), name="thread_name:stars/censored"
+                target=run_bfs,
+                args=(actresses, None, True),
+                name="thread_name:actresses/censored",
             ),
             threading.Thread(
-                target=run_bfs, args=(stars, False), name="thread_name:stars/uncensored"
+                target=run_bfs,
+                args=(actresses, None, False),
+                name="thread_name:actresses/uncensored",
             ),
         ]
 

@@ -4,7 +4,7 @@ class Page:
     director = None
     studio = None
     series = None
-    stars = None
+    actresses = None
     bigimage = None
     categories = None
     sampleimage = None

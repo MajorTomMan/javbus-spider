@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieStudioDao">
-        <!-- 添加电影与工作室关系 -->
-        <insert id="addMovieStudioRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieStudioRelation">
-            INSERT IGNORE INTO movie_studio_relation (movie_id, studio_id)
-            VALUES (#{movieId}, #{studioId})
-        </insert>
-    
-        <!-- 删除电影与工作室关系 -->
-        <delete id="deleteMovieStudioRelation">
-            DELETE FROM movie_studio_relation
-            WHERE movie_id = #{movieId} AND studio_id = #{studioId}
-        </delete>
+    <!-- MovieStudioRelation resultMap -->
+    <resultMap id="movieStudioRelationResultMap"
+        type="com.javbus.spider.spider.entity.relation.MovieStudioRelation">
+        <id property="id" column="id" />
+        <result property="movieId" column="movie_id" />
+        <result property="studioId" column="studio_id" />
+    </resultMap>
+    <!-- 添加电影与工作室关系 -->
+    <insert id="addMovieStudioRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.MovieStudioRelation"> INSERT IGNORE
+        INTO movie_studio_relation (movie_id, studio_id) VALUES (#{movieId}, #{studioId}) </insert>
 
-        <select id="queryMovieStudioRelation" resultType="com.javbus.spider.spider.entity.relation.MovieStudioRelation">
-            SELECT * FROM movie_studio_relation WHERE movie_id = #{movieId} AND studio_id = #{studioId}
-        </select>
+    <!-- 删除电影与工作室关系 -->
+    <delete id="deleteMovieStudioRelation"> DELETE FROM movie_studio_relation WHERE movie_id =
+        #{movieId} AND studio_id = #{studioId} </delete>
+
+    <select id="queryMovieStudioRelation"
+        resultMap="movieStudioRelationResultMap"> SELECT * FROM
+        movie_studio_relation WHERE movie_id = #{movieId} AND studio_id = #{studioId} </select>
 </mapper>

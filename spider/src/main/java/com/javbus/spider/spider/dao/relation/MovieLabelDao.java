@@ -8,6 +8,6 @@ import com.javbus.spider.spider.entity.relation.MovieLabelRelation;
 public interface MovieLabelDao {
     void addMovieLabelRelation(MovieLabelRelation relation);
 
-    void deleteMovieLabelRelation(int movieId, int labelId);
-    MovieLabelRelation queryMovieDirectorRelation(int movieId, int labelId);
+    void deleteMovieLabelRelation(Integer movieId, Integer labelId);
+    MovieLabelRelation queryMovieLabelRelation(Integer movieId, Integer labelId);
 }

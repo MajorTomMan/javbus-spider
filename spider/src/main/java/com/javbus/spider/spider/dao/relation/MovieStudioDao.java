@@ -8,6 +8,6 @@ import com.javbus.spider.spider.entity.relation.MovieStudioRelation;
 public interface MovieStudioDao {
     void addMovieStudioRelation(MovieStudioRelation relation);
 
-    void deleteMovieStudioRelation(int movieId, int studioId);
-    MovieStudioRelation queryMovieStudioRelation(int movieId, int studioId);
+    void deleteMovieStudioRelation(Integer movieId, Integer studioId);
+    MovieStudioRelation queryMovieStudioRelation(Integer movieId, Integer studioId);
 }

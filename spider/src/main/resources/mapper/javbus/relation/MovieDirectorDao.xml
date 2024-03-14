@@ -1,19 +1,26 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieDirectorDao">
+    <!-- MovieDirectorRelation resultMap -->
+    <resultMap id="movieDirectorRelationResultMap"
+        type="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
+        <id property="id" column="id" />
+        <result property="movieId" column="movie_id" />
+        <result property="directorId" column="director_id" />
+    </resultMap>
+    <insert id="addMovieDirectorRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation"> INSERT
+        IGNORE INTO movie_director_relation (movie_id, director_id) VALUES (#{movieId},
+        #{directorId}) </insert>
 
-    <insert id="addMovieDirectorRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT IGNORE INTO movie_director_relation (movie_id, director_id)
-        VALUES (#{movieId}, #{directorId})
-    </insert>
-
-    <delete id="deleteMovieDirectorRelation">
-        DELETE FROM movie_director_relation
-        WHERE movie_id = #{movieId} AND director_id = #{directorId}
-    </delete>
-    <select id="queryMovieDirectorRelation" resultType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        Select movie_director_relation
-        WHERE movie_id = #{movieId} AND director_id = #{directorId}
+    <delete id="deleteMovieDirectorRelation"> DELETE FROM movie_director_relation WHERE movie_id =
+        #{movieId} AND director_id = #{directorId} </delete>
+    <select id="queryMovieDirectorRelation"
+        resultMap="movieDirectorRelationResultMap"> 
+        Select *
+        FROM movie_director_relation 
+        WHERE movie_id = #{movieId} 
+        AND director_id = #{directorId}
     </select>
 </mapper>

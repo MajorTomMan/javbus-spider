@@ -40,7 +40,7 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         final Movie final_movie=movie;
         // 设置一对多关系
         List<MovieCategoryRelation> movieCategoryRelations = movieCategoryDao.queryMovieCategoryRelations(movie.getId(), categoryIds);
-        if(movieCategoryRelations==null){
+        if(movieCategoryRelations==null|| movieCategoryRelations.isEmpty()){
             List<MovieCategoryRelation> relations = categoryIds.stream().map((id) -> {
                 MovieCategoryRelation relation = new MovieCategoryRelation();
                 relation.setMovieId(final_movie.getId());

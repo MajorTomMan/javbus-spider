@@ -87,14 +87,14 @@ class index:
                         self.logUtil.log(
                             "------------------------------page info ended--------------------------------------"
                         )
-                        if page.stars:
+                        if page.actresses:
                             self.logUtil.log(
-                                "------------------------------star info start--------------------------------------"
+                                "------------------------------actress info start--------------------------------------"
                             )
-                            for star in page.stars:
-                                self.logUtil.log(star)
+                            for actress in page.actresses:
+                                self.logUtil.log(actress)
                             self.logUtil.log(
-                                "------------------------------star info ended--------------------------------------"
+                                "------------------------------actress info ended--------------------------------------"
                             )
                         self.sendData2Server(page=page)
                     elif page == -1:
@@ -159,22 +159,25 @@ class index:
         if page.sampleimage and len(page.sampleimage) >= 1:
             movieSampleImageVo = {"movie": page.movie, "sampleImages": page.sampleimage}
             self.send(movieSampleImageVo, "/movie/relation/sampleimage/save")
-        if page.stars and len(page.stars) >= 1:
+        if page.actresses and len(page.actresses) >= 1:
             if page.director:
-                starDirectorVo = {"stars": page.stars, "director": page.director}
-                self.send(starDirectorVo, "/star/relation/director/save")
+                starDirectorVo = {"actress": page.actresses, "director": page.director}
+                self.send(starDirectorVo, "/actress/relation/director/save")
             if page.studio:
-                starStudioVo = {"stars": page.stars, "studio": page.studio}
-                self.send(starStudioVo, "/star/relation/studio/save")
+                starStudioVo = {"actress": page.actresses, "studio": page.studio}
+                self.send(starStudioVo, "/actress/relation/studio/save")
             if page.series:
-                starSeriesVo = {"stars": page.stars, "series": page.series}
-                self.send(starSeriesVo, "/star/relation/series/save")
+                starSeriesVo = {"actress": page.actresses, "series": page.series}
+                self.send(starSeriesVo, "/actress/relation/series/save")
             if page.movie:
-                movieStarVo = {"movie": page.movie, "stars": page.stars}
-                self.send(movieStarVo, "/movie/relation/star/save")
+                movieActressVo = {"movie": page.movie, "actress": page.actresses}
+                self.send(movieActressVo, "/movie/relation/actress/save")
             if page.categories and len(page.categories) >= 1:
-                starCategoryVo = {"stars": page.stars, "categories": page.categories}
-                self.send(starCategoryVo, "/star/relation/category/save")
+                starCategoryVo = {
+                    "actress": page.actresses,
+                    "categories": page.categories,
+                }
+                self.send(starCategoryVo, "/actress/relation/category/save")
         if page.studio and len(page.studio) >= 1:
             movieStudioVo = {"movie": page.movie, "studio": page.studio}
             self.send(movieStudioVo, "/movie/relation/studio/save")

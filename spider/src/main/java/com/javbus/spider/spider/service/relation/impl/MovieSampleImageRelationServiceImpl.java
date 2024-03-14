@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.MovieDao;
 import com.javbus.spider.spider.dao.base.SampleImageDao;
-import com.javbus.spider.spider.dao.dto.MovieStarSampleImageDao;
+import com.javbus.spider.spider.dao.dto.MovieActressSampleImageDao;
 import com.javbus.spider.spider.dao.relation.MovieSampleImageDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.dto.ImageDTO;
@@ -21,7 +21,7 @@ import com.javbus.spider.spider.utils.ImageUtil;
 @Service
 public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRelationService {
     @Autowired
-    private MovieStarSampleImageDao movieStarSampleImageDao;
+    private MovieActressSampleImageDao movieActressSampleImageDao;
     @Autowired
     private MovieSampleImageDao movieSampleImageDao;
     @Autowired
@@ -44,8 +44,9 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
             sampleImageDao.saveSampleImages(vo.getSampleImages());
             sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());
         }
-        List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao.queryMovieSampleImageRelatios(movie.getId(), sampleImageIds);
-        if(movieSampleImageRelations==null||movieSampleImageRelations.isEmpty()){
+        List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
+                .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);
+        if (movieSampleImageRelations == null || movieSampleImageRelations.isEmpty()) {
             final Movie final_movie = movie;
             List<MovieSampleImageRelation> relations = sampleImageIds.stream().map((id) -> {
                 MovieSampleImageRelation relation = new MovieSampleImageRelation();
@@ -54,7 +55,7 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
                 return relation;
             }).collect(Collectors.toList());
             movieSampleImageDao.addMovieSampleImageRelations(relations);
-            List<ImageDTO> imageDTOs = movieStarSampleImageDao.queryImageDao(movie.getId());
+            List<ImageDTO> imageDTOs = movieActressSampleImageDao.queryImageDao(movie.getId());
             if (imageDTOs == null || imageDTOs.isEmpty()) {
                 return;
             }

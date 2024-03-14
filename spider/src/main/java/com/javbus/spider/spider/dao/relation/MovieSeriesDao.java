@@ -11,6 +11,6 @@ import com.javbus.spider.spider.entity.relation.MovieSeriesRelation;
 public interface MovieSeriesDao {
     void addMovieSeriesRelation(MovieSeriesRelation relation);
 
-    void deleteMovieSeriesRelation(int movieId, int seriesId);
-    MovieSeriesRelation queryMovieSeriesRelation(int movieId, int seriesId);
+    void deleteMovieSeriesRelation(Integer movieId, Integer seriesId);
+    MovieSeriesRelation queryMovieSeriesRelation(Integer movieId, Integer seriesId);
 }

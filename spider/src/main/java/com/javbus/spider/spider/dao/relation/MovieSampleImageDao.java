@@ -10,9 +10,9 @@ import com.javbus.spider.spider.entity.relation.MovieSampleImageRelation;
 public interface MovieSampleImageDao {
     void addMovieSampleImageRelation(MovieSampleImageRelation relation);
 
-    void deleteMovieSampleImageRelation(int movieId, int sampleImageId);
+    void deleteMovieSampleImageRelation(Integer movieId, Integer sampleImageId);
 
     void addMovieSampleImageRelations(List<MovieSampleImageRelation> relations);
 
-    List<MovieSampleImageRelation> queryMovieSampleImageRelatios(Integer movieId,List<Integer> categoryIds);
+    List<MovieSampleImageRelation> queryMovieSampleImageRelations(Integer movieId,List<Integer> sampleImageIds);
 }

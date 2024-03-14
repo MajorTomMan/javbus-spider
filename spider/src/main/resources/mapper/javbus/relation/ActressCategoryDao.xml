@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.javbus.spider.spider.dao.relation.ActressCategoryDao">
+    <!-- ActressCategoryRelation resultMap -->
+    <resultMap id="actressCategoryRelationResultMap"
+        type="com.javbus.spider.spider.entity.relation.ActressCategoryRelation">
+        <id property="id" column="id" />
+        <result property="actressId" column="actress_id" />
+        <result property="categoryId" column="category_id" />
+    </resultMap>
+    <insert id="addActressCategoryRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.ActressCategoryRelation"> INSERT IGNORE
+        INTO actress_category_relation (actress_id, category_id) VALUES (#{actressId}, #{categoryId}) </insert>
+    <insert id="addActressCategoryRelations"
+        parameterType="com.javbus.spider.spider.entity.relation.ActressCategoryRelation"> INSERT IGNORE
+        INTO actress_category_relation (actress_id, category_id) VALUES <foreach collection="list"
+            item="item" separator=","> (#{item.actressId}, #{item.categoryId}) </foreach>
+    </insert>
+    <delete id="deleteActressCategoryRelation"> DELETE FROM actress_category_relation WHERE actress_id =
+        #{actressId} AND category_id = #{categoryId} </delete>
+    <select id="queryActressCategoryRelationsByActressId"
+        resultMap="actressCategoryRelationResultMap"> SELECT * FROM actress_category_relation WHERE
+        actress_id=#{actressId} AND category_id IN <foreach
+            collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+        (#categoryId) </foreach>
+    </select>
+    <select id="queryActressCategoryRelations"
+        resultMap="actressCategoryRelationResultMap"> SELECT * FROM actress_category_relation WHERE
+        actress_id IN <foreach collection="actressIds" item="actressId" open="("
+            separator="," close=")"> #{actressId} </foreach> AND category_id IN <foreach
+            collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+        #{categoryId} </foreach>
+    </select>
+</mapper>

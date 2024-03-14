@@ -9,6 +9,6 @@ import com.javbus.spider.spider.entity.relation.MovieBigImageRelation;
 public interface MovieBigImageDao {
     void addMovieBigImageRelation(MovieBigImageRelation relation);
 
-    void deleteMovieBigImageRelation(int movieId, int bigImageId);
-    MovieBigImageRelation queryMovieBigImageRelation(int movieId, int bigImageId);
+    void deleteMovieBigImageRelation(Integer movieId, Integer bigImageId);
+    MovieBigImageRelation queryMovieBigImageRelation(Integer movieId, Integer bigImageId);
 }

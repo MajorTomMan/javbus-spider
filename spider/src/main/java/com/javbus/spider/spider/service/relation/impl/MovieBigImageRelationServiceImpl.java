@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.BigImageDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
-import com.javbus.spider.spider.dao.dto.MovieStarBigImageDao;
+import com.javbus.spider.spider.dao.dto.MovieActressBigImageDao;
 import com.javbus.spider.spider.dao.relation.MovieBigImageDao;
 import com.javbus.spider.spider.entity.base.BigImage;
 import com.javbus.spider.spider.entity.base.Movie;
@@ -22,7 +22,7 @@ import com.javbus.spider.spider.utils.ImageUtil;
 @Service
 public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationService {
     @Autowired
-    private MovieStarBigImageDao movieStarBigImageDao;
+    private MovieActressBigImageDao movieActressBigImageDao;
     @Autowired
     private MovieBigImageDao movieBigImageDao;
     @Autowired
@@ -47,13 +47,13 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
             bigImageResult = bigImageDao.queryBigImageByLink(vo.getBigImage().getLink());
         }
         MovieBigImageRelation movieBigImageRelation = movieBigImageDao.queryMovieBigImageRelation(movie.getId(),
-                bigImage.getId());
+                bigImageResult.getId());
         if (movieBigImageRelation == null) {
             MovieBigImageRelation relation = new MovieBigImageRelation();
             relation.setBigImageId(bigImageResult.getId());
             relation.setMovieId(movie.getId());
             movieBigImageDao.addMovieBigImageRelation(relation);
-            List<ImageDTO> imageDTOs = movieStarBigImageDao.queryImageDao(movie.getId());
+            List<ImageDTO> imageDTOs = movieActressBigImageDao.queryImageDao(movie.getId());
             if (imageDTOs == null || imageDTOs.isEmpty()) {
                 return;
             }

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.GenreCategoryDao">
+    <!-- resultMap -->
+    <resultMap id="genreCategoryRelationResultMap" type="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+        <id property="id" column="id"/>
+        <result property="genreId" column="genre_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="isCensored" column="is_censored"/>
+    </resultMap>
     <insert id="addGenreCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
         INSERT IGNORE INTO genre_category_relation (genre_id, category_id)
         VALUES (#{genreId}, #{categoryId})
@@ -15,10 +22,10 @@
         DELETE FROM genre_category_relation
         WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
-    <select id="queryGenreCategoryRelations" resultType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+    <select id="queryGenreCategoryRelations" resultMap="genreCategoryRelationResultMap">
         select * from genre_category_relation WHERE genre_id = #{genreId} AND category_id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
-            #{categoryIds}
+            #{categoryId}
         </foreach>
     </select>
 </mapper>

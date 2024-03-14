@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from utils.AttrsUtil import AttrsUtil
 from utils.ImageUtil import ImageUtil
 from utils.LogUtil import LogUtil
-from utils.StarUtil import StarUtil
+from utils.ActressUtil import ActressUtil
 from utils.WebUtil import WebUtil
 from utils.attrs.CompanyLinks import CompanyLinks
 
@@ -25,7 +25,7 @@ class PageUtil:
     webUtil = WebUtil()
     imageUtil = ImageUtil()
     attrsUtil = AttrsUtil()
-    starUtil = StarUtil()
+    actressUtil = ActressUtil()
     logUtil = LogUtil()
     baseUrl = ""
     isCensored = ""
@@ -44,22 +44,22 @@ class PageUtil:
             page = self.getPage(bs)
             if page != -1:
                 page.movie["link"] = link
-                stars = page.stars
+                actresses = page.actresses
                 code = page.movie.get("code")
                 links = []
                 for sample in page.sampleimage:
                     for link in sample:
                         links.append(sample[link])
                 names = []
-                if stars:
-                    for star in stars:
-                        names.append(star.get("name"))
+                if actresses:
+                    for actress in actresses:
+                        names.append(actress.get("name"))
                 # try:
                 # self.imageUtil.downloadSampleImages(
-                #    links=links, stars=names, code=code
+                #    links=links, actresses=names, code=code
                 # )
                 # self.imageUtil.downloadBigImage(
-                #    link=page.bigimage["link"], stars=names, code=code
+                #    link=page.bigimage["link"], actresses=names, code=code
                 # )
                 # except Exception as e:
                 # self.logUtil.log(
@@ -87,9 +87,8 @@ class PageUtil:
         series = Series()
         studio = Studio()
         label = Label()
-        actors = []
+        actressesList = []
         samples = []
-        stars = []
         title = self.attrsUtil.getTitle(bs)
         if title:
             movie.title = title
@@ -153,20 +152,24 @@ class PageUtil:
                         else:
                             self.logUtil.log("series not found")
             p = ps[-1]
-            stars = self.attrsUtil.getStars(p)
-            if stars:
-                for star in stars:
-                    starDetail = self.starUtil.getStarDetails(stars[star])
-                    if starDetail:
+            actresses = self.attrsUtil.getActresses(p)
+            if actresses:
+                for actress in actresses:
+                    actressDetail = self.actressUtil.getActressDetails(
+                        actresses[actress]
+                    )
+                    if actressDetail:
                         # 解决演员还没有图片的问题
-                        if not self.matchLinkIsCompanyLink(starDetail.photo_link):
+                        if not self.matchLinkIsCompanyLink(actressDetail.photo_link):
                             if self.baseUrl.endswith("/"):
                                 url = self.baseUrl[:-1]
-                                starDetail.photo_link = url + starDetail.photo_link
-                        starDetail.star_link = stars.get(star)
-                        starDetail.is_censored = self.isCensored
-                        actors.append(starDetail.toDict())
-            if stars:
+                                actressDetail.photo_link = (
+                                    url + actressDetail.photo_link
+                                )
+                        actressDetail.actress_link = actresses.get(actress)
+                        actressDetail.is_censored = self.isCensored
+                        actressesList.append(actressDetail.toDict())
+            if actresses:
                 p = ps[-3]
             else:
                 p = ps[-2]
@@ -197,8 +200,8 @@ class PageUtil:
             page.director = director.toDict()
         if label:
             page.label = label.toDict()
-        if stars:
-            page.stars = actors
+        if actressesList:
+            page.actresses = actressesList
         return page
 
     def matchLinkIsCompanyLink(self, link):

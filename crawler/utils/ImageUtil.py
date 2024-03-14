@@ -14,18 +14,18 @@ class ImageUtil:
         self.ua = UserAgent()
         self.basePath = "./images/"
 
-    def downloadSampleImages(self, links, stars, code):
-        if stars == None or len(stars) < 1:
-            stars = "未知演员"
-        elif len(stars) > 1:
-            stars = "-".join(stars)
-        elif len(stars) == 1:
-            stars = stars[0]
+    def downloadSampleImages(self, links, actresses, code):
+        if actresses == None or len(actresses) < 1:
+            actresses = "未知演员"
+        elif len(actresses) > 1:
+            actresses = "-".join(actresses)
+        elif len(actresses) == 1:
+            actresses = actresses[0]
         headers = {"User-Agent": self.ua.random}
         for link in links:
             filename = link.split("/")[-1]
             if self.__checkFileIsExists(
-                stars=stars, code=code, filename=filename, isBigImage=False
+                actresses=actresses, code=code, filename=filename, isBigImage=False
             ):
                 self.logUtil.log(
                     "local sample file "
@@ -39,7 +39,7 @@ class ImageUtil:
                 self.logUtil.log("image " + response.url + " download success")
                 self.__save2Local(
                     response=response,
-                    stars=stars,
+                    actresses=actresses,
                     code=code,
                     filename=filename,
                     isBigImage=False,
@@ -47,16 +47,16 @@ class ImageUtil:
             else:
                 self.logUtil.log("image " + response.url + " download failure")
 
-    def downloadBigImage(self, link, stars, code):
-        if stars == None or len(stars) < 1:
-            stars = "未知演员"
-        elif len(stars) > 1:
-            stars = "-".join(stars)
-        elif len(stars) == 1:
-            stars = stars[0]
+    def downloadBigImage(self, link, actresses, code):
+        if actresses == None or len(actresses) < 1:
+            actresses = "未知演员"
+        elif len(actresses) > 1:
+            actresses = "-".join(actresses)
+        elif len(actresses) == 1:
+            actresses = actresses[0]
         filename = link.split("/")[-1]
         if self.__checkFileIsExists(
-            stars=stars, code=code, filename=filename, isBigImage=True
+            actresses=actresses, code=code, filename=filename, isBigImage=True
         ):
             self.logUtil.log(
                 "local bigImage file " + filename + " already exists skipping download"
@@ -73,7 +73,7 @@ class ImageUtil:
             filename = paths[-1]
             self.__save2Local(
                 response=response,
-                stars=stars,
+                actresses=actresses,
                 code=code,
                 filename=filename,
                 isBigImage=True,
@@ -81,11 +81,13 @@ class ImageUtil:
         else:
             self.logUtil.log("image " + response.url + " download failure")
 
-    def __save2Local(self, response, stars, code, filename, isBigImage):
+    def __save2Local(self, response, actresses, code, filename, isBigImage):
         if not isBigImage:
-            targetFolder = self.basePath + stars + "/" + code + "/" + "sample" + "/"
+            targetFolder = self.basePath + actresses + "/" + code + "/" + "sample" + "/"
         else:
-            targetFolder = self.basePath + stars + "/" + code + "/" + "bigImage" + "/"
+            targetFolder = (
+                self.basePath + actresses + "/" + code + "/" + "bigImage" + "/"
+            )
         path = targetFolder + filename
         self.logUtil.log("current image store path is " + path)
         if self.__checkFolderIsExists(targetFolder):
@@ -103,12 +105,21 @@ class ImageUtil:
         self.logUtil.log(path + " not exists")
         return False
 
-    def __checkFileIsExists(self, stars, code, filename, isBigImage):
+    def __checkFileIsExists(self, actresses, code, filename, isBigImage):
         if not isBigImage:
-            path = self.basePath + stars + "/" + code + "/" + "sample" + "/" + filename
+            path = (
+                self.basePath + actresses + "/" + code + "/" + "sample" + "/" + filename
+            )
         else:
             path = (
-                self.basePath + stars + "/" + code + "/" + "bigImage" + "/" + filename
+                self.basePath
+                + actresses
+                + "/"
+                + code
+                + "/"
+                + "bigImage"
+                + "/"
+                + filename
             )
         if os.path.exists(path):
             return True

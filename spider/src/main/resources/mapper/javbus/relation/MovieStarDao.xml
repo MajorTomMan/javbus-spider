@@ -1,30 +1,29 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.javbus.spider.spider.dao.relation.MovieStarDao">
+<mapper namespace="com.javbus.spider.spider.dao.relation.MovieActressDao">
+    <!-- MovieActressRelation resultMap -->
+    <resultMap id="movieActressRelationResultMap"
+        type="com.javbus.spider.spider.entity.relation.MovieActressRelation">
+        <id property="id" column="id" />
+        <result property="movieId" column="movie_id" />
+        <result property="actressId" column="actress_id" />
+    </resultMap>
+    <insert id="addMovieActressRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.MovieActressRelation"> INSERT IGNORE
+        INTO movie_actress_relation (movie_id, actress_id) VALUES (#{movieId}, #{actressId}) </insert>
 
-    <insert id="addMovieStarRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieStarRelation">
-        INSERT IGNORE INTO movie_star_relation (movie_id, star_id)
-        VALUES (#{movieId}, #{starId})
+    <delete id="deleteMovieActressRelation"> DELETE FROM movie_actress_relation WHERE movie_id =
+        #{movieId} AND actress_id = #{actressId} </delete>
+    <insert id="addMovieActressRelations" parameterType="java.util.List"> INSERT IGNORE INTO
+        movie_actress_relation (movie_id, actress_id) VALUES <foreach collection="list" item="relation"
+            separator=","> (#{relation.movieId}, #{relation.actressId}) </foreach>
     </insert>
-
-    <delete id="deleteMovieStarRelation">
-        DELETE FROM movie_star_relation
-        WHERE movie_id = #{movieId} AND star_id = #{starId}
-    </delete>
-    <insert id="addMovieStarRelations" parameterType="java.util.List">
-        INSERT IGNORE INTO movie_star_relation (movie_id, star_id) VALUES
-        <foreach collection="list" item="relation" separator=",">
-            (#{relation.movieId}, #{relation.starId})
-        </foreach>
-    </insert>
-    <select id="queryMovieStarRelation"
-        resultType="com.javbus.spider.spider.entity.relation.MovieStarRelation"> SELECT *
-        FROM movie_star_relation WHERE movie_id = #{movieId} AND series_id = #{seriesId} </select>
-    <select id="queryMovieStarRelations"
-        resultType="com.javbus.spider.spider.entity.relation.MovieStarRelation"> SELECT *
-        FROM movie_star_relation WHERE movie_id = #{movieId} AND star_id IN 
-            <foreach collection="starIds" item="starId" open="(" separator="," close=")">
-                #{starId}
-            </foreach>
-     </select>
+    <select id="queryMovieActressRelation"
+        resultMap="movieActressRelationResultMap"> SELECT * FROM movie_actress_relation WHERE movie_id =
+        #{movieId} AND series_id = #{seriesId} </select>
+    <select id="queryMovieActressRelations"
+        resultMap="movieActressRelationResultMap"> SELECT * FROM movie_actress_relation WHERE movie_id =
+        #{movieId} AND actress_id IN <foreach collection="actressIds"
+            item="actressId" open="(" separator="," close=")"> #{actressId} </foreach>
+    </select>
 </mapper>

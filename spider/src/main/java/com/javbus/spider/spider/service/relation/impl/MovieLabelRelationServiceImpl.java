@@ -25,23 +25,23 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     public void saveRelation(MovieLabelVo vo) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
-        if(movie==null){
+        if (movie == null) {
             movieDao.saveMovie(vo.getMovie());
-            movie=movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
         }
-        Label label=labelDao.queryLabelByName(vo.getLabel().getName());
-        if(label==null){
+        Label label = labelDao.queryLabelByName(vo.getLabel().getName());
+        if (label == null) {
             labelDao.save(vo.getLabel());
-            label=labelDao.queryLabelByName(vo.getLabel().getName());
+            label = labelDao.queryLabelByName(vo.getLabel().getName());
         }
-        MovieLabelRelation movieDirectorRelation = movieLabelDao.queryMovieDirectorRelation(movie.getId(),label.getId());
-        if(movieDirectorRelation==null){
-            MovieLabelRelation relation=new MovieLabelRelation();
+        MovieLabelRelation movieLabelRelation = movieLabelDao.queryMovieLabelRelation(movie.getId(), label.getId());
+        if (movieLabelRelation == null) {
+            MovieLabelRelation relation = new MovieLabelRelation();
             relation.setLabelId(label.getId());
             relation.setMovieId(movie.getId());
             movieLabelDao.addMovieLabelRelation(relation);
         }
 
     }
-    
+
 }

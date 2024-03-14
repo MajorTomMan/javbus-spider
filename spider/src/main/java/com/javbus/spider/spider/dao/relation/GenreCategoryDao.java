@@ -14,6 +14,6 @@ public interface GenreCategoryDao {
 
     void addGenreCategoryRelations(List<GenreCategoryRelation> relations);
 
-    void deleteGenreCategoryRelation(int genreId, int categoryId);
+    void deleteGenreCategoryRelation(Integer genreId, Integer categoryId);
     List<GenreCategoryRelation> queryGenreCategoryRelations(Integer genreId,List<Integer> categoryIds);
 }

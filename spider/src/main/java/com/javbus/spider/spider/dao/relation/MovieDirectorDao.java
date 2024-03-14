@@ -8,7 +8,7 @@ import com.javbus.spider.spider.entity.relation.MovieDirectorRelation;
 public interface MovieDirectorDao {
     void addMovieDirectorRelation(MovieDirectorRelation relation);
 
-    void deleteMovieDirectorRelation(int starId, int directorId);
+    void deleteMovieDirectorRelation(Integer movidId, Integer directorId);
 
-    MovieDirectorRelation queryMovieDirectorRelation(int starId, int directorId);
+    MovieDirectorRelation queryMovieDirectorRelation(Integer movieId, Integer directorId);
 }

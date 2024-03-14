@@ -128,7 +128,7 @@ class AttrsUtil:
             self.logUtil.log("categories not found")
             return None
 
-    def getStars(self, bs):
+    def getActresses(self, bs):
         names = {}
         spans = bs.find_all("span", {"class": "genre"})
         if spans:
@@ -140,7 +140,7 @@ class AttrsUtil:
                     names[name] = link
             return names
         else:
-            self.logUtil.log("stars not found")
+            self.logUtil.log("actresses not found")
             return None
 
     def getSeries(self, bs):
@@ -215,7 +215,7 @@ class AttrsUtil:
             self.logUtil.log("name not found")
             return None
 
-    def getSingleStarLink(self, bs):
+    def getSingleActressLink(self, bs):
         box = bs.find("a", {"class": "avatar-box text-center"})
         if box:
             img = box.find("img")
@@ -225,8 +225,8 @@ class AttrsUtil:
                 return {
                     "name": name,
                     "photo_link": photo_link,
-                    "star_link": box["href"],
+                    "actress_link": box["href"],
                 }
         else:
-            self.logUtil.log("page stars not found")
+            self.logUtil.log("page actresses not found")
             return None
