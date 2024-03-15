@@ -3,6 +3,7 @@ import time
 from warnings import catch_warnings
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
+from utils.PageUtil import PageUtil
 from utils.RequestUtil import RequestUtil
 
 from utils.AttrsUtil import AttrsUtil
@@ -23,10 +24,12 @@ class actresses:
     timeouts = []
     isCensored = True
     lock = threading.Lock()
+    pageUtil = None
 
     def __init__(self, url, is_censored):
         self.baseUrl = url
         self.isCensored = is_censored
+        self.pageUtil = PageUtil(url, is_censored)
 
     def BFS(self):
         star_time = time.time()
@@ -38,8 +41,8 @@ class actresses:
             source = self.webUtil.getWebSite(url)
             self.logUtil.log("now page num is " + str(self.pageNum))
             bs = BeautifulSoup(source, "html.parser")
-            ul = bs.find("ul", {"class": "pagination pagination-lg"})
-            if ul:
+            if self.pageUtil.hasNextPage(bs):
+
                 self.__bfs(source)
             else:
                 self.logUtil.log("final page is reach")
@@ -103,8 +106,8 @@ class actresses:
             self.send(actressList, "/actress/save")
             if self.timeouts and len(self.timeouts) >= 1:
                 self.logUtil.log("try to request timeout list")
-                for link in self.timeouts:
-                    actress = self.actressUtil.getActressDetails(link)
+                for timeout in self.timeouts:
+                    actress = self.actressUtil.getActressDetails(link=timeout["link"])
                     if actress:
                         if self.actressUtil.matchLinkIsCompanyLink(
                             actress_dict["photo_link"]
@@ -114,7 +117,7 @@ class actresses:
                                 actress.photo_link = url + actress.photo_link
                             else:
                                 actress.photo_link = self.baseUrl + actress.photo_link
-                        actress.actress_link = link
+                        actress.actress_link = timeout["link"]
                         self.send(
                             {"actress": actressList},
                             "/actress/save",

@@ -65,8 +65,9 @@ class WebUtil:
                         options=options,
                         version_main=122,
                     )
-                    cls.driver.set_page_load_timeout(120)
-                    cls.driver.set_script_timeout(120)
+                    # 超时时间设为5分钟
+                    cls.driver.set_page_load_timeout(300)
+                    cls.driver.set_script_timeout(300)
 
                 cls.logUtil.log("starting request to " + new_url + " ...........")
                 cls.logUtil.log("waiting for request finished...........")
@@ -78,8 +79,8 @@ class WebUtil:
                 source = cls.driver.page_source
                 return source
             except TimeoutException:
-                cls.logUtil.log("request to " + new_url + " timeout in 2 minutes")
-                cls.logUtil.log("waiting 5 seconds to request")
+                cls.logUtil.log("request to " + new_url + " timeout in 5 minutes")
+                cls.logUtil.log("waiting 5 seconds to request backup")
                 time.sleep(5)
                 continue
             except WebDriverException as e:

@@ -50,8 +50,7 @@ class search:
                 if source:
                     self.logUtil.log("now page num is " + str(self.pageNum))
                     bs = BeautifulSoup(source, "html.parser")
-                    ul = bs.find("ul", {"class": "pagination pagination-lg"})
-                    if ul:
+                    if self.pageUtil.hasNextPage(bs):
                         self.__bfs(source)
                     else:
                         self.logUtil.log("final page is reach")

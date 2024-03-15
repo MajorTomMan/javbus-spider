@@ -210,3 +210,14 @@ class PageUtil:
                 if company in link:
                     return True
         return False
+
+    def hasNextPage(self, bs):
+        underline = bs.find("div", {"class": "text-center hidden-xs"})
+        if underline:
+            ul = underline.find("ul", {"class": "pagination pagination-lg"})
+            if ul:
+                a = ul.find("a", {"id", "next"})
+                if a:
+                    return True
+        print("this page dont have next page element")
+        return False
