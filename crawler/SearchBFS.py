@@ -9,6 +9,7 @@ from utils.PageUtil import PageUtil
 from utils.WebUtil import WebUtil
 from utils.RequestUtil import RequestUtil
 from utils.AttrsUtil import AttrsUtil
+from utils.exceptions.PageException import PageException
 
 
 class search:
@@ -36,9 +37,9 @@ class search:
             star_time = time.time()
             while True:
                 if self.isCensored:
-                    url = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
+                    link = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
                 else:
-                    url = (
+                    link = (
                         self.baseUrl
                         + "uncensored/"
                         + "search/"
@@ -46,15 +47,21 @@ class search:
                         + "/"
                         + str(self.pageNum)
                     )
-                source = self.webUtil.getWebSite(url)
+                source = self.webUtil.getWebSite(link)
                 if source:
                     self.logUtil.log("now page num is " + str(self.pageNum))
                     bs = BeautifulSoup(source, "html.parser")
                     if self.pageUtil.hasNextPage(bs):
-                        self.__bfs(source)
+                        try:
+                            self.__bfs(source)
+                        except PageException:
+                            self.save2local(source, "./failed_link/" + link, ".html")
                     else:
                         self.logUtil.log("final page is reach")
-                        self.__bfs(source)
+                        try:
+                            self.__bfs(source)
+                        except PageException:
+                            self.save2local(source, "./failed_link/" + link, ".html")
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")
@@ -123,7 +130,8 @@ class search:
                         self.logUtil.log("request " + link + " failed  link abandon")
             self.logUtil.log("all link was visited jump to next page")
         else:
-            self.logUtil.log("page list not found")
+            self.logUtil.log("bricks not found")
+            raise PageException()
 
     def save2local(self, content, path):
         with open(path + ".json", "w+", encoding="UTF-8") as f:

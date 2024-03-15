@@ -1,3 +1,4 @@
+import json
 import threading
 import time
 from warnings import catch_warnings
@@ -9,6 +10,7 @@ from utils.RequestUtil import RequestUtil
 from utils.AttrsUtil import AttrsUtil
 from utils.ActressUtil import ActressUtil
 from utils.WebUtil import WebUtil
+from utils.exceptions.PageException import PageException
 
 
 class actresses:
@@ -35,18 +37,23 @@ class actresses:
         star_time = time.time()
         while True:
             if self.isCensored:
-                url = self.baseUrl + "actresses/" + str(self.pageNum)
+                link = self.baseUrl + "actresses/" + str(self.pageNum)
             else:
-                url = self.baseUrl + "uncensored/actresses/" + str(self.pageNum)
-            source = self.webUtil.getWebSite(url)
+                link = self.baseUrl + "uncensored/actresses/" + str(self.pageNum)
+            source = self.webUtil.getWebSite(link)
             self.logUtil.log("now page num is " + str(self.pageNum))
             bs = BeautifulSoup(source, "html.parser")
             if self.pageUtil.hasNextPage(bs):
-
-                self.__bfs(source)
+                try:
+                    self.__bfs(source)
+                except PageException:
+                    self.save2local(source, "./failed_link/" + link, ".html")
             else:
                 self.logUtil.log("final page is reach")
-                self.__bfs(source)
+                try:
+                    self.__bfs(source)
+                except PageException:
+                    self.save2local(source, "./failed_link/" + link, ".html")
                 break
             self.pageNum += 1
         end_time = time.time()
@@ -137,6 +144,7 @@ class actresses:
                         )
         else:
             self.logUtil.log("bricks not found")
+            raise PageException()
 
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
@@ -148,3 +156,7 @@ class actresses:
             self.logUtil.log("send data to " + path + " was success")
         else:
             self.logUtil.log("send data to " + path + " was failure")
+
+    def save2local(self, content, path, extensions):
+        with open(path + extensions, "w+", encoding="UTF-8") as f:
+            json.dump(content, f, ensure_ascii=False)
