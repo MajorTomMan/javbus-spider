@@ -13,6 +13,7 @@ public interface ActressDao {
     Integer queryActressIdByName(Integer id);
 
     Actress queryActressById(Integer id);
+    List<Actress> queryActressesById(List<Integer> ids);
 
     Actress queryActressByName(String name);
 
@@ -22,5 +23,5 @@ public interface ActressDao {
 
     void delete(Integer id);
 
-    void saveActresses(List<Actress> stars);
+    void saveActresses(List<Actress> actresses);
 }

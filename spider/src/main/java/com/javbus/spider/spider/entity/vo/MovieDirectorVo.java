@@ -6,7 +6,7 @@ import com.javbus.spider.spider.entity.base.Movie;
 import lombok.Data;
 
 @Data
-public class MovieDirectorVo {
-    private Movie movie;
-    private Director director;
+public class MovieDirectorVO {
+    Movie movie;
+    Director director;
 }

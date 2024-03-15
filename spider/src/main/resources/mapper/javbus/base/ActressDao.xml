@@ -45,7 +45,7 @@
     <!-- 插入多个Actress -->
     <insert id="saveActresses" parameterType="List"> INSERT IGNORE INTO actress (name, actress_link,
         photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place, hobby,is_censored)
-        VALUES <foreach collection="list" item="actress" separator=","> (#{actress.name},
+        VALUES <foreach collection="actresses" item="actress" separator=","> (#{actress.name},
         #{actress.actressLink}, #{actress.photoLink}, #{actress.birthDay}, #{actress.age}, #{actress.height},
         #{actress.cup}, #{actress.bust}, #{actress.waist}, #{actress.hip}, #{actress.birthPlace}, #{actress.hobby},
         #{actress.isCensored}) </foreach>
@@ -61,4 +61,13 @@
 
     <select id="queryActressIdByName" parameterType="java.lang.Integer"> select id from actress where
         name=#{name} </select>
+
+    <!-- queryActressesById --> 
+
+    <select id="queryActressesById">
+        SELECT id FROM actress WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+             #{id}
+        </foreach>
+    </select>
 </mapper>

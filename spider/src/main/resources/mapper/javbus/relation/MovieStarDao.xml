@@ -26,4 +26,11 @@
         #{movieId} AND actress_id IN <foreach collection="actressIds"
             item="actressId" open="(" separator="," close=")"> #{actressId} </foreach>
     </select>
+
+    <!-- queryMovieActressRelationByMovieId --> 
+
+    <select id="queryMovieActressRelationByMovieId" resultMap="movieActressRelationResultMap">
+        SELECT * FROM movie_actress_relation WHERE movie_id =
+        #{movieId}
+    </select>
 </mapper>

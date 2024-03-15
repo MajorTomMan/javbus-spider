@@ -16,5 +16,15 @@ public class StudioServiceImpl implements StudioService{
         // TODO Auto-generated method stub
         studioDao.save(studio);
     }
+    @Override
+    public Studio queryStudioById(Integer id) {
+        // TODO Auto-generated method stub
+        return studioDao.queryStudioById(id);
+    }
+    @Override
+    public Studio queryStudioByName(String name) {
+        // TODO Auto-generated method stub
+        return studioDao.queryStudioByName(name);
+    }
     
 }

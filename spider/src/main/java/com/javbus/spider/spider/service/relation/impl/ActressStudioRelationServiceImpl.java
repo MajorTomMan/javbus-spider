@@ -6,6 +6,7 @@ import com.javbus.spider.spider.dao.relation.ActressStudioDao;
 import com.javbus.spider.spider.entity.base.Actress;
 import com.javbus.spider.spider.entity.base.Studio;
 import com.javbus.spider.spider.entity.relation.ActressStudioRelation;
+import com.javbus.spider.spider.entity.vo.ActressStudioVO;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,34 +14,35 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.javbus.spider.spider.entity.vo.ActressStudioVo;
+import com.javbus.spider.spider.entity.dto.ActressStudioDTO;
 import com.javbus.spider.spider.service.relation.ActressStudioRelationService;
 
 @Service
 public class ActressStudioRelationServiceImpl implements ActressStudioRelationService {
     @Autowired
-    private ActressStudioDao ActressStudioDao;
+    private ActressStudioDao actressStudioDao;
     @Autowired
     private StudioDao studioDao;
     @Autowired
-    private ActressDao ActressDao;
+    private ActressDao actressDao;
 
     @Override
-    public void saveRelation(ActressStudioVo vo) {
+    public void saveRelation(ActressStudioDTO dto) {
         // TODO Auto-generated method stub
-        List<Actress> actresses = vo.getActress();
+        List<Actress> actresses = dto.getActress();
         List<String> names = actresses.stream().map(Actress -> Actress.getName()).collect(Collectors.toList());
-        List<Integer> ActressIds = ActressDao.queryActressIdsByNames(names);
+        List<Integer> ActressIds = actressDao.queryActressIdsByNames(names);
         if (ActressIds == null || ActressIds.isEmpty()) {
-            ActressDao.saveActresses(actresses);
-            ActressIds = ActressDao.queryActressIdsByNames(names);
+            actressDao.saveActresses(actresses);
+            ActressIds = actressDao.queryActressIdsByNames(names);
         }
-        Studio studio = studioDao.queryStudioByName(vo.getStudio().getName());
+        Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
         if (studio == null) {
-            studioDao.save(vo.getStudio());
-            studio = studioDao.queryStudioByName(vo.getStudio().getName());
+            studioDao.save(dto.getStudio());
+            studio = studioDao.queryStudioByName(dto.getStudio().getName());
         }
-        List<ActressStudioRelation> ActressStudioRelations = ActressStudioDao.queryActressStudioRelations(ActressIds, studio.getId());
+        List<ActressStudioRelation> ActressStudioRelations = actressStudioDao.queryActressStudioRelations(ActressIds,
+                studio.getId());
         if (ActressStudioRelations == null || ActressStudioRelations.isEmpty()) {
             final Studio final_studio = studio;
             List<ActressStudioRelation> relations = ActressIds.stream().map((id) -> {
@@ -49,9 +51,27 @@ public class ActressStudioRelationServiceImpl implements ActressStudioRelationSe
                 relation.setStudioId(final_studio.getId());
                 return relation;
             }).collect(Collectors.toList());
-            ActressStudioDao.addActressStudioRelations(relations);
+            actressStudioDao.addActressStudioRelations(relations);
         }
-        
+
+    }
+
+    @Override
+    public ActressStudioVO queryRelations(Integer actressId) {
+        // TODO Auto-generated method stub
+        List<ActressStudioRelation> relations = actressStudioDao.queryActressStudioRelationByActressId(actressId);
+        if (relations == null || relations.isEmpty()) {
+            return null;
+        }
+        Actress actress = actressDao.queryActressById(actressId);
+        List<Integer> studioIds = relations.stream().map(relation -> {
+            return relation.getStudioId();
+        }).collect(Collectors.toList());
+        List<Studio> studios = studioDao.queryStudioByIds(studioIds);
+        ActressStudioVO vo = new ActressStudioVO();
+        vo.setActress(actress);
+        vo.setStudios(studios);
+        return vo;
     }
 
 }

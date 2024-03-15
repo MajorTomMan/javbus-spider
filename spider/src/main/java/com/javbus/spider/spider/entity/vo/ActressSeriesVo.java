@@ -8,7 +8,7 @@ import com.javbus.spider.spider.entity.base.Actress;
 import lombok.Data;
 
 @Data
-public class ActressSeriesVo {
-    private List<Actress> actress;
-    private Series series;
+public class ActressSeriesVO {
+    Actress actress;
+    List<Series> series;
 }

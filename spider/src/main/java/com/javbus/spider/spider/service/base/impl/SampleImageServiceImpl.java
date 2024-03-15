@@ -18,5 +18,10 @@ public class SampleImageServiceImpl implements SampleImageService{
         // TODO Auto-generated method stub
         sampleImageDao.saveSampleImages(sampleImages);
     }
+    @Override
+    public SampleImage querySampleImageById(Integer id) {
+        // TODO Auto-generated method stub
+        return sampleImageDao.querySampleImageById(id);
+    }
     
 }

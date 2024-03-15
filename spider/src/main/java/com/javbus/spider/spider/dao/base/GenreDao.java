@@ -20,5 +20,5 @@ public interface GenreDao {
 
     Integer queryGenreIdByName(String name);
 
-    List<Integer> queryGenreIdsByNames(List<String> names);
+    Genre queryGenreByName(String name);
 }

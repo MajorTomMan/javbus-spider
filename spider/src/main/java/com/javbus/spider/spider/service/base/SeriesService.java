@@ -6,4 +6,8 @@ public interface SeriesService {
 
     void saveSeries(Series series);
 
+    Series querySeriesById(Integer id);
+
+    Series querySeriesByName(String name);
+
 }

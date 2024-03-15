@@ -9,7 +9,8 @@ import com.javbus.spider.spider.dao.relation.MovieSeriesDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.Series;
 import com.javbus.spider.spider.entity.relation.MovieSeriesRelation;
-import com.javbus.spider.spider.entity.vo.MovieSeriesVo;
+import com.javbus.spider.spider.entity.vo.MovieSeriesVO;
+import com.javbus.spider.spider.entity.dto.MovieSeriesDTO;
 import com.javbus.spider.spider.service.relation.MovieSeriesRelationService;
 
 @Service
@@ -22,17 +23,17 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
     private MovieDao movieDao;
 
     @Override
-    public void saveRelaton(MovieSeriesVo vo) {
+    public void saveRelaton(MovieSeriesDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(vo.getMovie());
-            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
-        Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
+        Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
         if (series == null) {
-            seriesDao.save(vo.getSeries());
-            series = seriesDao.querySeriesByName(vo.getSeries().getName());
+            seriesDao.save(dto.getSeries());
+            series = seriesDao.querySeriesByName(dto.getSeries().getName());
         }
         MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(),
                 series.getId());
@@ -42,6 +43,22 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
             relation.setSeriesId(series.getId());
             movieSeriesDao.addMovieSeriesRelation(relation);
         }
+    }
+
+    @Override
+    public MovieSeriesVO queryRelations(Integer movieId) {
+        MovieSeriesVO vo = new MovieSeriesVO();
+        Movie movie = movieDao.queryMovieById(movieId);
+        vo.setMovie(movie);
+        // TODO Auto-generated method stub
+        MovieSeriesRelation relation = movieSeriesDao.queryMovieSeriesRelationByMovieId(movieId);
+        if (relation == null) {
+            vo.setSeries(null);
+            return null;
+        }
+        Series series = seriesDao.querySeriesById(relation.getSeriesId());
+        vo.setSeries(series);
+        return vo;
     }
 
 }

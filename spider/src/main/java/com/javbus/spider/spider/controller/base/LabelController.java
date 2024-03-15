@@ -1,6 +1,8 @@
 package com.javbus.spider.spider.controller.base;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +26,17 @@ public class LabelController {
         }
         labelService.saveLabel(label);
         return R.ok();
+    }
+
+    @GetMapping("query/id/{id}")
+    public R queryLabelById(@PathVariable Integer id) {
+        Label label = labelService.queryLabelById(id);
+        return R.ok().put("label", label);
+    }
+
+    @GetMapping("query/name/{name}")
+    public R queryLabelByName(@PathVariable String name) {
+        Label label = labelService.queryLabelByName(name);
+        return R.ok().put("label", label);
     }
 }

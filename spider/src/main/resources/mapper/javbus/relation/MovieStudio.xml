@@ -20,4 +20,12 @@
     <select id="queryMovieStudioRelation"
         resultMap="movieStudioRelationResultMap"> SELECT * FROM
         movie_studio_relation WHERE movie_id = #{movieId} AND studio_id = #{studioId} </select>
+
+    <!-- queryMovieStudioRelationByMovieId --> 
+
+    <select id="queryMovieStudioRelationByMovieId">
+        SELECT * 
+        FROM movie_studio_relation 
+        WHERE movie_id = #{movieId}
+    </select>
 </mapper>

@@ -12,16 +12,25 @@ import com.javbus.spider.spider.service.base.ActressService;
 @Service
 public class ActressServiceImpl implements ActressService {
     @Autowired
-    private ActressDao ActressDao;
+    private ActressDao actressDao;
     @Override
     public void saveActress(Actress Actress) {
         // TODO Auto-generated method stub
-        ActressDao.saveActress(Actress);
+        actressDao.saveActress(Actress);
     }
     @Override
     public void saveActresses(List<Actress> actresses) {
         // TODO Auto-generated method stub
-        ActressDao.saveActresses(actresses);
+        actressDao.saveActresses(actresses);
     }
-    
+    @Override
+    public Actress queryActressById(Integer id) {
+        // TODO Auto-generated method stub
+        return actressDao.queryActressById(id);
+    }
+    @Override
+    public Actress queryActressByName(String name) {
+        // TODO Auto-generated method stub
+        return actressDao.queryActressByName(name);
+    }
 }

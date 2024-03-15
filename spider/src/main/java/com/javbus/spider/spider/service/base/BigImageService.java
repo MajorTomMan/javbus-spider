@@ -6,4 +6,6 @@ public interface BigImageService {
 
     void saveBigImage(BigImage bigImage);
 
+    BigImage queryBigImageById(Integer id);
+
 }

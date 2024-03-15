@@ -19,4 +19,10 @@
     <select id="queryMovieBigImageRelation"
         resultMap="movieBigImageRelationResultMap"> SELECT * FROM
         movie_big_image_relation WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId} </select>
+
+    <!-- queryMovieBigImageRelationByMovieId --> 
+
+    <select id="queryMovieBigImageRelationByMovieId" resultMap="movieBigImageRelationResultMap">
+        SELECT * FROM movie_big_image_relation WHERE movie_id=#{movieId}
+    </select>
 </mapper>

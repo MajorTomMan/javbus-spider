@@ -8,6 +8,8 @@ import com.javbus.spider.spider.service.base.DirectorService;
 import com.javbus.spider.spider.utils.R;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,5 +28,9 @@ public class DirectorController {
         directorService.saveDirector(director);
         return R.ok();
     }
-
+    @GetMapping("query/id/{id}")
+    public R queryDirectorById(@PathVariable Integer id){
+        Director director=directorService.queryDirectorById(id);
+        return R.ok().put("director", director);
+    }
 }

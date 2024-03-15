@@ -8,4 +8,6 @@ public interface SampleImageService {
 
     void saveSampleImages(List<SampleImage> sampleImages);
 
+    SampleImage querySampleImageById(Integer id);
+
 }

@@ -28,4 +28,8 @@
             #{categoryId}
         </foreach>
     </select>
+
+    <select id="queryGenreCategoryRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
+        select * from genre_category_relation WHERE genre_id = #{genreId}
+    </select>
 </mapper>

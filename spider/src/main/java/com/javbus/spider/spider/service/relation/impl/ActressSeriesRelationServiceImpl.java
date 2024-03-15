@@ -12,36 +12,38 @@ import com.javbus.spider.spider.dao.relation.ActressSeriesDao;
 import com.javbus.spider.spider.entity.base.Series;
 import com.javbus.spider.spider.entity.base.Actress;
 import com.javbus.spider.spider.entity.relation.ActressSeriesRelation;
-import com.javbus.spider.spider.entity.vo.ActressSeriesVo;
+import com.javbus.spider.spider.entity.vo.ActressSeriesVO;
+import com.javbus.spider.spider.entity.dto.ActressSeriesDTO;
 import com.javbus.spider.spider.service.relation.ActressSeriesRelationService;
 
 @Service
 public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationService {
     @Autowired
-    private ActressSeriesDao ActressSeriesDao;
+    private ActressSeriesDao actressSeriesDao;
     @Autowired
     private SeriesDao seriesDao;
     @Autowired
-    private ActressDao ActressDao;
+    private ActressDao actressDao;
 
     @Override
-    public void saveRelation(ActressSeriesVo vo) {
+    public void saveRelation(ActressSeriesDTO dto) {
         // TODO Auto-generated method stub
-        List<Actress> actresses = vo.getActress();
+        List<Actress> actresses = dto.getActress();
         List<String> names = actresses.stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> ActressIds = ActressDao.queryActressIdsByNames(names);
+        List<Integer> ActressIds = actressDao.queryActressIdsByNames(names);
         if (ActressIds == null || ActressIds.isEmpty()) {
-            ActressDao.saveActresses(actresses);
-            ActressIds = ActressDao.queryActressIdsByNames(names);
+            actressDao.saveActresses(actresses);
+            ActressIds = actressDao.queryActressIdsByNames(names);
         }
-        Series series = seriesDao.querySeriesByName(vo.getSeries().getName());
+        Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
         if (series == null) {
-            seriesDao.save(vo.getSeries());
-            series = seriesDao.querySeriesByName(vo.getSeries().getName());
+            seriesDao.save(dto.getSeries());
+            series = seriesDao.querySeriesByName(dto.getSeries().getName());
         }
-        List<ActressSeriesRelation> ActressSeriesRelations = ActressSeriesDao.queryActressSeriesRelations(ActressIds, series.getId());
+        List<ActressSeriesRelation> ActressSeriesRelations = actressSeriesDao.queryActressSeriesRelations(ActressIds,
+                series.getId());
         if (ActressSeriesRelations == null || ActressSeriesRelations.isEmpty()) {
             final Series final_series = series;
             List<ActressSeriesRelation> relations = ActressIds.stream().map((id) -> {
@@ -50,9 +52,27 @@ public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationSe
                 relation.setActressId(id);
                 return relation;
             }).collect(Collectors.toList());
-            ActressSeriesDao.addActressSeriesRelations(relations);
+            actressSeriesDao.addActressSeriesRelations(relations);
         }
 
+    }
+
+    @Override
+    public ActressSeriesVO queryRelations(Integer actressId) {
+        // TODO Auto-generated method stub
+        List<ActressSeriesRelation> relations = actressSeriesDao.queryActressSeriesRelationsByActressId(actressId);
+        if (relations == null || relations.isEmpty()) {
+            return null;
+        }
+        Actress actress = actressDao.queryActressById(actressId);
+        List<Integer> seriesIds = relations.stream().map(re -> {
+            return re.getSeriesId();
+        }).collect(Collectors.toList());
+        List<Series> series = seriesDao.querySeriesByIds(seriesIds);
+        ActressSeriesVO vo = new ActressSeriesVO();
+        vo.setActress(actress);
+        vo.setSeries(series);
+        return vo;
     }
 
 }

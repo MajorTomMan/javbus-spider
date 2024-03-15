@@ -9,5 +9,9 @@ public interface CategoryService {
     void saveCategory(Category category);
 
     void saveCategories(List<Category> categories);
+
+    Category queryCategoryById(Integer id);
+
+    Category queryCategoryByName(String name);
     
 }

@@ -11,10 +11,12 @@ import com.javbus.spider.spider.dao.base.SampleImageDao;
 import com.javbus.spider.spider.dao.dto.MovieActressSampleImageDao;
 import com.javbus.spider.spider.dao.relation.MovieSampleImageDao;
 import com.javbus.spider.spider.entity.base.Movie;
+import com.javbus.spider.spider.entity.base.SampleImage;
 import com.javbus.spider.spider.entity.dto.ImageDTO;
 import com.javbus.spider.spider.entity.dto.SampleImageDTO;
 import com.javbus.spider.spider.entity.relation.MovieSampleImageRelation;
-import com.javbus.spider.spider.entity.vo.MovieSampleImageVo;
+import com.javbus.spider.spider.entity.vo.MovieSampleImageVO;
+import com.javbus.spider.spider.entity.dto.MovieSampleImageDTO;
 import com.javbus.spider.spider.service.relation.MovieSampleImageRelationService;
 import com.javbus.spider.spider.utils.ImageUtil;
 
@@ -32,17 +34,17 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
     private ImageUtil imageUtil;
 
     @Override
-    public void saveRelation(MovieSampleImageVo vo) {
+    public void saveRelation(MovieSampleImageDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(vo.getMovie());
-            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
-        List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());
+        List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
         if (sampleImageIds == null || sampleImageIds.isEmpty()) {
-            sampleImageDao.saveSampleImages(vo.getSampleImages());
-            sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(vo.getSampleImages());
+            sampleImageDao.saveSampleImages(dto.getSampleImages());
+            sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
         }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);
@@ -73,9 +75,27 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
                     sampleImageDTO.setSampleImage(null);
                 }
                 return sampleImageDTO;
-            }).filter(dto -> dto.getSampleImage() != null).collect(Collectors.toList());
+            }).filter(imageDTO -> imageDTO.getSampleImage() != null).collect(Collectors.toList());
             imageUtil.saveSampleImage(sampleImageDTOs);
         }
+    }
+
+    @Override
+    public MovieSampleImageVO queryRelations(Integer movieId) {
+        // TODO Auto-generated method stub
+        List<MovieSampleImageRelation> relations = movieSampleImageDao.queryMovieSampleImageRelationsByMovieId(movieId);
+        if (relations == null || relations.isEmpty()) {
+            return null;
+        }
+        Movie movie = movieDao.queryMovieById(movieId);
+        List<Integer> sampleImageIds = relations.stream().map(relation -> {
+            return relation.getSampleImageId();
+        }).collect(Collectors.toList());
+        List<SampleImage> sampleImages = sampleImageDao.querySampleImagesByIds(sampleImageIds);
+        MovieSampleImageVO vo = new MovieSampleImageVO();
+        vo.setMovie(movie);
+        vo.setSampleImages(sampleImages);
+        return vo;
     }
 
 }

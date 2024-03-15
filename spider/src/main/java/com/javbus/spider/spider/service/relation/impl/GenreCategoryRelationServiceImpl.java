@@ -12,7 +12,8 @@ import com.javbus.spider.spider.dao.relation.GenreCategoryDao;
 import com.javbus.spider.spider.entity.base.Category;
 import com.javbus.spider.spider.entity.base.Genre;
 import com.javbus.spider.spider.entity.relation.GenreCategoryRelation;
-import com.javbus.spider.spider.entity.vo.GenreCategoryVo;
+import com.javbus.spider.spider.entity.vo.GenreCategoryVO;
+import com.javbus.spider.spider.entity.dto.GenreCategoryDTO;
 import com.javbus.spider.spider.service.relation.GenreCategoryRelationService;
 
 @Service
@@ -25,12 +26,12 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
     private GenreDao genreDao;
 
     @Override
-    public void saveRelation(GenreCategoryVo vo) {
+    public void saveRelation(GenreCategoryDTO dto) {
         // TODO Auto-generated method stub
-        Genre genre = vo.getGenre();
-        genreDao.saveGenre(vo.getGenre());
+        Genre genre = dto.getGenre();
+        genreDao.saveGenre(dto.getGenre());
         Integer genreId = genreDao.queryGenreIdByName(genre.getName());
-        List<Category> categories = vo.getCategories();
+        List<Category> categories = dto.getCategories();
         categoryDao.saveCategories(categories);
         List<String> categoryNames = categories.stream().map(category -> {
             return category.getName();
@@ -47,6 +48,24 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
             }).collect(Collectors.toList());
             genreCategoryDao.addGenreCategoryRelations(relations);
         }
+    }
+
+    @Override
+    public GenreCategoryVO queryRelations(Integer genreId) {
+        // TODO Auto-generated method stub
+        List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryRelationsByGenreId(genreId);
+        if (relations == null|| relations.isEmpty()) {
+            return null;
+        }
+        Genre genre = genreDao.queryGenreById(genreId);
+        List<Integer> categoryIds = relations.stream().map(relation -> {
+            return relation.getCategoryId();
+        }).collect(Collectors.toList());
+        List<Category> categories = categoryDao.queryCategories(categoryIds);
+        GenreCategoryVO vo = new GenreCategoryVO();
+        vo.setCategories(categories);
+        vo.setGenre(genre);
+        return vo;
     }
 
 }

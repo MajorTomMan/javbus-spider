@@ -21,4 +21,12 @@
         FROM movie_label_relation 
         WHERE movie_id = #{movieId} AND label_id = #{labelId} 
     </select>
+
+    <!-- queryMovieLabelRelationByMovieId --> 
+
+    <select id="queryMovieLabelRelationByMovieId">
+        Select * 
+        FROM movie_label_relation 
+        WHERE movie_id = #{movieId}
+    </select>
 </mapper>

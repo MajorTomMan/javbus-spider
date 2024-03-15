@@ -13,4 +13,5 @@ public interface ActressDirectorDao {
     void deleteActressDirectorRelation(Integer actressId, Integer directorId);
     ActressDirectorRelation queryActressDirectorRelation(Integer actressId, Integer directorId);
     List<ActressDirectorRelation> queryActressDirectorRelations(List<Integer> actressIds, Integer directorId);
+    ActressDirectorRelation queryActressDirectorRelationByActressId(Integer actressId);
 }

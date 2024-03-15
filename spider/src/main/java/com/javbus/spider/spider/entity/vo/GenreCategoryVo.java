@@ -8,8 +8,7 @@ import com.javbus.spider.spider.entity.base.Genre;
 import lombok.Data;
 
 @Data
-public class GenreCategoryVo {
-    private Integer id;
-    private Genre genre;
-    private List<Category> categories;
+public class GenreCategoryVO {
+    Genre genre;
+    List<Category> categories;
 }

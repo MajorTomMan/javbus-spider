@@ -16,5 +16,14 @@ public class LabelServiceImpl implements LabelService{
         // TODO Auto-generated method stub
         labelDao.save(label);
     }
-    
+    @Override
+    public Label queryLabelById(Integer id) {
+        // TODO Auto-generated method stub
+        return labelDao.queryLabelById(id);
+    }
+    @Override
+    public Label queryLabelByName(String name) {
+        // TODO Auto-generated method stub
+        return labelDao.queryLabelByName(name);
+    }
 }

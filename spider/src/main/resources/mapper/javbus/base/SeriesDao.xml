@@ -20,4 +20,13 @@
         DELETE FROM series
         WHERE id = #{id}
     </delete>
+
+    <!-- querySeriesByIds --> 
+
+    <select id="querySeriesByIds">
+        SELECT * FROM series WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

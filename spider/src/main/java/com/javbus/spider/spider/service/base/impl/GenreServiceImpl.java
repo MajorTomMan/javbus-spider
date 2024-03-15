@@ -16,5 +16,15 @@ public class GenreServiceImpl implements GenreService {
         // TODO Auto-generated method stub
         genreDao.saveGenre(genre);
     }
-    
+    @Override
+    public Genre queryGenreById(Integer id) {
+        // TODO Auto-generated method stub
+        return genreDao.queryGenreById(id);
+    }
+    @Override
+    public Genre queryGenreByName(String name) {
+        // TODO Auto-generated method stub
+        return genreDao.queryGenreByName(name);
+    }
+
 }

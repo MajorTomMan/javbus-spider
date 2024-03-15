@@ -16,4 +16,14 @@ public class MovieServiceImpl implements MovieService {
         // TODO Auto-generated method stub
         movieDao.saveMovie(movie);
     }
+    @Override
+    public Movie queryMovieById(Integer id) {
+        // TODO Auto-generated method stub
+        return movieDao.queryMovieById(id);
+    }
+    @Override
+    public Movie queryMovieByCode(String code) {
+        // TODO Auto-generated method stub
+        return movieDao.queryMovieByCode(code);
+    }
 }

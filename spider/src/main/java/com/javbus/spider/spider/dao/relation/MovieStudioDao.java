@@ -10,4 +10,6 @@ public interface MovieStudioDao {
 
     void deleteMovieStudioRelation(Integer movieId, Integer studioId);
     MovieStudioRelation queryMovieStudioRelation(Integer movieId, Integer studioId);
+
+    MovieStudioRelation queryMovieStudioRelationByMovieId(Integer movieId);
 }

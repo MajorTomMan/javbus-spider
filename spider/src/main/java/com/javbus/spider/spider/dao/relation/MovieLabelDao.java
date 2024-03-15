@@ -10,4 +10,6 @@ public interface MovieLabelDao {
 
     void deleteMovieLabelRelation(Integer movieId, Integer labelId);
     MovieLabelRelation queryMovieLabelRelation(Integer movieId, Integer labelId);
+
+    MovieLabelRelation queryMovieLabelRelationByMovieId(Integer movieId);
 }

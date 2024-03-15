@@ -16,5 +16,10 @@ public class DirectorServiceImpl implements DirectorService {
         // TODO Auto-generated method stub
         directorDao.save(director);
     }
+    @Override
+    public Director queryDirectorById(Integer id) {
+        // TODO Auto-generated method stub
+        return directorDao.queryDirectorById(id);
+    }
     
 }

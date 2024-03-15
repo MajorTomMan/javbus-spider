@@ -15,5 +15,5 @@ public interface ActressCategoryDao {
 
     void addActressCategoryRelations(List<ActressCategoryRelation> relations);
     List<ActressCategoryRelation> queryActressCategoryRelations(List<Integer> actressIds,List<Integer> categoryIds);
-    List<ActressCategoryRelation> queryActressCategoryRelationsByActressId(Integer actressId,List<Integer> categoryIds);
+    List<ActressCategoryRelation> queryActressCategoryRelationsByActressId(Integer actressId);
 }

@@ -9,7 +9,8 @@ import com.javbus.spider.spider.dao.relation.MovieStudioDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.Studio;
 import com.javbus.spider.spider.entity.relation.MovieStudioRelation;
-import com.javbus.spider.spider.entity.vo.MovieStudioVo;
+import com.javbus.spider.spider.entity.vo.MovieStudioVO;
+import com.javbus.spider.spider.entity.dto.MovieStudioDTO;
 import com.javbus.spider.spider.service.relation.MovieStudioRelationService;
 
 @Service
@@ -22,25 +23,44 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
     private MovieDao movieDao;
 
     @Override
-    public void saveRelation(MovieStudioVo vo) {
+    public void saveRelation(MovieStudioDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(vo.getMovie());
-            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
-        Studio studio = studioDao.queryStudioByName(vo.getStudio().getName());
+        Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
         if (studio == null) {
-            studioDao.save(vo.getStudio());
-            studio = studioDao.queryStudioByName(vo.getStudio().getName());
+            studioDao.save(dto.getStudio());
+            studio = studioDao.queryStudioByName(dto.getStudio().getName());
         }
-        MovieStudioRelation movieStudioRelation = movieStudioDao.queryMovieStudioRelation(movie.getId(), studio.getId());
-        if(movieStudioRelation==null){
+        MovieStudioRelation movieStudioRelation = movieStudioDao.queryMovieStudioRelation(movie.getId(),
+                studio.getId());
+        if (movieStudioRelation == null) {
             MovieStudioRelation relation = new MovieStudioRelation();
             relation.setMovieId(movie.getId());
             relation.setStudioId(studio.getId());
             movieStudioDao.addMovieStudioRelation(relation);
         }
+    }
+
+    @Override
+    public MovieStudioVO queryRelations(Integer movieId) {
+        MovieStudioVO vo = new MovieStudioVO();
+        Movie movie = movieDao.queryMovieById(movieId);
+        vo.setMovie(movie);
+        // TODO Auto-generated method stub
+        MovieStudioRelation relation = movieStudioDao.queryMovieStudioRelationByMovieId(movieId);
+        if (relation == null) {
+            return null;
+        } else if (relation.getStudioId() == null) {
+            vo.setStudio(null);
+            return vo;
+        }
+        Studio studio = studioDao.queryStudioById(relation.getStudioId());
+        vo.setStudio(studio);
+        return vo;
     }
 
 }

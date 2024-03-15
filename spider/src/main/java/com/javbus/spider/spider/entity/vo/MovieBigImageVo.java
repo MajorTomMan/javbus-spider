@@ -6,7 +6,7 @@ import com.javbus.spider.spider.entity.base.Movie;
 import lombok.Data;
 
 @Data
-public class MovieBigImageVo {
-    private Movie movie;
-    private BigImage bigImage;
+public class MovieBigImageVO {
+    Movie movie;
+    BigImage bigImage;
 }

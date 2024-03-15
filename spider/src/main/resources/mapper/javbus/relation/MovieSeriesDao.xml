@@ -17,4 +17,11 @@
     <select id="queryMovieSeriesRelation"
         resultMap="movieSeriesRelationResultMap"> SELECT * FROM
         movie_series_relation WHERE movie_id = #{movieId} AND series_id = #{seriesId} </select>
+
+    <!-- queryMovieSeriesRelationByMovieId --> 
+
+    <select id="queryMovieSeriesRelationByMovieId" resultMap="movieSeriesRelationResultMap">
+        SELECT * FROM
+        movie_series_relation WHERE movie_id = #{movieId}
+    </select>
 </mapper>

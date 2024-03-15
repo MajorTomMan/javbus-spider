@@ -23,4 +23,12 @@
         WHERE movie_id = #{movieId} 
         AND director_id = #{directorId}
     </select>
+
+    <!-- queryMovieDirectorRelationByMovieId --> 
+
+    <select id="queryMovieDirectorRelationByMovieId" resultMap="movieDirectorRelationResultMap">
+        Select *
+        FROM movie_director_relation 
+        WHERE movie_id = #{movieId} 
+    </select>
 </mapper>

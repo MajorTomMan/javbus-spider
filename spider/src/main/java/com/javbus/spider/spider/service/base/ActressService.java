@@ -8,4 +8,8 @@ public interface ActressService{
     void saveActress(Actress actress);
     
     void saveActresses(List<Actress> stars);
+
+    Actress queryActressById(Integer id);
+
+    Actress queryActressByName(String name);
 }

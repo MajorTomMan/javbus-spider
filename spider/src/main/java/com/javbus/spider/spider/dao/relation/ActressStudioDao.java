@@ -15,4 +15,6 @@ public interface ActressStudioDao {
     void addActressStudioRelations(List<ActressStudioRelation> relations);
     ActressStudioRelation queryActressStudioRelation(Integer actressId, Integer studioId);
     List<ActressStudioRelation> queryActressStudioRelations(List<Integer> actressIds, Integer studioId);
+
+    List<ActressStudioRelation> queryActressStudioRelationByActressId(Integer actressId);
 }

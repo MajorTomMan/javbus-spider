@@ -27,4 +27,10 @@
         actress_series_relation WHERE actress_id IN <foreach
             collection="actressIds" item="actressId" open="(" separator="," close=")"> #{actressId} </foreach>
         AND series_id = #{seriesId} </select>
+
+    <!-- queryActressSeriesRelationsByActressId --> 
+
+    <select id="queryActressSeriesRelationsByActressId">
+        SELECT * FROM actress_series_relation where actress_id=#{actressId}
+    </select>
 </mapper>

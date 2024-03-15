@@ -9,7 +9,8 @@ import com.javbus.spider.spider.dao.relation.MovieLabelDao;
 import com.javbus.spider.spider.entity.base.Label;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.relation.MovieLabelRelation;
-import com.javbus.spider.spider.entity.vo.MovieLabelVo;
+import com.javbus.spider.spider.entity.vo.MovieLabelVO;
+import com.javbus.spider.spider.entity.dto.MovieLabelDTO;
 import com.javbus.spider.spider.service.relation.MovieLabelRelationService;
 
 @Service
@@ -22,17 +23,17 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     private MovieDao movieDao;
 
     @Override
-    public void saveRelation(MovieLabelVo vo) {
+    public void saveRelation(MovieLabelDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(vo.getMovie());
-            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
-        Label label = labelDao.queryLabelByName(vo.getLabel().getName());
+        Label label = labelDao.queryLabelByName(dto.getLabel().getName());
         if (label == null) {
-            labelDao.save(vo.getLabel());
-            label = labelDao.queryLabelByName(vo.getLabel().getName());
+            labelDao.save(dto.getLabel());
+            label = labelDao.queryLabelByName(dto.getLabel().getName());
         }
         MovieLabelRelation movieLabelRelation = movieLabelDao.queryMovieLabelRelation(movie.getId(), label.getId());
         if (movieLabelRelation == null) {
@@ -42,6 +43,21 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
             movieLabelDao.addMovieLabelRelation(relation);
         }
 
+    }
+
+    @Override
+    public MovieLabelVO queryRelations(Integer movieId) {
+        // TODO Auto-generated method stub
+        MovieLabelRelation relation=movieLabelDao.queryMovieLabelRelationByMovieId(movieId);
+        if (relation == null) {
+            return null;
+        }
+        MovieLabelVO vo = new MovieLabelVO();
+        Movie movie = movieDao.queryMovieById(movieId);
+        vo.setMovie(movie);
+        Label label = labelDao.queryLabelById(relation.getLabelId());
+        vo.setLabel(label);
+        return vo;
     }
 
 }

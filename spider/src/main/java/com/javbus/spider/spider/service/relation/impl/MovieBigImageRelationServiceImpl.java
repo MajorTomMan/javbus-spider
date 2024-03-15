@@ -15,7 +15,8 @@ import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.dto.BigImageDTO;
 import com.javbus.spider.spider.entity.dto.ImageDTO;
 import com.javbus.spider.spider.entity.relation.MovieBigImageRelation;
-import com.javbus.spider.spider.entity.vo.MovieBigImageVo;
+import com.javbus.spider.spider.entity.vo.MovieBigImageVO;
+import com.javbus.spider.spider.entity.dto.MovieBigImageDTO;
 import com.javbus.spider.spider.service.relation.MovieBigImageRelationService;
 import com.javbus.spider.spider.utils.ImageUtil;
 
@@ -33,18 +34,18 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
     private ImageUtil imageUtil;
 
     @Override
-    public void saveRelaton(MovieBigImageVo vo) {
+    public void saveRelaton(MovieBigImageDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(vo.getMovie());
-            movie = movieDao.queryMovieByCode(vo.getMovie().getCode());
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
-        BigImage bigImage = vo.getBigImage();
+        BigImage bigImage = dto.getBigImage();
         BigImage bigImageResult = bigImageDao.queryBigImageByLink(bigImage.getLink());
         if (bigImageResult == null) {
             bigImageDao.saveBigImage(bigImage);
-            bigImageResult = bigImageDao.queryBigImageByLink(vo.getBigImage().getLink());
+            bigImageResult = bigImageDao.queryBigImageByLink(dto.getBigImage().getLink());
         }
         MovieBigImageRelation movieBigImageRelation = movieBigImageDao.queryMovieBigImageRelation(movie.getId(),
                 bigImageResult.getId());
@@ -71,9 +72,24 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
                     bigImageDTO.setBigImage(null);
                 }
                 return bigImageDTO;
-            }).filter(dto -> dto.getBigImage() != null).collect(Collectors.toList());
+            }).filter(imageDTO -> imageDTO.getBigImage() != null).collect(Collectors.toList());
             imageUtil.saveBigImage(bigImageDTOs);
         }
+    }
+
+    @Override
+    public MovieBigImageVO queryRelations(Integer movieId) {
+        // TODO Auto-generated method stub
+        MovieBigImageRelation relation = movieBigImageDao.queryMovieBigImageRelationByMovieId(movieId);
+        if (relation == null) {
+            return null;
+        }
+        Movie movie = movieDao.queryMovieById(relation.getMovieId());
+        BigImage BigImage = bigImageDao.queryBigImageById(relation.getBigImageId());
+        MovieBigImageVO vo = new MovieBigImageVO();
+        vo.setBigImage(BigImage);
+        vo.setMovie(movie);
+        return vo;
     }
 
 }

@@ -1,9 +1,12 @@
 package com.javbus.spider.spider.service.relation;
 
-import com.javbus.spider.spider.entity.vo.MovieCategoryVo;
+import com.javbus.spider.spider.entity.dto.MovieCategoryDTO;
+import com.javbus.spider.spider.entity.vo.MovieCategoryVO;
 
 public interface MovieCategoryRelationService {
 
-    void saveRelation(MovieCategoryVo vo);
+    void saveRelation(MovieCategoryDTO dto);
+
+    MovieCategoryVO queryRelations(Integer movieId);
     
 }

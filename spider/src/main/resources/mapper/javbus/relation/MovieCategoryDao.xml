@@ -30,4 +30,11 @@
             collection="categoryIds" item="categoryId" open="(" separator="," close=")">
         #{categoryId} </foreach>
     </select>
+
+    <!-- queryMovieCategoryRelationsByMovieId --> 
+
+    <select id="queryMovieCategoryRelationsByMovieId" resultMap="movieCategoryRelationResultMap">
+        SELECT * FROM movie_category_relation WHERE movie_id =
+        #{movieId}
+    </select>
 </mapper>

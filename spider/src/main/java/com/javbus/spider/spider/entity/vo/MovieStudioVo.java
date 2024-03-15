@@ -7,7 +7,7 @@ import lombok.Data;
 
 
 @Data
-public class MovieStudioVo {
-    private Movie movie;
-    private Studio studio;
+public class MovieStudioVO {
+    Movie movie;
+    Studio studio;
 }

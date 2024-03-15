@@ -6,7 +6,7 @@ import com.javbus.spider.spider.entity.base.Movie;
 import lombok.Data;
 
 @Data
-public class MovieLabelVo {
-    private Movie movie;
-    private Label label;
+public class MovieLabelVO {
+    Movie movie;
+    Label label;
 }

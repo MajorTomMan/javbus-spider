@@ -23,5 +23,15 @@ public class CategoryServiceImpl implements CategoryService{
         // TODO Auto-generated method stub
         categoryDao.saveCategories(categories);
     }
+    @Override
+    public Category queryCategoryById(Integer id) {
+        // TODO Auto-generated method stub
+        return categoryDao.queryCategoryById(id);
+    }
+    @Override
+    public Category queryCategoryByName(String name) {
+        // TODO Auto-generated method stub
+        return categoryDao.queryCategoryByName(name);
+    }
     
 }

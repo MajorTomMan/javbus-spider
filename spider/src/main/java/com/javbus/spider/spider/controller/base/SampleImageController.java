@@ -3,6 +3,8 @@ package com.javbus.spider.spider.controller.base;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,11 @@ public class SampleImageController {
         }
         sampleImageService.saveSampleImages(sampleImages);
         return R.ok();
+    }
+
+    @GetMapping("query/id/{id}")
+    public R querySampleImageById(@PathVariable Integer id) {
+        SampleImage sampleImage = sampleImageService.querySampleImageById(id);
+        return R.ok().put("sampleImage", sampleImage);
     }
 }

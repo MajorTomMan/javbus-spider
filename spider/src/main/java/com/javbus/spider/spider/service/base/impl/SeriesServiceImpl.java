@@ -17,5 +17,15 @@ public class SeriesServiceImpl implements SeriesService{
         // TODO Auto-generated method stub
         seriesDao.save(series);
     }
+    @Override
+    public Series querySeriesById(Integer id) {
+        // TODO Auto-generated method stub
+        return seriesDao.querySeriesById(id);
+    }
+    @Override
+    public Series querySeriesByName(String name) {
+        // TODO Auto-generated method stub
+        return seriesDao.querySeriesByName(name);
+    }
     
 }

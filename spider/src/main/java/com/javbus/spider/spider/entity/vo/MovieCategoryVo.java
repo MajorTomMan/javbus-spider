@@ -7,7 +7,7 @@ import com.javbus.spider.spider.entity.base.Movie;
 
 import lombok.Data;
 @Data
-public class MovieCategoryVo {
-    private Movie movie;
-    private List<Category> categories;
+public class MovieCategoryVO {
+    Movie movie;
+    List<Category> categories;
 }

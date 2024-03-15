@@ -34,4 +34,12 @@
             collection="sampleImageIds" item="sampleImageId" open="(" separator="," close=")">
         #{sampleImageId} </foreach>
     </select>
+
+    <!-- queryMovieSampleImageRelationsByMovieId --> 
+
+    <select id="queryMovieSampleImageRelationsByMovieId">
+        SELECT *
+        FROM movie_sample_image_relation 
+        WHERE movie_id=#{movieId}
+    </select>
 </mapper>

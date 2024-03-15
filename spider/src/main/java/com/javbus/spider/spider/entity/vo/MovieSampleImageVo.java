@@ -8,7 +8,7 @@ import com.javbus.spider.spider.entity.base.SampleImage;
 import lombok.Data;
 
 @Data
-public class MovieSampleImageVo {
-    private Movie movie;
-    private List<SampleImage> sampleImages;
+public class MovieSampleImageVO {
+    Movie movie;
+    List<SampleImage> sampleImages;
 }

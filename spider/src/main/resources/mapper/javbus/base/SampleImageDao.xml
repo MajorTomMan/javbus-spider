@@ -16,4 +16,13 @@
             (#{image.link})
         </foreach>
     </insert>
+
+    <!-- querySampleImagesByIds --> 
+
+    <select id="querySampleImagesByIds">
+        SELECT * FROM sample_image WHERE id IN
+        <foreach collection="sampleImageIds" item="sampleImageId">
+            #{sampleImageId}
+        </foreach>
+    </select>
 </mapper>

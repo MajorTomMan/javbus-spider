@@ -28,4 +28,12 @@
         WHERE id = #{id}
     </update>
 
+    <!-- queryStudioByIds --> 
+
+    <select id="queryStudioByIds">
+        SELECT * FROM studio WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

@@ -13,4 +13,6 @@ public interface MovieSeriesDao {
 
     void deleteMovieSeriesRelation(Integer movieId, Integer seriesId);
     MovieSeriesRelation queryMovieSeriesRelation(Integer movieId, Integer seriesId);
+
+    MovieSeriesRelation queryMovieSeriesRelationByMovieId(Integer movieId);
 }

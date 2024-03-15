@@ -11,9 +11,9 @@ public interface CategoryDao {
     Category queryCategoryById(Integer id);
     Category queryCategoryByName(String name);
     List<Integer> queryCategoryIdsByNames(List<String> names);
+    List<Category> queryCategories(List<Integer> categoryIds);
     void saveCategory(Category category);
     void saveCategories(List<Category> categories);
     void delete(Integer id);
-
     void update(Category category);
 }

@@ -16,5 +16,10 @@ public class BigImageServiceImpl implements BigImageService {
         // TODO Auto-generated method stub
         bigImageDao.saveBigImage(bigImage);
     }
+    @Override
+    public BigImage queryBigImageById(Integer id) {
+        // TODO Auto-generated method stub
+        return bigImageDao.queryBigImageById(id);
+    }
     
 }

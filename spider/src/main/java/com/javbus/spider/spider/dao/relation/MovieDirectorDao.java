@@ -11,4 +11,6 @@ public interface MovieDirectorDao {
     void deleteMovieDirectorRelation(Integer movidId, Integer directorId);
 
     MovieDirectorRelation queryMovieDirectorRelation(Integer movieId, Integer directorId);
+
+    MovieDirectorRelation queryMovieDirectorRelationByMovieId(Integer movieId);
 }
