@@ -133,8 +133,8 @@ class search:
             self.logUtil.log("bricks not found")
             raise PageException()
 
-    def save2local(self, content, path):
-        with open(path + ".json", "w+", encoding="UTF-8") as f:
+    def save2local(self, content, path, extensions):
+        with open(path + extensions, "w+", encoding="UTF-8") as f:
             json.dump(content, f, ensure_ascii=False)
 
     def send(self, data, path):

@@ -216,8 +216,11 @@ class PageUtil:
         if underline:
             ul = underline.find("ul", {"class": "pagination pagination-lg"})
             if ul:
-                a = ul.find("a", {"id", "next"})
-                if a:
-                    return True
+                li = ul.find_all("li")
+                if li:
+                    for l in li:
+                        a = l.find("a", id="next")
+                        if a:
+                            return True
         print("this page dont have next page element")
         return False
