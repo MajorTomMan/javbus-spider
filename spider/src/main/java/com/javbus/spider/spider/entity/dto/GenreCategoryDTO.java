@@ -9,7 +9,6 @@ import lombok.Data;
 
 @Data
 public class GenreCategoryDTO {
-    private Integer id;
     private Genre genre;
     private List<Category> categories;
 }

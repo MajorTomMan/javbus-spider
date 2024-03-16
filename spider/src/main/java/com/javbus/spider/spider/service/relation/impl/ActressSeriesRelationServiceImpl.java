@@ -33,11 +33,8 @@ public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationSe
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
+        seriesDao.save(dto.getSeries());
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
-        if (series == null) {
-            seriesDao.save(dto.getSeries());
-            series = seriesDao.querySeriesByName(dto.getSeries().getName());
-        }
         List<ActressSeriesRelation> ActressSeriesRelations = actressSeriesDao.queryActressSeriesRelations(actressIds,
                 series.getId());
         if (ActressSeriesRelations == null || ActressSeriesRelations.isEmpty()) {

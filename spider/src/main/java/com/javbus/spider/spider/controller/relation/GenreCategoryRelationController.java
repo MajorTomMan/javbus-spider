@@ -19,7 +19,7 @@ public class GenreCategoryRelationController {
     @Autowired
     private GenreCategoryRelationService genreCategoryRelationService;
 
-    @PostMapping("save")
+    @PostMapping("/save")
     public R saveGenre(@RequestBody GenreCategoryDTO dto) {
         // TODO: process POST request
         if (dto == null || dto.getCategories() == null || dto.getGenre() == null) {
@@ -28,7 +28,6 @@ public class GenreCategoryRelationController {
         genreCategoryRelationService.saveRelation(dto);
         return R.ok();
     }
-
     @GetMapping("query/{genreId}")
     public R queryRelation(@PathVariable Integer genreId) {
         GenreCategoryVO vos = genreCategoryRelationService.queryRelations(genreId);
