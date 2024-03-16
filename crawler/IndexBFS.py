@@ -50,13 +50,13 @@ class index:
                         try:
                             self.__bfs(source)
                         except PageException:
-                            self.save2local(source, "./failed_link/" + link, ".html")
+                            self.save2local(source, link, ".html")
                     else:
                         self.logUtil.log("final page is reach")
                         try:
                             self.__bfs(source)
                         except PageException:
-                            self.save2local(source, "./failed_link/" + link, ".html")
+                            self.save2local(source, link, ".html")
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")
@@ -132,17 +132,16 @@ class index:
             self.logUtil.log("bricks not found")
             raise PageException()
 
-    def save2local(self, content, path, extensions):
+    def save2local(self, content, link, extensions):
         # 获取链接的路径名
-        parsed_url = urlparse(path)
-        path_name = parsed_url.path
-
+        parsed_url = urlparse(link)
+        path_name = parsed_url.path.replace("/", "_")
         # 计算路径名的哈希值
         hash_value = hashlib.md5(path_name.encode()).hexdigest()
 
         # 构建保存文件的路径
         save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
-        with open(path + extensions, "w+", encoding="UTF-8") as f:
+        with open(save_path, "w+", encoding="UTF-8") as f:
             f.write(content)
 
     def send(self, data, path):

@@ -4,15 +4,15 @@
     <select id="querySampleImageById" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.base.SampleImage">
         SELECT * FROM sample_image WHERE id=#{id}
     </select>
-    <select id="querySampleImageIdsByLinks" parameterType="java.util.List" resultType="java.lang.Integer">
+    <select id="querySampleImageIdsByLinks" resultType="java.lang.Integer">
         SELECT id FROM sample_image WHERE link IN
-        <foreach item="item" collection="list" open="(" separator="," close=")">
-            #{item.link}
+        <foreach item="sampleImage" collection="sampleImages" open="(" separator="," close=")">
+            #{sampleImage.link}
         </foreach>
     </select>
     <insert id="saveSampleImages" parameterType="List">
         INSERT IGNORE INTO sample_image (link) VALUES
-        <foreach collection="list" item="image" separator=",">
+        <foreach collection="sampleImages" item="image" separator=",">
             (#{image.link})
         </foreach>
     </insert>

@@ -222,5 +222,5 @@ class PageUtil:
                         a = l.find("a", id="next")
                         if a:
                             return True
-        print("this page dont have next page element")
+        self.logUtil.log("this page dont have next page element")
         return False

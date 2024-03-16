@@ -24,7 +24,7 @@
 
     <!-- queryBigImageByLink --> 
 
-    <select id="queryBigImageByLink" parameterType="java.lang.String">
+    <select id="queryBigImageByLink" parameterType="java.lang.String" resultType="com.javbus.spider.spider.entity.base.BigImage">
         select * from big_image where link=#{link}
     </select>
 </mapper>

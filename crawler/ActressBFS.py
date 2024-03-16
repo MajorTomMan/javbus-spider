@@ -49,13 +49,13 @@ class actresses:
                 try:
                     self.__bfs(source)
                 except PageException:
-                    self.save2local(source, "./failed_link/" + link, ".html")
+                    self.save2local(source, link, ".html")
             else:
                 self.logUtil.log("final page is reach")
                 try:
                     self.__bfs(source)
                 except PageException:
-                    self.save2local(source, "./failed_link/" + link, ".html")
+                    self.save2local(source, link, ".html")
                 break
             self.pageNum += 1
         end_time = time.time()
@@ -117,7 +117,7 @@ class actresses:
                         )
                     self.send(actressList, "/actress/save")
                 else:
-                    self.save2local()
+                    self.save2local(source, "actress/__bfs", ".html")
             if self.timeouts and len(self.timeouts) >= 1:
                 self.logUtil.log("try to request timeout list")
                 for timeout in self.timeouts:
@@ -138,15 +138,15 @@ class actresses:
                         )
                         self.logUtil.log(
                             "retry "
-                            + self.timeout["name"]
-                            + self.timeout["link"]
+                            + timeout["name"]
+                            + timeout["link"]
                             + " was success"
                         )
                     else:
                         self.logUtil.log(
                             "retry "
-                            + self.timeout["name"]
-                            + self.timeout["link"]
+                            + timeout["name"]
+                            + timeout["link"]
                             + " was failure name abandon"
                         )
         else:
@@ -167,12 +167,11 @@ class actresses:
     def save2local(self, content, path, extensions):
         # 获取链接的路径名
         parsed_url = urlparse(path)
-        path_name = parsed_url.path
-
+        path_name = parsed_url.path.replace("/", "_")
         # 计算路径名的哈希值
         hash_value = hashlib.md5(path_name.encode()).hexdigest()
 
         # 构建保存文件的路径
         save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
-        with open(path + extensions, "w+", encoding="UTF-8") as f:
+        with open(save_path, "w+", encoding="UTF-8") as f:
             f.write(content)
