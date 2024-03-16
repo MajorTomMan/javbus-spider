@@ -28,25 +28,21 @@ public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationSe
     @Override
     public void saveRelation(ActressSeriesDTO dto) {
         // TODO Auto-generated method stub
-        List<Actress> actresses = dto.getActress();
-        List<String> names = actresses.stream().map((Actress) -> {
+        actressDao.saveActresses(dto.getActress());
+        List<String> names = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> ActressIds = actressDao.queryActressIdsByNames(names);
-        if (ActressIds == null || ActressIds.isEmpty()) {
-            actressDao.saveActresses(actresses);
-            ActressIds = actressDao.queryActressIdsByNames(names);
-        }
+        List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
         if (series == null) {
             seriesDao.save(dto.getSeries());
             series = seriesDao.querySeriesByName(dto.getSeries().getName());
         }
-        List<ActressSeriesRelation> ActressSeriesRelations = actressSeriesDao.queryActressSeriesRelations(ActressIds,
+        List<ActressSeriesRelation> ActressSeriesRelations = actressSeriesDao.queryActressSeriesRelations(actressIds,
                 series.getId());
         if (ActressSeriesRelations == null || ActressSeriesRelations.isEmpty()) {
             final Series final_series = series;
-            List<ActressSeriesRelation> relations = ActressIds.stream().map((id) -> {
+            List<ActressSeriesRelation> relations = actressIds.stream().map((id) -> {
                 ActressSeriesRelation relation = new ActressSeriesRelation();
                 relation.setSeriesId(final_series.getId());
                 relation.setActressId(id);

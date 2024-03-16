@@ -28,25 +28,18 @@ public class MovieActressRelationServiceImpl implements MovieActressRelationServ
     @Override
     public void saveRelation(MovieActressDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
-        List<Actress> actresses = dto.getActress();
-        List<String> names = actresses.stream().map((Actress) -> {
+        actressDao.saveActresses(dto.getActress());
+        List<String> names = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> ActressIds = actressDao.queryActressIdsByNames(names);
-        if (ActressIds == null || ActressIds.isEmpty()) {
-            actressDao.saveActresses(actresses);
-            ActressIds = actressDao.queryActressIdsByNames(names);
-        }
+        List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
         List<MovieActressRelation> movieActressRelations = movieActressDao.queryMovieActressRelations(movie.getId(),
-                ActressIds);
+                actressIds);
         if (movieActressRelations == null || movieActressRelations.isEmpty()) {
             final Movie final_movie = movie;
-            List<MovieActressRelation> relations = ActressIds.stream().map((id) -> {
+            List<MovieActressRelation> relations = actressIds.stream().map((id) -> {
                 MovieActressRelation relation = new MovieActressRelation();
                 relation.setMovieId(final_movie.getId());
                 relation.setActressId(id);

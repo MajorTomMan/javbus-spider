@@ -28,19 +28,13 @@ public class ActressDirectorRelationServiceImpl implements ActressDirectorRelati
     @Override
     public void saveRelation(ActressDirectorDTO dto) {
         // TODO Auto-generated method stub
+        directorDao.save(dto.getDirector());
         Director director = directorDao.queryDirectorByName(dto.getDirector().getName());
-        if (director == null) {
-            directorDao.save(dto.getDirector());
-            director = directorDao.queryDirectorByName(dto.getDirector().getName());
-        }
+        actressDao.saveActresses(dto.getActress());
         List<String> names = dto.getActress().stream().map((actress) -> {
             return actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
-        if (actressIds == null || actressIds.isEmpty()) {
-            actressDao.saveActresses(dto.getActress());
-            actressIds = actressDao.queryActressIdsByNames(names);
-        }
         List<ActressDirectorRelation> actressDirectorRelations = actressDirectorDao
                 .queryActressDirectorRelations(actressIds, director.getId());
         if (actressDirectorRelations == null || actressDirectorRelations.isEmpty()) {

@@ -36,22 +36,15 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
     @Override
     public void saveRelaton(MovieBigImageDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
-        BigImage bigImage = dto.getBigImage();
-        BigImage bigImageResult = bigImageDao.queryBigImageByLink(bigImage.getLink());
-        if (bigImageResult == null) {
-            bigImageDao.saveBigImage(bigImage);
-            bigImageResult = bigImageDao.queryBigImageByLink(dto.getBigImage().getLink());
-        }
+        bigImageDao.saveBigImage(dto.getBigImage());
+        BigImage bigImage = bigImageDao.queryBigImageByLink(dto.getBigImage().getLink());
         MovieBigImageRelation movieBigImageRelation = movieBigImageDao.queryMovieBigImageRelation(movie.getId(),
-                bigImageResult.getId());
+                bigImage.getId());
         if (movieBigImageRelation == null) {
             MovieBigImageRelation relation = new MovieBigImageRelation();
-            relation.setBigImageId(bigImageResult.getId());
+            relation.setBigImageId(bigImage.getId());
             relation.setMovieId(movie.getId());
             movieBigImageDao.addMovieBigImageRelation(relation);
             List<ImageDTO> imageDTOs = movieActressBigImageDao.queryImageDao(movie.getId());

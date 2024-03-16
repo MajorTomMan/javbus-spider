@@ -30,15 +30,11 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
     @Override
     public void saveRelation(ActressCategoryDTO dto) {
         // TODO Auto-generated method stub
-        List<Actress> actresses = dto.getActress();
-        List<String> ActressNames = actresses.stream().map((Actress) -> {
+        actressDao.saveActresses(dto.getActress());
+        List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> ActressIds = actressDao.queryActressIdsByNames(ActressNames);
-        if (ActressIds == null || ActressIds.isEmpty()) {
-            actressDao.saveActresses(actresses);
-            ActressIds = actressDao.queryActressIdsByNames(ActressNames);
-        }
+        List<Integer> actressIds = actressDao.queryActressIdsByNames(actressNames);
         List<Category> categories = dto.getCategories();
         // 先保存进数据库保证数据存在
         categoryDao.saveCategories(categories);
@@ -46,16 +42,12 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        if (categoryIds == null || categoryIds.isEmpty()) {
-            categoryDao.saveCategories(categories);
-            categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        }
         List<ActressCategoryRelation> ActressCategoryRelations = actressCategoryDao
-                .queryActressCategoryRelations(ActressIds, categoryIds);
+                .queryActressCategoryRelations(actressIds, categoryIds);
         if (ActressCategoryRelations == null || ActressCategoryRelations.isEmpty()) {
             List<ActressCategoryRelation> relations = new ArrayList<>();
             // 处理多对多关系
-            for (Integer actressId : ActressIds) {
+            for (Integer actressId : actressIds) {
                 for (Integer categoryId : categoryIds) {
                     ActressCategoryRelation relation = new ActressCategoryRelation();
                     relation.setCategoryId(categoryId);

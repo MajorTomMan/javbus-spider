@@ -64,8 +64,8 @@
 
     <!-- queryActressesById --> 
 
-    <select id="queryActressesById">
-        SELECT id FROM actress WHERE id IN
+    <select id="queryActressesById" resultMap="actressResultMap">
+        SELECT * FROM actress WHERE id IN
         <foreach collection="ids" item="id" open="(" separator="," close=")">
              #{id}
         </foreach>

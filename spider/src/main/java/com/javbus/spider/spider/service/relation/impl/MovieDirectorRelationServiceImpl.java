@@ -25,16 +25,10 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
     @Override
     public void saveRelaton(MovieDirectorDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
+        directorDao.save(dto.getDirector());
         Director director = directorDao.queryDirectorByName(dto.getDirector().getName());
-        if (director == null) {
-            directorDao.save(dto.getDirector());
-            director = directorDao.queryDirectorByName(dto.getDirector().getName());
-        }
         MovieDirectorRelation movieDirectorRelation = movieDirectorDao.queryMovieDirectorRelation(movie.getId(),
                 director.getId());
         if (movieDirectorRelation == null) {
@@ -48,7 +42,7 @@ public class MovieDirectorRelationServiceImpl implements MovieDirectorRelationSe
     @Override
     public MovieDirectorVO queryRelations(Integer movieId) {
         // TODO Auto-generated method stub
-        MovieDirectorRelation relation=movieDirectorDao.queryMovieDirectorRelationByMovieId(movieId);
+        MovieDirectorRelation relation = movieDirectorDao.queryMovieDirectorRelationByMovieId(movieId);
         if (relation == null) {
             return null;
         }

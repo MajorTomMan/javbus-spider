@@ -25,16 +25,10 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
     @Override
     public void saveRelaton(MovieSeriesDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
+        seriesDao.save(dto.getSeries());
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
-        if (series == null) {
-            seriesDao.save(dto.getSeries());
-            series = seriesDao.querySeriesByName(dto.getSeries().getName());
-        }
         MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(),
                 series.getId());
         if (movieSeriesRelation == null) {

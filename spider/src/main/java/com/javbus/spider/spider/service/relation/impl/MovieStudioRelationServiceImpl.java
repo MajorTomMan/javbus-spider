@@ -25,16 +25,10 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
     @Override
     public void saveRelation(MovieStudioDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
+        studioDao.save(dto.getStudio());
         Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
-        if (studio == null) {
-            studioDao.save(dto.getStudio());
-            studio = studioDao.queryStudioByName(dto.getStudio().getName());
-        }
         MovieStudioRelation movieStudioRelation = movieStudioDao.queryMovieStudioRelation(movie.getId(),
                 studio.getId());
         if (movieStudioRelation == null) {

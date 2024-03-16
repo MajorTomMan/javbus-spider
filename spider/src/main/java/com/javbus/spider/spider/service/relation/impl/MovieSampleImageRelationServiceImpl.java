@@ -36,16 +36,10 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
     @Override
     public void saveRelation(MovieSampleImageDTO dto) {
         // TODO Auto-generated method stub
+        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie == null) {
-            movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        }
+        sampleImageDao.saveSampleImages(dto.getSampleImages());
         List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
-        if (sampleImageIds == null || sampleImageIds.isEmpty()) {
-            sampleImageDao.saveSampleImages(dto.getSampleImages());
-            sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
-        }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);
         if (movieSampleImageRelations == null || movieSampleImageRelations.isEmpty()) {
