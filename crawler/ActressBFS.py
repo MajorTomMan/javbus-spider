@@ -1,6 +1,8 @@
+import hashlib
 import json
 import threading
 import time
+from urllib.parse import urlparse
 from warnings import catch_warnings
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
@@ -69,48 +71,53 @@ class actresses:
         if bricks:
             for brick in bricks:
                 actress_dict = self.attrsUtil.getSingleActressLink(brick)
-                try:
-                    actress = self.actressUtil.getActressDetails(
-                        actress_dict["actress_link"]
-                    )
-                except Exception as e:
-                    self.logUtil.log(e)
-                    self.logUtil.log(actress_dict)
-                    self.logUtil.log(actress)
-                if actress:
-                    if not self.actressUtil.matchLinkIsCompanyLink(
-                        actress_dict["photo_link"]
-                    ):
-                        if self.baseUrl.endswith("/"):
-                            url = self.baseUrl[:-1]
-                            actress.photo_link = url + actress.photo_link
-                    actress.actress_link = actress_dict["actress_link"]
-                    actress.is_censored = self.isCensored
-                    with actresses.lock:
-                        self.logUtil.log("info of " + actress.name + " was collected")
-                        self.logUtil.log(
-                            "----------------actress info start-----------------------------"
+                if actress_dict:
+                    try:
+                        actress = self.actressUtil.getActressDetails(
+                            actress_dict["actress_link"]
                         )
+                    except Exception as e:
+                        self.logUtil.log(e)
+                        self.logUtil.log(actress_dict)
                         self.logUtil.log(actress)
-                        self.logUtil.log(
-                            "----------------actress info over-----------------------------"
+                    if actress:
+                        if not self.actressUtil.matchLinkIsCompanyLink(
+                            actress_dict["photo_link"]
+                        ):
+                            if self.baseUrl.endswith("/"):
+                                url = self.baseUrl[:-1]
+                                actress.photo_link = url + actress.photo_link
+                        actress.actress_link = actress_dict["actress_link"]
+                        actress.is_censored = self.isCensored
+                        with actresses.lock:
+                            self.logUtil.log(
+                                "info of " + actress.name + " was collected"
+                            )
+                            self.logUtil.log(
+                                "----------------actress info start-----------------------------"
+                            )
+                            self.logUtil.log(actress)
+                            self.logUtil.log(
+                                "----------------actress info over-----------------------------"
+                            )
+                        actressList.append(actress.toDict())
+                    else:
+                        self.timeouts.append(
+                            {
+                                "name": actress_dict["name"],
+                                "link": actress_dict["actress_link"],
+                            }
                         )
-                    actressList.append(actress.toDict())
+                        self.logUtil.log(
+                            "request "
+                            + actress_dict["name"]
+                            + ":"
+                            + actress_dict["actress_link"]
+                            + " timeout  add it to timeouts"
+                        )
+                    self.send(actressList, "/actress/save")
                 else:
-                    self.timeouts.append(
-                        {
-                            "name": actress_dict["name"],
-                            "link": actress_dict["actress_link"],
-                        }
-                    )
-                    self.logUtil.log(
-                        "request "
-                        + actress_dict["name"]
-                        + ":"
-                        + actress_dict["actress_link"]
-                        + " timeout  add it to timeouts"
-                    )
-            self.send(actressList, "/actress/save")
+                    self.save2local()
             if self.timeouts and len(self.timeouts) >= 1:
                 self.logUtil.log("try to request timeout list")
                 for timeout in self.timeouts:
@@ -131,15 +138,15 @@ class actresses:
                         )
                         self.logUtil.log(
                             "retry "
-                            + self.timeouts["name"]
-                            + self.timeouts["link"]
+                            + self.timeout["name"]
+                            + self.timeout["link"]
                             + " was success"
                         )
                     else:
                         self.logUtil.log(
                             "retry "
-                            + self.timeouts["name"]
-                            + self.timeouts["link"]
+                            + self.timeout["name"]
+                            + self.timeout["link"]
                             + " was failure name abandon"
                         )
         else:
@@ -158,5 +165,14 @@ class actresses:
             self.logUtil.log("send data to " + path + " was failure")
 
     def save2local(self, content, path, extensions):
+        # 获取链接的路径名
+        parsed_url = urlparse(path)
+        path_name = parsed_url.path
+
+        # 计算路径名的哈希值
+        hash_value = hashlib.md5(path_name.encode()).hexdigest()
+
+        # 构建保存文件的路径
+        save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
         with open(path + extensions, "w+", encoding="UTF-8") as f:
-            json.dump(content, f, ensure_ascii=False)
+            f.write(content)

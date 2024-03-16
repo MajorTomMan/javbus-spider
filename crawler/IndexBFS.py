@@ -1,7 +1,9 @@
 from asyncio import timeouts
+import hashlib
 import json
 import threading
 import time
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
@@ -131,8 +133,17 @@ class index:
             raise PageException()
 
     def save2local(self, content, path, extensions):
+        # 获取链接的路径名
+        parsed_url = urlparse(path)
+        path_name = parsed_url.path
+
+        # 计算路径名的哈希值
+        hash_value = hashlib.md5(path_name.encode()).hexdigest()
+
+        # 构建保存文件的路径
+        save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
         with open(path + extensions, "w+", encoding="UTF-8") as f:
-            json.dump(content, f, ensure_ascii=False)
+            f.write(content)
 
     def send(self, data, path):
         response = self.requestUtil.post(data=data, path=path)
