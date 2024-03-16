@@ -37,7 +37,8 @@
 
     <!-- queryMovieSampleImageRelationsByMovieId --> 
 
-    <select id="queryMovieSampleImageRelationsByMovieId">
+    <select id="queryMovieSampleImageRelationsByMovieId" 
+    resultMap="movieSampleImageRelationResultMap">
         SELECT *
         FROM movie_sample_image_relation 
         WHERE movie_id=#{movieId}

@@ -24,6 +24,9 @@ public class ImageUtil {
     private RestTemplate restTemplate;
 
     public List<byte[]> download(List<String> links) {
+        if (links == null || links.isEmpty()) {
+            return null;
+        }
         List<byte[]> images = new ArrayList<>();
         for (String link : links) {
             ResponseEntity<byte[]> image = restTemplate.getForEntity(link, byte[].class);
@@ -33,6 +36,9 @@ public class ImageUtil {
     }
 
     public byte[] download(String link) {
+        if (link == null) {
+            return null;
+        }
         ResponseEntity<byte[]> image = restTemplate.getForEntity(link, byte[].class);
         return image.getBody();
     }

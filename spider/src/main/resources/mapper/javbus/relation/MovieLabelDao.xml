@@ -24,7 +24,7 @@
 
     <!-- queryMovieLabelRelationByMovieId --> 
 
-    <select id="queryMovieLabelRelationByMovieId">
+    <select id="queryMovieLabelRelationByMovieId" resultMap="movieLabelRelationResultMap">
         Select * 
         FROM movie_label_relation 
         WHERE movie_id = #{movieId}

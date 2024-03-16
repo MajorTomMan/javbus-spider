@@ -19,9 +19,9 @@
 
     <!-- querySampleImagesByIds --> 
 
-    <select id="querySampleImagesByIds">
+    <select id="querySampleImagesByIds" resultType="com.javbus.spider.spider.entity.base.SampleImage">
         SELECT * FROM sample_image WHERE id IN
-        <foreach collection="sampleImageIds" item="sampleImageId">
+        <foreach collection="sampleImageIds" item="sampleImageId" open="(" separator="," close=")">
             #{sampleImageId}
         </foreach>
     </select>

@@ -23,7 +23,7 @@
 
     <!-- queryMovieStudioRelationByMovieId --> 
 
-    <select id="queryMovieStudioRelationByMovieId">
+    <select id="queryMovieStudioRelationByMovieId" resultMap="movieStudioRelationResultMap">
         SELECT * 
         FROM movie_studio_relation 
         WHERE movie_id = #{movieId}
