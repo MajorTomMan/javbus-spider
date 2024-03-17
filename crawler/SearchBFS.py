@@ -144,6 +144,8 @@ class search:
                 self.parseActressMovieListPage(
                     pageNum + 1, link + "/" + pageNum, isCensored
                 )
+            else:
+                return
 
     def save2local(self, content, link, extensions):
         # 获取链接的路径名
