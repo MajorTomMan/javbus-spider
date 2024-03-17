@@ -1,3 +1,4 @@
+import threading
 import time
 from bs4 import BeautifulSoup
 from utils.AttrsUtil import AttrsUtil
@@ -13,6 +14,7 @@ class ActressUtil:
     attrsUtil = AttrsUtil()
     logUtil = LogUtil()
     companys = CompanyLinks()
+    lock = threading.Lock()
 
     def getActressDetails(self, link):
         self.logUtil.log("sleeping in 10 seconds")

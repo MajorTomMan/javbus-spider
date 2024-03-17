@@ -18,9 +18,8 @@ class LogUtil:
                 log = f"Exception: {str(log)}\n" + f"stack:{traceback.format_exc()}"
             elif hasattr(log, "__dict__"):
                 log = log.__dict__
-            with LogUtil.lock:
-                with open(self.logPath, "a", encoding="utf-8") as file:
-                    self.log_recursive(log, current_time, thread_name, file)
+            with open(self.logPath, "a", encoding="utf-8") as file:
+                self.log_recursive(log, current_time, thread_name, file)
 
     def log_recursive(
         self, obj, current_time, thread_name, file=None, indent=0, parent_key=None

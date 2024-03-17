@@ -1,6 +1,4 @@
-from asyncio import timeouts
 import hashlib
-import json
 import threading
 import time
 from urllib.parse import urlparse
@@ -32,7 +30,6 @@ class index:
         self.baseUrl = url
         self.pageUtil = PageUtil(url, is_censored)
         self.isCensored = is_censored
-        self.baseUrls = self.webUtil.baseUrls
 
     def BFS(self):
         if self.baseUrl:
@@ -85,30 +82,13 @@ class index:
                     except Exception as e:
                         self.logUtil.log(e)
                     # self.save2local(page.toDict(), "./page/data")
-                    with index.lock:
-                        if page and page != -1:
-                            page.movie["is_censored"] = self.isCensored
-                            self.logUtil.log(
-                                "------------------------------page info start--------------------------------------"
-                            )
-                            self.logUtil.log(page)
-                            self.logUtil.log(
-                                "------------------------------page info ended--------------------------------------"
-                            )
-                            if page.actresses:
-                                self.logUtil.log(
-                                    "------------------------------actress info start--------------------------------------"
-                                )
-                                for actress in page.actresses:
-                                    self.logUtil.log(actress)
-                                self.logUtil.log(
-                                    "------------------------------actress info ended--------------------------------------"
-                                )
-                        elif page == -1:
-                            continue
-                        else:
-                            self.logUtil.log("add " + link + " to timeouts")
-                            self.timeouts.append(link)
+                    if page and page != -1:
+                        page.movie["is_censored"] = self.isCensored
+                    elif page == -1:
+                        continue
+                    else:
+                        self.logUtil.log("add " + link + " to timeouts")
+                        self.timeouts.append(link)
                     self.sendData2Server(page=page)
             if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
@@ -207,3 +187,12 @@ class index:
             self.logUtil.log(
                 "------------------------------page info ended--------------------------------------"
             )
+            if page.actresses:
+                self.logUtil.log(
+                    "------------------------------actress info start--------------------------------------"
+                )
+                for actress in page.actresses:
+                    self.logUtil.log(actress)
+                self.logUtil.log(
+                    "------------------------------actress info ended--------------------------------------"
+                )

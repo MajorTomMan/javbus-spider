@@ -1,3 +1,4 @@
+import threading
 import time
 from bs4 import BeautifulSoup
 
@@ -30,6 +31,7 @@ class PageUtil:
     baseUrl = ""
     isCensored = ""
     companys = CompanyLinks()
+    lock = threading.Lock()
 
     def __init__(self, url, is_censored) -> None:
         self.baseUrl = url
@@ -38,6 +40,7 @@ class PageUtil:
     def parseDetailPage(self, link):
         self.logUtil.log("sleeping in 10 seconds")
         time.sleep(10)
+
         source = self.webUtil.getWebSite(link)
         if source:
             bs = BeautifulSoup(source, "html.parser")

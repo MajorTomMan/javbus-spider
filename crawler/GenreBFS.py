@@ -1,5 +1,8 @@
+import hashlib
+import os
 import threading
 import time
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
 from utils.RequestUtil import RequestUtil
@@ -87,10 +90,24 @@ class genre:
                                 "request not response pls check server is open or has expection "
                             )
             else:
+                self.save2local(source, self.genreUrl, ".html")
                 self.logUtil.log("boxs not found")
         else:
+            self.save2local(source, self.genreUrl, ".html")
             self.logUtil.log("h4s not found")
 
     def printGenres(self, vos):
         with genre.lock:
             self.logUtil.log(vos)
+
+    def save2local(self, content, link, extensions):
+        # 获取链接的路径名
+        parsed_url = urlparse(link)
+        path_name = parsed_url.path.replace("/", "_")
+        # 计算路径名的哈希值
+        hash_value = hashlib.md5(path_name.encode()).hexdigest()
+
+        # 构建保存文件的路径
+        save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
+        with open(save_path, "w+", encoding="UTF-8") as f:
+            f.write(content)

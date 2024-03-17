@@ -102,22 +102,6 @@ class search:
                     self.logUtil.log("now visit website link is " + link)
                     page = self.pageUtil.parseDetailPage(link)
                     if page:
-                        self.logUtil.log(
-                            "------------------------------page info start--------------------------------------"
-                        )
-                        self.logUtil.log(page)
-                        self.logUtil.log(
-                            "------------------------------page info ended--------------------------------------"
-                        )
-                        if page.actresses:
-                            self.logUtil.log(
-                                "------------------------------actress info start--------------------------------------"
-                            )
-                            for actress in page.actresses:
-                                self.logUtil.log(actress)
-                            self.logUtil.log(
-                                "------------------------------actress info ended--------------------------------------"
-                            )
                         self.sendData2Server(page)
                         self.logUtil.log("request " + link + " success")
                     else:
@@ -206,3 +190,12 @@ class search:
             self.logUtil.log(
                 "------------------------------page info ended--------------------------------------"
             )
+            if page.actresses:
+                self.logUtil.log(
+                    "------------------------------actress info start--------------------------------------"
+                )
+                for actress in page.actresses:
+                    self.logUtil.log(actress)
+                self.logUtil.log(
+                    "------------------------------actress info ended--------------------------------------"
+                )

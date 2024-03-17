@@ -77,9 +77,11 @@ class actresses:
                             actress_dict["actress_link"]
                         )
                     except Exception as e:
-                        self.logUtil.log(e)
-                        self.logUtil.log(actress_dict)
-                        self.logUtil.log(actress)
+                        self.save2local(
+                            source,
+                            threading.currentThread().getName() + "__bfs",
+                            ".html",
+                        )
                     if actress:
                         if not self.actressUtil.matchLinkIsCompanyLink(
                             actress_dict["photo_link"]
@@ -106,7 +108,9 @@ class actresses:
                         )
                     self.send(actressList, "/actress/save")
                 else:
-                    self.save2local(source, "actress/__bfs", ".html")
+                    self.save2local(
+                        source, threading.currentThread().getName() + "__bfs", ".html"
+                    )
             if self.timeouts and len(self.timeouts) >= 1:
                 self.logUtil.log("try to request timeout list")
                 for timeout in self.timeouts:
@@ -139,6 +143,9 @@ class actresses:
                             + " was failure name abandon"
                         )
         else:
+            self.save2local(
+                source, threading.currentThread().getName() + "__bfs", ".html"
+            )
             self.logUtil.log("bricks not found")
             raise PageException()
 
@@ -153,9 +160,9 @@ class actresses:
         else:
             self.logUtil.log("send data to " + path + " was failure")
 
-    def save2local(self, content, path, extensions):
+    def save2local(self, content, link, extensions):
         # 获取链接的路径名
-        parsed_url = urlparse(path)
+        parsed_url = urlparse(link)
         path_name = parsed_url.path.replace("/", "_")
         # 计算路径名的哈希值
         hash_value = hashlib.md5(path_name.encode()).hexdigest()
