@@ -69,8 +69,6 @@ class genre:
                         "genre": {"name": key},
                         "categories": categories,
                     }
-                    with genre.lock:
-                        self.logUtil.log(vos)
                     if vos and len(vos) >= 1:
                         response = self.request.post(
                             vos, "/genre/relation/category/save"
@@ -92,3 +90,7 @@ class genre:
                 self.logUtil.log("boxs not found")
         else:
             self.logUtil.log("h4s not found")
+
+    def printGenres(self, vos):
+        with genre.lock:
+            self.logUtil.log(vos)

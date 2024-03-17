@@ -89,17 +89,6 @@ class actresses:
                                 actress.photo_link = url + actress.photo_link
                         actress.actress_link = actress_dict["actress_link"]
                         actress.is_censored = self.isCensored
-                        with actresses.lock:
-                            self.logUtil.log(
-                                "info of " + actress.name + " was collected"
-                            )
-                            self.logUtil.log(
-                                "----------------actress info start-----------------------------"
-                            )
-                            self.logUtil.log(actress)
-                            self.logUtil.log(
-                                "----------------actress info over-----------------------------"
-                            )
                         actressList.append(actress.toDict())
                     else:
                         self.timeouts.append(
@@ -175,3 +164,14 @@ class actresses:
         save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
         with open(save_path, "w+", encoding="UTF-8") as f:
             f.write(content)
+
+    def printActresses(self, actress):
+        with actresses.lock:
+            self.logUtil.log("info of " + actress.name + " was collected")
+            self.logUtil.log(
+                "----------------actress info start-----------------------------"
+            )
+            self.logUtil.log(actress)
+            self.logUtil.log(
+                "----------------actress info over-----------------------------"
+            )

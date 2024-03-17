@@ -116,13 +116,6 @@ class index:
                     self.logUtil.log("now visit website link is " + link)
                     page = self.pageUtil.parseDetailPage(link)
                     if page:
-                        self.logUtil.log(
-                            "------------------------------page info start--------------------------------------"
-                        )
-                        self.logUtil.log(page)
-                        self.logUtil.log(
-                            "------------------------------page info ended--------------------------------------"
-                        )
                         self.sendData2Server(page)
                         self.logUtil.log("request " + link + " success")
                     else:
@@ -204,3 +197,13 @@ class index:
         if page.series and len(page.series) >= 1:
             movieSeriesVo = {"movie": page.movie, "series": page.series}
             self.send(movieSeriesVo, "/movie/relation/series/save")
+
+    def printPage(self, page):
+        with index.lock:
+            self.logUtil.log(
+                "------------------------------page info start--------------------------------------"
+            )
+            self.logUtil.log(page)
+            self.logUtil.log(
+                "------------------------------page info ended--------------------------------------"
+            )

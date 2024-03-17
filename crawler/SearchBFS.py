@@ -88,21 +88,13 @@ class search:
                     except Exception as e:
                         self.logUtil.log(e)
                     # self.save2local(page.toDict(), "./page/data")
-                    with search.lock:
-                        if page and page != -1:
-                            page.movie["is_censored"] = self.isCensored
-                            self.logUtil.log(
-                                "------------------------------page info start--------------------------------------"
-                            )
-                            self.logUtil.log(page)
-                            self.logUtil.log(
-                                "------------------------------page info ended--------------------------------------"
-                            )
-                        elif page == -1:
-                            continue
-                        else:
-                            self.logUtil.log("add " + link + " to timeouts")
-                            self.timeouts.append(link)
+                    if page and page != -1:
+                        page.movie["is_censored"] = self.isCensored
+                    elif page == -1:
+                        continue
+                    else:
+                        self.logUtil.log("add " + link + " to timeouts")
+                        self.timeouts.append(link)
                     self.sendData2Server(page=page)
             if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
@@ -204,3 +196,13 @@ class search:
         if page.series and len(page.series) >= 1:
             movieSeriesVo = {"movie": page.movie, "series": page.series}
             self.send(movieSeriesVo, "/movie/relation/series/save")
+
+    def printPage(self, page):
+        with search.lock:
+            self.logUtil.log(
+                "------------------------------page info start--------------------------------------"
+            )
+            self.logUtil.log(page)
+            self.logUtil.log(
+                "------------------------------page info ended--------------------------------------"
+            )
