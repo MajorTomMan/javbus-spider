@@ -5,7 +5,9 @@ from SearchBFS import search
 from IndexBFS import index
 from ActressBFS import actresses
 
+
 if __name__ == "__main__":
+    keywords = ["北野未奈", "rion", "大橋未久", "藤森里穗"]
     baseUrl = "https://www.cdnbus.shop/"
     print(
         """
@@ -15,6 +17,7 @@ if __name__ == "__main__":
         2. search
         3. genre
         4. actress
+        5. starAllThread
           """
     )
     num = int(input("input:"))
@@ -79,10 +82,55 @@ if __name__ == "__main__":
                 name="thread_name:actresses/uncensored",
             ),
         ]
-
-    for thread in threads:
+    elif num == 5:
+        threads = [
+            threading.Thread(
+                target=run_bfs,
+                args=(index, None, True),
+                name="thread_name:index/censored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(index, None, False),
+                name="thread_name:index/uncensored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(genre, None, True),
+                name="thread_name:genre/censored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(genre, None, False),
+                name="thread_name:genre/uncensored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(actresses, None, True),
+                name="thread_name:actresses/censored",
+            ),
+            threading.Thread(
+                target=run_bfs,
+                args=(actresses, None, False),
+                name="thread_name:actresses/uncensored",
+            ),
+        ]
+        for keyword in keywords:
+            threads.append(
+                threading.Thread(
+                    target=run_bfs,
+                    args=(search, keyword, True),
+                    name="thread_name:search/censored/" + keyword,
+                ),
+                threading.Thread(
+                    target=run_bfs,
+                    args=(search, keyword, False),
+                    name="thread_name:search/uncensored/" + keyword,
+                ),
+            )
+    for i, thread in enumerate(threads):
         # 在第一个线程之外，等待前一个线程至少20秒,防止瘫痪对方服务器而察觉爬虫
-        if thread != threads[0]:
+        if i != 0:
             time.sleep(20)
         thread.start()
     # 等待所有线程完成
