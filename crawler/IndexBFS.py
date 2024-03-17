@@ -156,6 +156,9 @@ class index:
             self.logUtil.log("send data to " + path + " was failure")
 
     def sendData2Server(self, page):
+        if not page:
+            self.logUtil.log("page is none")
+            return
         if page.movie and len(page.movie) >= 1:
             self.send(page.movie, "/movie/save")
         if page.bigimage and len(page.bigimage) >= 1:

@@ -30,31 +30,47 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         // TODO Auto-generated method stub
         Genre genre = dto.getGenre();
         genreDao.saveGenre(dto.getGenre());
+        categoryDao.saveCategories(dto.getCategories());
         Integer genreId = genreDao.queryGenreIdByName(genre.getName());
-        List<Category> categories = dto.getCategories();
-        categoryDao.saveCategories(categories);
-        List<String> categoryNames = categories.stream().map(category -> {
+        Boolean isCensored = dto.getCategories().get(0).getIsCensored();
+        List<String> categoryNames = dto.getCategories().stream().map(category -> {
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryRelations(genreId,
-                categoryIds);
-        if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
-            List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
-                GenreCategoryRelation relation = new GenreCategoryRelation();
-                relation.setGenreId(genreId);
-                relation.setCategoryId(id);
-                return relation;
-            }).collect(Collectors.toList());
-            genreCategoryDao.addGenreCategoryRelations(relations);
+        if (isCensored) {
+            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryCensoredRelations(
+                    genreId,
+                    categoryIds);
+            if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
+                List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
+                    GenreCategoryRelation relation = new GenreCategoryRelation();
+                    relation.setGenreId(genreId);
+                    relation.setCategoryId(id);
+                    return relation;
+                }).collect(Collectors.toList());
+                genreCategoryDao.addGenreCategoryCensoredRelations(relations);
+            }
+        } else {
+            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryUncensoredRelations(
+                    genreId,
+                    categoryIds);
+            if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
+                List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
+                    GenreCategoryRelation relation = new GenreCategoryRelation();
+                    relation.setGenreId(genreId);
+                    relation.setCategoryId(id);
+                    return relation;
+                }).collect(Collectors.toList());
+                genreCategoryDao.addGenreCategoryUncensoredRelations(relations);
+            }
         }
     }
 
     @Override
     public GenreCategoryVO queryRelations(Integer genreId) {
         // TODO Auto-generated method stub
-        List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryRelationsByGenreId(genreId);
-        if (relations == null|| relations.isEmpty()) {
+        List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryCensoredRelationsByGenreId(genreId);
+        if (relations == null || relations.isEmpty()) {
             return null;
         }
         Genre genre = genreDao.queryGenreById(genreId);
@@ -66,6 +82,26 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         vo.setCategories(categories);
         vo.setGenre(genre);
         return vo;
+    }
+
+    @Override
+    public GenreCategoryVO queryRelations(Integer genreId, Boolean isCensored) {
+        // TODO Auto-generated method stub
+        if (isCensored) {
+            return queryRelations(genreId);
+        } else {
+            List<GenreCategoryRelation> relations = genreCategoryDao
+                    .queryGenreCategoryUncensoredRelationsByGenreId(genreId);
+            Genre genre = genreDao.queryGenreById(genreId);
+            List<Integer> categoryIds = relations.stream().map(relation -> {
+                return relation.getCategoryId();
+            }).collect(Collectors.toList());
+            List<Category> categories = categoryDao.queryCategories(categoryIds);
+            GenreCategoryVO vo = new GenreCategoryVO();
+            vo.setCategories(categories);
+            vo.setGenre(genre);
+            return vo;
+        }
     }
 
 }

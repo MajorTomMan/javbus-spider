@@ -11,9 +11,9 @@
 	</parent>
 	<groupId>com.javbus.spider</groupId>
 	<artifactId>spider</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>spider</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Crawler Server</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -37,13 +37,14 @@
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>3.0.3</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
+		<!-- 
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-devtools</artifactId>
+				<scope>runtime</scope>
+				<optional>true</optional>
+			</dependency>
+		-->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>

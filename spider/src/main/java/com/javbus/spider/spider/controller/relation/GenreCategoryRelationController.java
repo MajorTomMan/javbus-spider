@@ -28,9 +28,9 @@ public class GenreCategoryRelationController {
         genreCategoryRelationService.saveRelation(dto);
         return R.ok();
     }
-    @GetMapping("query/{genreId}")
-    public R queryRelation(@PathVariable Integer genreId) {
-        GenreCategoryVO vos = genreCategoryRelationService.queryRelations(genreId);
+    @GetMapping("query/{isCensored}/{genreId}")
+    public R queryRelation(@PathVariable Integer genreId,@PathVariable Boolean isCensored) {
+        GenreCategoryVO vos = genreCategoryRelationService.queryRelations(genreId,isCensored);
         return R.ok().put("vos", vos);
     }
 }

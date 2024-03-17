@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS actress_series_relation (
     FOREIGN KEY (series_id) REFERENCES series(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '女优-系列关系表';
 
-CREATE TABLE IF NOT EXISTS genre_category_relation (
+CREATE TABLE IF NOT EXISTS genre_category_censored_relation (
     id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID',
     genre_id INT COMMENT '类型ID',
     category_id INT COMMENT '分类ID',
@@ -185,42 +185,65 @@ CREATE TABLE IF NOT EXISTS genre_category_relation (
     FOREIGN KEY (category_id) REFERENCES category(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '类型-分类关系表';
 
+CREATE TABLE IF NOT EXISTS genre_category_uncensored_relation (
+    id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID',
+    genre_id INT COMMENT '类型ID',
+    category_id INT COMMENT '分类ID',
+    FOREIGN KEY (genre_id) REFERENCES genre(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '类型-分类关系表';
 
+-- 对于 movie_label_relation 表
 ALTER TABLE movie_label_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_studio_relation 表
 ALTER TABLE movie_studio_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_big_image_relation 表
 ALTER TABLE movie_big_image_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_sample_image_relation 表
 ALTER TABLE movie_sample_image_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_category_relation 表
 ALTER TABLE movie_category_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_actress_relation 表
 ALTER TABLE movie_actress_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_director_relation 表
 ALTER TABLE movie_director_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 movie_series_relation 表
 ALTER TABLE movie_series_relation
-ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (movie_id) REFERENCES movie(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 actress_director_relation 表
 ALTER TABLE actress_director_relation
-ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 actress_studio_relation 表
 ALTER TABLE actress_studio_relation
-ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 actress_category_relation 表
 ALTER TABLE actress_category_relation
-ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- 对于 actress_series_relation 表
 ALTER TABLE actress_series_relation
-ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE;
+ADD FOREIGN KEY (actress_id) REFERENCES actress(id) ON DELETE CASCADE ON UPDATE CASCADE;
 
-#ALTER TABLE genre_category_relation
-#ADD FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE;
+-- 对于 genre_category_censored_relation 表
+ALTER TABLE genre_category_censored_relation
+ADD FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE ON UPDATE CASCADE;
+-- 对于 genre_category_uncensored_relation 表
+ALTER TABLE genre_category_uncensored_relation
+ADD FOREIGN KEY (genre_id) REFERENCES genre(id) ON DELETE CASCADE ON UPDATE CASCADE;

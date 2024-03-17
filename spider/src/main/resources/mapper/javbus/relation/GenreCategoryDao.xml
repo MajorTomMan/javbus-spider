@@ -6,30 +6,54 @@
         <id property="id" column="id"/>
         <result property="genreId" column="genre_id"/>
         <result property="categoryId" column="category_id"/>
-        <result property="isCensored" column="is_censored"/>
     </resultMap>
-    <insert id="addGenreCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_relation (genre_id, category_id)
+    <insert id="addGenreCategoryCensoredRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id)
         VALUES (#{genreId}, #{categoryId})
     </insert>
-    <insert id="addGenreCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_relation (genre_id, category_id) VALUES
+    <insert id="addGenreCategoryCensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
-    <delete id="deleteGenreCategoryRelation">
-        DELETE FROM genre_category_relation
+    <delete id="deleteGenreCategoryRelationByCensored">
+        DELETE FROM genre_category_censored_relation
         WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
-    <select id="queryGenreCategoryRelations" resultMap="genreCategoryRelationResultMap">
-        select * from genre_category_relation WHERE genre_id = #{genreId} AND category_id IN 
+    <select id="queryGenreCategoryCensoredRelations" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId} AND category_id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
             #{categoryId}
         </foreach>
     </select>
 
-    <select id="queryGenreCategoryRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
-        select * from genre_category_relation WHERE genre_id = #{genreId}
+    <select id="queryGenreCategoryCensoredRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId}
     </select>
+
+    <insert id="addGenreCategoryUncensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
+        INSERT IGNORE INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.genreId}, #{relation.categoryId})
+        </foreach>
+    </insert>
+    <select id="addGenreCategoryUncensoredRelation" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_uncensored_relation WHERE genre_id=#{genreId} and category_id=#{categoryId}
+    </select>
+    <delete id="deleteGenreCategoryUncensoredRelation">
+        DELETE FROM genre_category_uncensored_relation
+        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
+    </delete>
+    <select id="queryGenreCategoryUncensoredRelations" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId} AND category_id IN 
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </select>
+
+    <select id="queryGenreCategoryUncensoredRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId}
+    </select>
+
 </mapper>

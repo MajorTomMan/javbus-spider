@@ -42,11 +42,11 @@ if __name__ == "__main__":
     elif num == 2:
         keyword = input("input what keyword you want to search:")
         threads = [
-            # threading.Thread(
-            #    target=run_bfs,
-            #    args=(search, keyword, True),
-            #    name="thread_name:search/censored",
-            # ),
+            threading.Thread(
+                target=run_bfs,
+                args=(search, keyword, True),
+                name="thread_name:search/censored",
+            ),
             threading.Thread(
                 target=run_bfs,
                 args=(search, keyword, False),

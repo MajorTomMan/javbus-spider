@@ -77,6 +77,7 @@ class WebUtil:
                 cls.logUtil.log("request finished....")
                 cls.logUtil.log("request spend time was " + str(end_time - start_time))
                 source = cls.driver.page_source
+                cls.driver.refresh()
                 return source
             except TimeoutException:
                 cls.logUtil.log("request to " + new_url + " timeout in 5 minutes")

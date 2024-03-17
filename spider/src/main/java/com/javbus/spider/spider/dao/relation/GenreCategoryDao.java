@@ -10,11 +10,19 @@ import com.javbus.spider.spider.entity.relation.GenreCategoryRelation;
  */
 @Mapper
 public interface GenreCategoryDao {
-    void addGenreCategoryRelation(GenreCategoryRelation relation);
+    void addGenreCategoryCensoredRelation(GenreCategoryRelation relation);
 
-    void addGenreCategoryRelations(List<GenreCategoryRelation> relations);
+    void addGenreCategoryCensoredRelations(List<GenreCategoryRelation> relations);
 
-    void deleteGenreCategoryRelation(Integer genreId, Integer categoryId);
-    List<GenreCategoryRelation> queryGenreCategoryRelations(Integer genreId,List<Integer> categoryIds);
-    List<GenreCategoryRelation> queryGenreCategoryRelationsByGenreId(Integer genreId);
+    void deleteGenreCategoryRelationByCensored(Integer genreId, Integer categoryId);
+    List<GenreCategoryRelation> queryGenreCategoryCensoredRelations(Integer genreId,List<Integer> categoryIds);
+    List<GenreCategoryRelation> queryGenreCategoryCensoredRelationsByGenreId(Integer genreId);
+
+    void addGenreCategoryUncensoredRelation(GenreCategoryRelation relation);
+
+    void addGenreCategoryUncensoredRelations(List<GenreCategoryRelation> relations);
+
+    void deleteGenreCategoryUncensoredRelation(Integer genreId, Integer categoryId);
+    List<GenreCategoryRelation> queryGenreCategoryUncensoredRelations(Integer genreId,List<Integer> categoryIds);
+    List<GenreCategoryRelation> queryGenreCategoryUncensoredRelationsByGenreId(Integer genreId);
 }

@@ -8,5 +8,7 @@ public interface GenreCategoryRelationService {
     void saveRelation(GenreCategoryDTO dto);
 
     GenreCategoryVO queryRelations(Integer genreId);
+
+    GenreCategoryVO queryRelations(Integer genreId, Boolean isCensored);
     
 }
