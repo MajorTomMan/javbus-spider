@@ -11,6 +11,10 @@ class AttrsUtil:
         if a:
             link = a["href"]
             return link
+        a = bs.find("a", {"class": "avatar-box text-center"})
+        if a:
+            link = a["href"]
+            return link
         self.logUtil.log("link not found")
         return None
 

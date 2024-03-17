@@ -22,9 +22,9 @@ class ActressUtil:
         source = self.webUtil.getWebSite(link)
         if source:
             bs = BeautifulSoup(source, "html.parser")
-            actress = Actress()
             box = bs.find("div", {"class": "avatar-box"})
             if box:
+                actress = Actress()
                 frame = box.find("div", {"class": "photo-frame"})
                 info = box.find("div", {"class": "photo-info"})
                 if frame:

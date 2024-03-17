@@ -50,11 +50,11 @@ if __name__ == "__main__":
                 args=(search, keyword, True),
                 name="thread_name:search/censored",
             ),
-            threading.Thread(
-                target=run_bfs,
-                args=(search, keyword, False),
-                name="thread_name:search/uncensored",
-            ),
+            # threading.Thread(
+            #    target=run_bfs,
+            #    args=(search, keyword, False),
+            #    name="thread_name:search/uncensored",
+            # ),
         ]
     elif num == 3:
         threads = [

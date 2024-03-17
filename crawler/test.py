@@ -6,8 +6,7 @@ from utils.PageUtil import PageUtil
 from utils.RequestUtil import RequestUtil
 from utils.WebUtil import WebUtil
 
-
-webUtil = WebUtil.
+webUtil = WebUtil()
 actressUtil = ActressUtil()
 attrsUtil = AttrsUtil()
 logUtil = LogUtil()

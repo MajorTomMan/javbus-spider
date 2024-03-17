@@ -5,6 +5,7 @@ import time
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
+from utils.ActressUtil import ActressUtil
 from utils.LogUtil import LogUtil
 
 from utils.PageUtil import PageUtil
@@ -27,6 +28,7 @@ class search:
     tag = ""
     timeouts = []
     lock = threading.Lock()
+    actressUtil = ActressUtil()
 
     def __init__(self, url, tag, is_censored):
         self.baseUrl = url
@@ -39,12 +41,18 @@ class search:
             star_time = time.time()
             while True:
                 if self.isCensored:
-                    link = self.baseUrl + "search/" + self.tag + "/" + str(self.pageNum)
+                    link = (
+                        self.baseUrl
+                        + "searchstar/"
+                        + self.tag
+                        + "/"
+                        + str(self.pageNum)
+                    )
                 else:
                     link = (
                         self.baseUrl
                         + "uncensored/"
-                        + "search/"
+                        + "searchstar/"
                         + self.tag
                         + "/"
                         + str(self.pageNum)
@@ -79,23 +87,18 @@ class search:
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
         if bricks:
             for brick in bricks:
+                isCensored = True
+                button = bs.find("button", {"class": "btn btn-xs btn-info"})
+                if button:
+                    if "有碼" in button.text.strip():
+                        isCensored = True
+                    elif "无碼" in button.text.strip():
+                        isCensored = False
                 link = self.attrsUtil.getLink(brick)
                 if link:
                     self.logUtil.log("now visit website link is " + link)
                     self.links.append(link)
-                    try:
-                        page = self.pageUtil.parseDetailPage(link)
-                    except Exception as e:
-                        self.logUtil.log(e)
-                    # self.save2local(page.toDict(), "./page/data")
-                    if page and page != -1:
-                        page.movie["is_censored"] = self.isCensored
-                    elif page == -1:
-                        continue
-                    else:
-                        self.logUtil.log("add " + link + " to timeouts")
-                        self.timeouts.append(link)
-                    self.sendData2Server(page=page)
+                    self.parseActressMovieListPage(1, link, isCensored)
             if self.timeouts and len(self.timeouts) >= 1:
                 for link in self.timeouts:
                     self.logUtil.log("try to request failed link")
@@ -107,9 +110,40 @@ class search:
                     else:
                         self.logUtil.log("request " + link + " failed  link abandon")
             self.logUtil.log("all link was visited jump to next page")
+
         else:
             self.logUtil.log("bricks not found")
             raise PageException()
+
+    def parseActressMovieListPage(self, pageNum, link, isCensored):
+        actress = self.actressUtil.getActressDetails(link)
+        # 如果女优详情页存在
+        if actress:
+            actress.is_censored = isCensored
+            self.send([actress.toDict()], "/actress/save")
+        source = self.webUtil.getWebSite(link)
+        bs = BeautifulSoup(source, "html.parser")
+        bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
+        if bricks:
+            for brick in bricks:
+                try:
+                    url = self.attrsUtil.getLink(brick)
+                    if url:
+                        page = self.pageUtil.parseDetailPage(url)
+                        if page and page != -1:
+                            self.sendData2Server(page)
+                        elif page == -1:
+                            continue
+                        else:
+                            self.logUtil.log("add " + url + " to timeouts")
+                            self.timeouts.append(url)
+                except Exception as e:
+                    self.logUtil.log(e)
+            self.logUtil.log("all link was visited jump to next page")
+            if self.pageUtil.hasNextPage(bs):
+                self.parseActressMovieListPage(
+                    pageNum + 1, link + "/" + pageNum, isCensored
+                )
 
     def save2local(self, content, link, extensions):
         # 获取链接的路径名
