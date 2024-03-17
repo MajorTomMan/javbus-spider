@@ -122,6 +122,8 @@ if __name__ == "__main__":
                     args=(search, keyword, True),
                     name="thread_name:search/censored/" + keyword,
                 ),
+            )
+            threads.append(
                 threading.Thread(
                     target=run_bfs,
                     args=(search, keyword, False),
