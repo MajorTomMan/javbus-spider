@@ -23,12 +23,13 @@ class actresses:
     baseUrl = ""
     lock = threading.Lock()
     pageUtil = None
-    timeoutUtil = TimeoutUtil()
+    timeoutUtil = None
 
     def __init__(self, url, is_censored):
         self.baseUrl = url
         self.pageUtil = PageUtil(url)
         self.isCensored = is_censored
+        self.timeoutUtil = TimeoutUtil(self.pageUtil)
 
     def BFS(self):
         star_time = time.time()

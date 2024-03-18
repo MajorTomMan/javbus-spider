@@ -15,12 +15,13 @@ class index:
     pageNum = 1
     baseUrl = ""
     isCensored = True
-    timeoutUtil = TimeoutUtil()
+    timeoutUtil = None
 
     def __init__(self, url, is_censored):
         self.baseUrl = url
         self.pageUtil = PageUtil(url)
         self.isCensored = is_censored
+        self.timeoutUtil = TimeoutUtil(self.pageUtil)
 
     def BFS(self):
         if self.baseUrl:

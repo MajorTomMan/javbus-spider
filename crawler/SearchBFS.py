@@ -23,13 +23,14 @@ class search:
     timeouts = []
     lock = threading.Lock()
     actressUtil = ActressUtil()
-    timeoutUtil = TimeoutUtil()
+    timeoutUtil = None
 
     def __init__(self, url, tag, is_censored):
         self.baseUrl = url
         self.pageUtil = PageUtil(url)
         self.isCensored = is_censored
         self.tag = tag
+        self.timeoutUtil = TimeoutUtil(self.pageUtil)
 
     def BFS(self):
         if self.baseUrl:

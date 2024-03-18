@@ -36,7 +36,7 @@ class PageUtil:
     companys = CompanyLinks()
     lock = threading.Lock()
     requestUtil = RequestUtil()
-    timeoutUtil = TimeoutUtil()
+    timeoutUtil = None
 
     def __init__(self, url) -> None:
         self.baseUrl = url
@@ -233,6 +233,8 @@ class PageUtil:
     def parseMovieListPage(self, link, isCensored):
         source = self.webUtil.getWebSite(link)
         if not source:
+            if self.timeoutUtil is None:
+                self.timeoutUtil = TimeoutUtil(self)
             self.timeoutUtil.addLink(link, isCensored)
             return True
         bs = BeautifulSoup(source, "html.parser")

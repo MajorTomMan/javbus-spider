@@ -1,14 +1,14 @@
 from utils.LogUtil import LogUtil
-from utils.PageUtil import PageUtil
 from utils.WebUtil import WebUtil
-from utils.TimeoutUtil import TimeoutUtil
 
 
 class TimeoutUtil:
-    webUtil = WebUtil()
-    timeouts = []
-    pageUtil = PageUtil()
-    logUtil = LogUtil()
+
+    def __init__(self, page_util) -> None:
+        self.webUtil = WebUtil()
+        self.timeouts = []
+        self.logUtil = LogUtil()
+        self.pageUtil = page_util  # 通过依赖注入传递 PageUtil 的实例
 
     def addLink(self, link, isCensored):
         self.timeouts.append(
