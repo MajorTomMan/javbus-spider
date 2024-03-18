@@ -1,14 +1,10 @@
-import hashlib
-import json
 import threading
 import time
-from urllib.parse import urlparse
-from warnings import catch_warnings
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
 from utils.PageUtil import PageUtil
 from utils.RequestUtil import RequestUtil
-
+from utils.TimeoutUtil import TimeoutUtil
 from utils.AttrsUtil import AttrsUtil
 from utils.ActressUtil import ActressUtil
 from utils.WebUtil import WebUtil
@@ -25,9 +21,9 @@ class actresses:
     starUrl = ""
     pageNum = 1
     baseUrl = ""
-    timeouts = []
     lock = threading.Lock()
     pageUtil = None
+    timeoutUtil = TimeoutUtil()
 
     def __init__(self, url, is_censored):
         self.baseUrl = url
@@ -60,6 +56,8 @@ class actresses:
         end_time = time.time()
         self.logUtil.log("bfs done")
         self.logUtil.log("thread running time is " + str(end_time - star_time))
+        if not self.timeoutUtil.isEmpty():
+            self.timeoutUtil.requestTimeoutLink()
 
     def __bfs(self, source):
         if not source:
@@ -97,22 +95,7 @@ class actresses:
                     )
             self.requestUtil.send(actressList, "/actress/save")
         else:
-            self.save2local(
-                source, threading.currentThread().getName() + "__bfs", ".html"
-            )
             self.logUtil.log("bricks not found")
-            raise PageException()
-
-    def send(self, data, path):
-        response = self.requestUtil.post(data=data, path=path)
-        if not response:
-            self.logUtil.log(
-                "request not response pls check server is open or has expection "
-            )
-        elif response.status_code == 200:
-            self.logUtil.log("send data to " + path + " was success")
-        else:
-            self.logUtil.log("send data to " + path + " was failure")
 
     def printActresses(self, actress):
         with actresses.lock:

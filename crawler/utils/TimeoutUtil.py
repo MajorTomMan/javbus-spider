@@ -1,6 +1,7 @@
 from utils.LogUtil import LogUtil
 from utils.PageUtil import PageUtil
 from utils.WebUtil import WebUtil
+from utils.TimeoutUtil import TimeoutUtil
 
 
 class TimeoutUtil:
@@ -8,6 +9,7 @@ class TimeoutUtil:
     timeouts = []
     pageUtil = PageUtil()
     logUtil = LogUtil()
+    timeoutUtil = TimeoutUtil()
 
     def addLink(self, link, isCensored):
         self.timeouts.append(
@@ -28,3 +30,8 @@ class TimeoutUtil:
                             + " still timeout, abandon this link"
                         )
                     self.timeouts.remove(timeout)
+
+    def isEmpty(self):
+        if len(self.timeouts) == 0:
+            return True
+        return False
