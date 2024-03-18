@@ -5,16 +5,10 @@ from utils.LogUtil import LogUtil
 from utils.PageUtil import PageUtil
 from utils.RequestUtil import RequestUtil
 from utils.WebUtil import WebUtil
-
-webUtil = WebUtil()
-actressUtil = ActressUtil()
-attrsUtil = AttrsUtil()
-logUtil = LogUtil()
-requestUtil = RequestUtil()
-pageUtil = PageUtil("https://www.cdnbus.shop/", False)
+import undetected_chromedriver as uc
 
 
-bs = BeautifulSoup(
-    webUtil.getWebSite("https://www.cdnbus.shop/072823-001"), "html.parser"
-)
-LogUtil().log(pageUtil.getPage(bs))
+if __name__ == "__main__":
+    driver = uc.Chrome()
+    driver.get("https://www.baidu.com")
+    driver.quit()

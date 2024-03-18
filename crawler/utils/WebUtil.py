@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 import undetected_chromedriver as uc
 
 from utils.LogUtil import LogUtil
+from urllib3.exceptions import MaxRetryError
 
 
 class WebUtil:
@@ -42,20 +43,22 @@ class WebUtil:
         options.add_argument("--ignore-certificate-errors")
         options.add_argument("--no-sandbox")
         options.add_argument("--start-maximized")
+        # 使用eager加快加载速度
         options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
-        # 使用eager加快加载速度
-        self.options = options
+        self.local.options = options
         self.logUtil.log("driver initial")
-        self.driver = Chrome(
+        self.local.driver = Chrome(
             headless=True,
             driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
-            options=self.options,
+            options=self.local.options,
             version_main=122,
+            user_multi_procs=True,
+            use_subprocess=True,
         )
-        # 超时时间设为5分钟
-        self.driver.set_page_load_timeout(150)
-        self.driver.set_script_timeout(150)
+        # 超时时间设为2.5分钟
+        self.local.driver.set_page_load_timeout(150)
+        self.local.driver.set_script_timeout(150)
 
     def getWebSite(self, link):
         parsed_url = urlparse(link)
@@ -76,12 +79,12 @@ class WebUtil:
                 self.logUtil.log("starting request to " + new_url + " ...........")
                 self.logUtil.log("waiting for request finished...........")
                 start_time = time.time()
-                self.driver.get(new_url)
+                self.local.driver.get(new_url)
                 end_time = time.time()
                 self.logUtil.log("request finished....")
                 self.logUtil.log("request spend time was " + str(end_time - start_time))
-                source = self.driver.page_source
-                self.driver.quit()
+                source = self.local.driver.page_source
+                self.local.driver.quit()
                 return source
             except TimeoutException:
                 self.logUtil.log("request to " + new_url + " timeout in 2.5 minutes")
@@ -90,6 +93,10 @@ class WebUtil:
                 continue
             except WebDriverException as e:
                 self.logUtil.log(e)
+                continue
+            except MaxRetryError as e:
+                self.logUtil.log("MaxRetry Link->")
+                self.logUtil.log(e.reason)
                 continue
         self.logUtil.log("All backup URLs tried, none successful.")
         return None

@@ -1,5 +1,7 @@
+import hashlib
 import threading
 import time
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
 
@@ -7,6 +9,7 @@ from utils.AttrsUtil import AttrsUtil
 from utils.ImageUtil import ImageUtil
 from utils.LogUtil import LogUtil
 from utils.ActressUtil import ActressUtil
+from utils.RequestUtil import RequestUtil
 from utils.WebUtil import WebUtil
 from utils.attrs.CompanyLinks import CompanyLinks
 
@@ -29,22 +32,20 @@ class PageUtil:
     actressUtil = ActressUtil()
     logUtil = LogUtil()
     baseUrl = ""
-    isCensored = ""
     companys = CompanyLinks()
     lock = threading.Lock()
+    requestUtil = RequestUtil()
 
-    def __init__(self, url, is_censored) -> None:
+    def __init__(self, url) -> None:
         self.baseUrl = url
-        self.isCensored = is_censored
 
-    def parseDetailPage(self, link):
+    def parseDetailPage(self, link, isCensored):
         self.logUtil.log("sleeping in 10 seconds")
         time.sleep(10)
-
         source = self.webUtil.getWebSite(link)
         if source:
             bs = BeautifulSoup(source, "html.parser")
-            page = self.getPage(bs)
+            page = self.getPage(bs, isCensored)
             if page != -1:
                 page.movie["link"] = link
                 actresses = page.actresses
@@ -82,7 +83,7 @@ class PageUtil:
             self.logUtil.log("request " + link + " timeout")
             return None
 
-    def getPage(self, bs):
+    def getPage(self, bs, isCensored):
         page = Page()
         bigimage = BigImage()
         movie = Movie()
@@ -170,7 +171,7 @@ class PageUtil:
                                     url + actressDetail.photo_link
                                 )
                         actressDetail.actress_link = actresses.get(actress)
-                        actressDetail.is_censored = self.isCensored
+                        actressDetail.is_censored = isCensored
                         actressesList.append(actressDetail.toDict())
             if actresses:
                 p = ps[-3]
@@ -180,9 +181,7 @@ class PageUtil:
             if genres and genres != -1:
                 categories = []
                 for k, v in genres.items():
-                    categories.append(
-                        {"name": k, "link": v, "is_censored": self.isCensored}
-                    )
+                    categories.append({"name": k, "link": v, "is_censored": isCensored})
                 page.categories = categories
             elif genres == -1:
                 self.logUtil.log("skipping this page")
@@ -196,6 +195,7 @@ class PageUtil:
         if bigimage:
             page.sampleimage = samples
         if movie:
+            movie.is_censored = isCensored
             page.movie = movie.toDict()
         if studio:
             page.studio = studio.toDict()
@@ -227,3 +227,111 @@ class PageUtil:
                             return True
         self.logUtil.log("this page dont have next page element")
         return False
+
+    def parseMovieListPage(self, link, isCensored):
+        source = self.webUtil.getWebSite(link)
+        if not source:
+            return True
+        bs = BeautifulSoup(source, "html.parser")
+        bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
+        if bricks:
+            for brick in bricks:
+                try:
+                    url = self.attrsUtil.getLink(brick)
+                    if url:
+                        # 如果电影页存在
+                        page = self.parseDetailPage(url, isCensored)
+                        if page and page != -1:
+                            self.sendData2Server(page)
+                        elif page == -1:
+                            continue
+                        else:
+                            self.logUtil.log("add " + url + " to timeouts")
+                            self.timeouts.append(url)
+                except Exception as e:
+                    self.logUtil.log(e)
+            self.logUtil.log("all link was visited jump to next page")
+            if self.hasNextPage(bs):
+                return False
+            else:
+                return True
+
+    def save2local(self, content, link, extensions):
+        # 获取链接的路径名
+        parsed_url = urlparse(link)
+        path_name = parsed_url.path.replace("/", "_")
+        # 计算路径名的哈希值
+        hash_value = hashlib.md5(path_name.encode()).hexdigest()
+
+        # 构建保存文件的路径
+        save_path = f"./failed_link/{path_name}_{hash_value}{extensions}"
+        with open(save_path, "w+", encoding="UTF-8") as f:
+            f.write(content)
+
+    def sendData2Server(self, page):
+        if page.movie and len(page.movie) >= 1:
+            self.requestUtil.send(page.movie, "/movie/save")
+        if page.bigimage and len(page.bigimage) >= 1:
+            movieBigImageVo = {
+                "movie": page.movie,
+                "bigImage": page.bigimage,
+            }
+            self.requestUtil.send(movieBigImageVo, "/movie/relation/bigimage/save")
+        if page.categories and len(page.categories) >= 1:
+            movieCategoryVo = {"movie": page.movie, "categories": page.categories}
+            self.requestUtil.send(movieCategoryVo, "/movie/relation/category/save")
+        if page.director and len(page.director) >= 1:
+            movieDirectVo = {"movie": page.movie, "director": page.director}
+            self.requestUtil.send(movieDirectVo, "/movie/relation/director/save")
+        if page.label and len(page.label) >= 1:
+            movieLabelVo = {"movie": page.movie, "label": page.label}
+            self.requestUtil.send(movieLabelVo, "/movie/relation/label/save")
+        if page.sampleimage and len(page.sampleimage) >= 1:
+            movieSampleImageVo = {"movie": page.movie, "sampleImages": page.sampleimage}
+            self.requestUtil.send(
+                movieSampleImageVo, "/movie/relation/sampleimage/save"
+            )
+        if page.actresses and len(page.actresses) >= 1:
+            if page.director:
+                starDirectorVo = {"actress": page.actresses, "director": page.director}
+                self.requestUtil.send(starDirectorVo, "/actress/relation/director/save")
+            if page.studio:
+                starStudioVo = {"actress": page.actresses, "studio": page.studio}
+                self.requestUtil.send(starStudioVo, "/actress/relation/studio/save")
+            if page.series:
+                starSeriesVo = {"actress": page.actresses, "series": page.series}
+                self.requestUtil.send(starSeriesVo, "/actress/relation/series/save")
+            if page.movie:
+                movieActressVo = {"movie": page.movie, "actress": page.actresses}
+                self.requestUtil.send(movieActressVo, "/movie/relation/actress/save")
+            if page.categories and len(page.categories) >= 1:
+                starCategoryVo = {
+                    "actress": page.actresses,
+                    "categories": page.categories,
+                }
+                self.requestUtil.send(starCategoryVo, "/actress/relation/category/save")
+        if page.studio and len(page.studio) >= 1:
+            movieStudioVo = {"movie": page.movie, "studio": page.studio}
+            self.requestUtil.send(movieStudioVo, "/movie/relation/studio/save")
+        if page.series and len(page.series) >= 1:
+            movieSeriesVo = {"movie": page.movie, "series": page.series}
+            self.requestUtil.send(movieSeriesVo, "/movie/relation/series/save")
+
+    def printPage(self, page):
+        with page.lock:
+            self.logUtil.log(
+                "------------------------------page info start--------------------------------------"
+            )
+            self.logUtil.log(page)
+            self.logUtil.log(
+                "------------------------------page info ended--------------------------------------"
+            )
+            if page.actresses:
+                self.logUtil.log(
+                    "------------------------------actress info start--------------------------------------"
+                )
+                for actress in page.actresses:
+                    self.logUtil.log(actress)
+                self.logUtil.log(
+                    "------------------------------actress info ended--------------------------------------"
+                )

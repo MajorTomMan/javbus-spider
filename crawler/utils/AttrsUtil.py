@@ -234,3 +234,11 @@ class AttrsUtil:
         else:
             self.logUtil.log("page actresses not found")
             return None
+
+    def getIsCensored(self, bs):
+        button = bs.find("button", {"class": "btn btn-xs btn-info"})
+        if button:
+            if "有碼" in button.text.strip():
+                return True
+            elif "无碼" in button.text.strip():
+                return False

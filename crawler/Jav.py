@@ -50,11 +50,6 @@ if __name__ == "__main__":
                 args=(search, keyword, True),
                 name="thread_name:search/censored",
             ),
-            # threading.Thread(
-            #    target=run_bfs,
-            #    args=(search, keyword, False),
-            #    name="thread_name:search/uncensored",
-            # ),
         ]
     elif num == 3:
         threads = [
@@ -115,21 +110,6 @@ if __name__ == "__main__":
                 name="thread_name:actresses/uncensored",
             ),
         ]
-        for keyword in keywords:
-            threads.append(
-                threading.Thread(
-                    target=run_bfs,
-                    args=(search, keyword, True),
-                    name="thread_name:search/censored/" + keyword,
-                ),
-            )
-            threads.append(
-                threading.Thread(
-                    target=run_bfs,
-                    args=(search, keyword, False),
-                    name="thread_name:search/uncensored/" + keyword,
-                ),
-            )
     for i, thread in enumerate(threads):
         # 在第一个线程之外，等待前一个线程至少20秒,防止瘫痪对方服务器而察觉爬虫
         if i != 0:

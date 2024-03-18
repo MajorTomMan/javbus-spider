@@ -22,6 +22,7 @@ class genre:
     genreUrl = ""
     isCensored = True
     lock = threading.Lock()
+    requestUtil = RequestUtil()
 
     def __init__(self, url, is_censored):
         if is_censored == True:
@@ -73,22 +74,8 @@ class genre:
                         "categories": categories,
                     }
                     if vos and len(vos) >= 1:
-                        response = self.request.post(
-                            vos, "/genre/relation/category/save"
-                        )
-                        if response:
-                            if response.status_code == 200:
-                                self.logUtil.log(
-                                    "send data to /genre/relation/category/save was success "
-                                )
-                            else:
-                                self.logUtil.log(
-                                    "send data to /genre/relation/category/save was failure "
-                                )
-                        else:
-                            self.logUtil.log(
-                                "request not response pls check server is open or has expection "
-                            )
+                        self.requestUtil.send(vos, "/genre/relation/category/save")
+
             else:
                 self.save2local(source, self.genreUrl, ".html")
                 self.logUtil.log("boxs not found")
