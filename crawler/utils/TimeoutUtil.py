@@ -9,7 +9,6 @@ class TimeoutUtil:
     timeouts = []
     pageUtil = PageUtil()
     logUtil = LogUtil()
-    timeoutUtil = TimeoutUtil()
 
     def addLink(self, link, isCensored):
         self.timeouts.append(
