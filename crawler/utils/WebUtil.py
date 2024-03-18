@@ -86,6 +86,7 @@ class WebUtil:
                     log_file_path=self.logFilePath,
                 )
                 start_time = time.time()
+                time.sleep(10)
                 self.local.driver.get(new_url)
                 end_time = time.time()
                 self.logUtil.log("request finished....", log_file_path=self.logFilePath)

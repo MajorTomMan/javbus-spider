@@ -36,14 +36,7 @@ class search:
         if self.baseUrl:
             star_time = time.time()
             while True:
-                if self.isCensored:
-                    link = (
-                        self.baseUrl
-                        + "searchstar/"
-                        + self.tag
-                        + "/"
-                        + str(self.pageNum)
-                    )
+                link = self.baseUrl + "searchstar/" + self.tag + "/" + str(self.pageNum)
                 source = self.webUtil.getWebSite(link)
                 if source:
                     self.logUtil.log("now page num is " + str(self.pageNum))
