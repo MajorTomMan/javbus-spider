@@ -18,17 +18,15 @@ class search:
     links = []
     pageNum = 1
     searchUrl = ""
-    isCensored = True
     tag = ""
     timeouts = []
     lock = threading.Lock()
     actressUtil = ActressUtil()
     timeoutUtil = None
 
-    def __init__(self, url, tag, is_censored):
+    def __init__(self, url, tag):
         self.baseUrl = url
         self.pageUtil = PageUtil(url)
-        self.isCensored = is_censored
         self.tag = tag
         self.timeoutUtil = TimeoutUtil(self.pageUtil)
 

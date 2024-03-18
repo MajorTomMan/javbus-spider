@@ -114,15 +114,8 @@ if __name__ == "__main__":
             threads.append(
                 threading.Thread(
                     target=run_bfs,
-                    args=(search, keyword, True),
+                    args=(search, keyword),
                     name="thread_name:search/censored/" + keyword,
-                ),
-            )
-            threads.append(
-                threading.Thread(
-                    target=run_bfs,
-                    args=(search, keyword, False),
-                    name="thread_name:search/uncensored/" + keyword,
                 ),
             )
     for i, thread in enumerate(threads):
