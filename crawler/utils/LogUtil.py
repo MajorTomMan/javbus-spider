@@ -9,7 +9,7 @@ class LogUtil:
     mailUtil = MailUtil()
     lock = threading.Lock()
 
-    def log(self, log):
+    def log(self, log, log_file_path="./spider.log"):
         if log:
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             thread_name = threading.current_thread().name
@@ -18,7 +18,7 @@ class LogUtil:
                 log = f"Exception: {str(log)}\n" + f"stack:{traceback.format_exc()}"
             elif hasattr(log, "__dict__"):
                 log = log.__dict__
-            with open(self.logPath, "a", encoding="utf-8") as file:
+            with open(log_file_path, "a", encoding="utf-8") as file:
                 self.log_recursive(log, current_time, thread_name, file)
 
     def log_recursive(

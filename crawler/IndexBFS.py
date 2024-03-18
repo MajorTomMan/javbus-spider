@@ -40,20 +40,14 @@ class index:
                     bs = BeautifulSoup(source, "html.parser")
                     self.logUtil.log("now page num is " + str(self.pageNum))
                     if self.pageUtil.hasNextPage(bs):
-                        try:
-                            isFinalPage = False
-                            while not isFinalPage:
-                                isFinalPage = self.pageUtil.parseMovieListPage(
-                                    link, self.isCensored
-                                )
-                        except PageException:
-                            self.pageUtil.save2local(source, link, ".html")
+                        isFinalPage = False
+                        while not isFinalPage:
+                            isFinalPage = self.pageUtil.parseMovieListPage(
+                                link, self.isCensored
+                            )
                     else:
                         self.logUtil.log("final page is reach")
-                        try:
-                            self.__bfs(source)
-                        except PageException:
-                            self.pageUtil.save2local(source, link, ".html")
+                        self.__bfs(source)
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")

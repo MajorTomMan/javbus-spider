@@ -10,6 +10,7 @@ from utils.ImageUtil import ImageUtil
 from utils.LogUtil import LogUtil
 from utils.ActressUtil import ActressUtil
 from utils.RequestUtil import RequestUtil
+from utils.TimeoutUtil import TimeoutUtil
 from utils.WebUtil import WebUtil
 from utils.attrs.CompanyLinks import CompanyLinks
 
@@ -35,6 +36,7 @@ class PageUtil:
     companys = CompanyLinks()
     lock = threading.Lock()
     requestUtil = RequestUtil()
+    timeoutUtil = TimeoutUtil()
 
     def __init__(self, url) -> None:
         self.baseUrl = url
@@ -231,6 +233,7 @@ class PageUtil:
     def parseMovieListPage(self, link, isCensored):
         source = self.webUtil.getWebSite(link)
         if not source:
+            self.timeoutUtil.addLink(link, isCensored)
             return True
         bs = BeautifulSoup(source, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})

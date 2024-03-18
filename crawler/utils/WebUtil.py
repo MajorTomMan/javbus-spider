@@ -25,6 +25,7 @@ class WebUtil:
         "https://www.cdnbus.art",
         "https://www.buscdn.art",
     ]
+    logFilePath = "./driver.log"
 
     def __init__(self) -> None:
         self.local = threading.local()
@@ -47,7 +48,7 @@ class WebUtil:
         options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
-        self.logUtil.log("driver initial")
+        self.logUtil.log("driver initial", log_file_path=self.logFilePath)
         self.local.driver = Chrome(
             headless=True,
             driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
@@ -76,27 +77,44 @@ class WebUtil:
             )
             try:
                 self.initialize_driver()
-                self.logUtil.log("starting request to " + new_url + " ...........")
-                self.logUtil.log("waiting for request finished...........")
+                self.logUtil.log(
+                    "starting request to " + new_url + " ...........",
+                    log_file_path=self.logFilePath,
+                )
+                self.logUtil.log(
+                    "waiting for request finished...........",
+                    log_file_path=self.logFilePath,
+                )
                 start_time = time.time()
                 self.local.driver.get(new_url)
                 end_time = time.time()
-                self.logUtil.log("request finished....")
-                self.logUtil.log("request spend time was " + str(end_time - start_time))
+                self.logUtil.log("request finished....", log_file_path=self.logFilePath)
+                self.logUtil.log(
+                    "request spend time was " + str(end_time - start_time),
+                    log_file_path=self.logFilePath,
+                )
                 source = self.local.driver.page_source
                 self.local.driver.quit()
                 return source
             except TimeoutException:
-                self.logUtil.log("request to " + new_url + " timeout in 2.5 minutes")
-                self.logUtil.log("waiting 5 seconds to request backup")
+                self.logUtil.log(
+                    "request to " + new_url + " timeout in 2.5 minutes",
+                    log_file_path=self.logFilePath,
+                )
+                self.logUtil.log(
+                    "waiting 5 seconds to request backup link",
+                    log_file_path=self.logFilePath,
+                )
                 time.sleep(5)
                 continue
             except WebDriverException as e:
                 self.logUtil.log(e)
                 continue
             except MaxRetryError as e:
-                self.logUtil.log("MaxRetry Link->")
+                self.logUtil.log("MaxRetry Link->", log_file_path=self.logFilePath)
                 self.logUtil.log(e.reason)
                 continue
-        self.logUtil.log("All backup URLs tried, none successful.")
+        self.logUtil.log(
+            "All backup URLs tried, none successful.", log_file_path=self.logFilePath
+        )
         return None
