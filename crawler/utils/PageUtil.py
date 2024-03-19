@@ -60,24 +60,24 @@ class PageUtil:
                 if actresses:
                     for actress in actresses:
                         names.append(actress.get("name"))
-                # try:
-                # self.imageUtil.downloadSampleImages(
-                #    links=links, actresses=names, code=code
-                # )
-                # self.imageUtil.downloadBigImage(
-                #    link=page.bigimage["link"], actresses=names, code=code
-                # )
-                # except Exception as e:
-                # self.logUtil.log(
-                #    "-------------image error info start------------------"
-                # )
-                # self.logUtil.log("Error while downloading images: ")
-                # self.logUtil.log(e)
-                # self.logUtil.log("Failed page details: ")
-                # self.logUtil.log(page)
-                # self.logUtil.log(
-                #    "-------------image error info end------------------"
-                # )
+                try:
+                    self.imageUtil.downloadSampleImages(
+                        links=links, actresses=names, code=code
+                    )
+                    self.imageUtil.downloadBigImage(
+                        link=page.bigimage["link"], actresses=names, code=code
+                    )
+                except Exception as e:
+                    self.logUtil.log(
+                        "-------------image error info start------------------"
+                    )
+                    self.logUtil.log("Error while downloading images: ")
+                    self.logUtil.log(e)
+                    self.logUtil.log("Failed page details: ")
+                    self.logUtil.log(page)
+                    self.logUtil.log(
+                        "-------------image error info end------------------"
+                    )
                 return page
             else:
                 return -1
