@@ -43,7 +43,7 @@ public class MovieActressRelationServiceImpl implements MovieActressRelationServ
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(names);
         } else {
-            for (int i = 0; i <= actressIds.size(); i++) {
+            for (int i = 0; i < actressIds.size(); i++) {
                 dto.getActress().get(i).setId(actressIds.get(i));
             }
             actressDao.updateActresses(dto.getActress());

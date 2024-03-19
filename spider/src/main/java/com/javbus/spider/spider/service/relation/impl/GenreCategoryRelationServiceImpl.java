@@ -31,19 +31,22 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         Boolean isCensored = dto.getCategories().get(0).getIsCensored();
         Genre genre = genreDao.queryGenreByName(dto.getGenre().getName());
         if (genre == null) {
-            genreDao.saveGenre(genre);
+            genreDao.saveGenre(dto.getGenre());
             genre = genreDao.queryGenreByName(dto.getGenre().getName());
         }
-        List<Category> categories = dto.getCategories();
-        List<String> names = categories.stream().map((category) -> {
+        else{
+            dto.getGenre().setId(genre.getId());
+            genreDao.updateGenre(genre);
+        }
+        List<String> names = dto.getCategories().stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
         if (categoryIds.isEmpty()) {
-            categoryDao.saveCategories(categories);
+            categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(names);
         } else {
-            for(int i=0;i<=categoryIds.size();i++){
+            for(int i=0;i<categoryIds.size();i++){
                 dto.getCategories().get(i).setId(categoryIds.get(i));
             }
             categoryDao.updateCategories(dto.getCategories());

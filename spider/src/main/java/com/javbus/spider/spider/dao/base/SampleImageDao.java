@@ -17,4 +17,5 @@ public interface SampleImageDao {
     List<SampleImage> querySampleImagesByIds(List<Integer> sampleImageIds);
 
     void updateSampleImage(SampleImage sampleImage);
+    void updateSampleImages(List<SampleImage> sampleImages);
 }

@@ -34,7 +34,7 @@
         WHERE id = #{id}
     </update>
         <!-- 批量更新操作 -->
-    <update id="updateSampleImagesBatch" parameterType="java.util.List">
+    <update id="updateSampleImages" parameterType="java.util.List">
         <foreach collection="sampleImages" item="sampleImage" index="index" separator=";">
             UPDATE sample_image
             SET link=#{sampleImage.link}

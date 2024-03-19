@@ -38,7 +38,7 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(actressNames);
         } else {
-            for (int i = 0; i <= actressIds.size(); i++) {
+            for (int i = 0; i < actressIds.size(); i++) {
                 dto.getActress().get(i).setId(actressIds.get(i));
             }
             actressDao.updateActresses(dto.getActress());
@@ -48,12 +48,11 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         // 先保存进数据库保证数据存在
-        if(categoryIds.isEmpty()){
+        if (categoryIds.isEmpty()) {
             categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        }
-        else{
-            for(int i=0;i<=categoryIds.size();i++){
+        } else {
+            for (int i = 0; i < categoryIds.size(); i++) {
                 dto.getCategories().get(i).setId(categoryIds.get(i));
             }
             categoryDao.updateCategories(dto.getCategories());

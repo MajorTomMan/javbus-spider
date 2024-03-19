@@ -47,12 +47,10 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
             sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
         }
         else{
-            List<SampleImage> sampleImages = dto.getSampleImages();
-            for (int i=0;i<=sampleImageIds.size();i++) {
-                SampleImage sampleImage = sampleImages.get(i);
-                sampleImage.setId(sampleImageIds.get(i));
-                sampleImageDao.updateSampleImage(sampleImage);
+            for (int i=0;i< sampleImageIds.size();i++) {
+                dto.getSampleImages().get(i).setId(sampleImageIds.get(i));
             }
+            sampleImageDao.updateSampleImages(dto.getSampleImages());
         }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);

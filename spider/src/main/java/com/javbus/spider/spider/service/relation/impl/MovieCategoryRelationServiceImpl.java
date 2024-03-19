@@ -40,12 +40,11 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
             return data.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        if(categoryIds.isEmpty()){
+        if (categoryIds.isEmpty()) {
             categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        }
-        else{
-            for(int i=0;i<=categoryIds.size();i++){
+        } else {
+            for (int i = 0; i < categoryIds.size(); i++) {
                 dto.getCategories().get(i).setId(categoryIds.get(i));
             }
             categoryDao.updateCategories(dto.getCategories());
