@@ -40,7 +40,7 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
             return data.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        if (categoryIds.isEmpty()) {
+        if (categoryIds.isEmpty() || categoryIds.size() != dto.getCategories().size()) {
             categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(names);
         } else {
@@ -75,7 +75,7 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         List<Integer> categoryIds = relations.stream().map(relation -> {
             return relation.getCategoryId();
         }).collect(Collectors.toList());
-        List<Category> categories = categoryDao.queryCategories(categoryIds);
+        List<Category> categories = categoryDao.queryCategoriesByIds(categoryIds);
         MovieCategoryVO vo = new MovieCategoryVO();
         vo.setCategories(categories);
         vo.setMovie(movie);

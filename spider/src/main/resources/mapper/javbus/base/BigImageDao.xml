@@ -3,7 +3,7 @@
 <mapper namespace="com.javbus.spider.spider.dao.base.BigImageDao">
     <!-- 增加 BigImage 记录 -->
     <insert id="saveBigImage" parameterType="com.javbus.spider.spider.entity.base.BigImage">
-        INSERT INTO big_image (link)
+        INSERT IGNORE INTO big_image (link)
         VALUES (#{link})
     </insert>
 

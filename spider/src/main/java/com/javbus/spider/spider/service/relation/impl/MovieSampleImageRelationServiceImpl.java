@@ -42,12 +42,11 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
             movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         }
         List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
-        if(sampleImageIds.isEmpty()){
+        if (sampleImageIds.isEmpty() || sampleImageIds.size() != dto.getSampleImages().size()) {
             sampleImageDao.saveSampleImages(dto.getSampleImages());
             sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
-        }
-        else{
-            for (int i=0;i< sampleImageIds.size();i++) {
+        } else {
+            for (int i = 0; i < sampleImageIds.size(); i++) {
                 dto.getSampleImages().get(i).setId(sampleImageIds.get(i));
             }
             sampleImageDao.updateSampleImages(dto.getSampleImages());

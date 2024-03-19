@@ -4,7 +4,7 @@
 
     <insert id="saveGenre" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT
         INTO genre (name) VALUES (#{name}) </insert>
-    <insert id="saveGenres" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT INTO genre (name) VALUES <foreach collection="list" item="genre" separator=",">
+    <insert id="saveGenres" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT IGNORE INTO genre (name) VALUES <foreach collection="list" item="genre" separator=",">
         (#{genre.name}) </foreach>
     </insert>
 

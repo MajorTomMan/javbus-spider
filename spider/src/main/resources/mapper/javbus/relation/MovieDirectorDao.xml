@@ -10,7 +10,7 @@
     </resultMap>
     
     <insert id="addMovieDirectorRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
-        INSERT INTO movie_director_relation (movie_id, director_id) 
+        INSERT IGNORE INTO movie_director_relation (movie_id, director_id) 
         VALUES (#{movieId}, #{directorId})
     </insert>
 

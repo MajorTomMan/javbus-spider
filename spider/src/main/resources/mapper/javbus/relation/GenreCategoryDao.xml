@@ -10,19 +10,19 @@
     </resultMap>
 
     <insert id="addGenreCategoryCensoredRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT INTO genre_category_censored_relation (genre_id, category_id)
+        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id)
         VALUES (#{genreId}, #{categoryId})
     </insert>
 
     <insert id="addGenreCategoryCensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT INTO genre_category_censored_relation (genre_id, category_id) VALUES
+        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
     
     <insert id="addGenreCategoryUncensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
+        INSERT IGNORE INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>

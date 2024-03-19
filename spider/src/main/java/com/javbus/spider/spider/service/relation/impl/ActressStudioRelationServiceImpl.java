@@ -33,7 +33,7 @@ public class ActressStudioRelationServiceImpl implements ActressStudioRelationSe
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(actressNames);
-        if (actressIds.isEmpty()) {
+        if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(actressNames);
         } else {

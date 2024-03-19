@@ -13,7 +13,7 @@
         WHERE name = #{name}
     </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Studio">
-        INSERT INTO studio (name,link)
+        INSERT IGNORE INTO studio (name,link)
         VALUES (#{name},#{link})
     </insert>
 

@@ -34,14 +34,13 @@ public class ActressServiceImpl implements ActressService {
             return actress.getName();
         }).collect(Collectors.toList());
         List<Integer> ids = actressDao.queryActressIdsByNames(names);
-        if (ids.isEmpty()) {
+        if (ids.isEmpty() || ids.size() != actresses.size()) {
             actressDao.saveActresses(actresses);
         } else {
-            for (int i = 0; i <= ids.size(); i++) {
-                Actress act = actresses.get(i);
-                act.setId(ids.get(i));
-                actressDao.update(act);
+            for (int i = 0; i < ids.size(); i++) {
+                actresses.get(i).setId(ids.get(i));
             }
+            actressDao.updateActresses(actresses);
         }
     }
 

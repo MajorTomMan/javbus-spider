@@ -34,7 +34,7 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(actressNames);
-        if (actressIds.isEmpty()) {
+        if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(actressNames);
         } else {
@@ -48,7 +48,7 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         // 先保存进数据库保证数据存在
-        if (categoryIds.isEmpty()) {
+        if (categoryIds.isEmpty() || categoryIds.size() != dto.getCategories().size()) {
             categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
         } else {
@@ -86,7 +86,7 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
         List<Integer> categoryIds = relations.stream().map(relation -> {
             return relation.getCategoryId();
         }).collect(Collectors.toList());
-        List<Category> categories = categoryDao.queryCategories(categoryIds);
+        List<Category> categories = categoryDao.queryCategoriesByIds(categoryIds);
         ActressCategoryVO vo = new ActressCategoryVO();
         vo.setActress(actress);
         vo.setCategories(categories);

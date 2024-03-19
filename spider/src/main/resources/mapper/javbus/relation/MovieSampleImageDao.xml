@@ -11,7 +11,7 @@
 
     <insert id="addMovieSampleImageRelation"
         parameterType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
-        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES (#{movieId},
+        INSERT IGNORE INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES (#{movieId},
         #{sampleImageId})
     </insert>
 
@@ -21,7 +21,7 @@
     </delete>
 
     <insert id="addMovieSampleImageRelations" parameterType="List">
-        INSERT INTO
+        INSERT IGNORE INTO
         movie_sample_image_relation (movie_id, sample_image_id) VALUES <foreach collection="list"
             item="relation" separator=","> (#{relation.movieId}, #{relation.sampleImageId}) </foreach>
     </insert>

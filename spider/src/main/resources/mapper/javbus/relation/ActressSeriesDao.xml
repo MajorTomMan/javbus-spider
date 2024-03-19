@@ -12,7 +12,7 @@
     
     <insert id="addActressSeriesRelation" parameterType="List">
         <!-- 插入单个关系 -->
-        INSERT INTO actress_series_relation (actress_id, series_id) 
+        INSERT IGNORE INTO actress_series_relation (actress_id, series_id) 
         VALUES (#{actressId}, #{seriesId})
     </insert>
     
@@ -24,7 +24,7 @@
 
     <insert id="addActressSeriesRelations" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT INTO actress_series_relation (actress_id, series_id) VALUES
+        INSERT IGNORE INTO actress_series_relation (actress_id, series_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.actressId}, #{relation.seriesId})
         </foreach>

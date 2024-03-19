@@ -9,7 +9,7 @@
         <result property="seriesId" column="series_id" />
     </resultMap>
     <insert id="addMovieSeriesRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieSeriesRelation"> INSERT INTO movie_series_relation (movie_id, series_id) VALUES (#{movieId}, #{seriesId}) </insert>
+        parameterType="com.javbus.spider.spider.entity.relation.MovieSeriesRelation"> INSERT IGNORE INTO movie_series_relation (movie_id, series_id) VALUES (#{movieId}, #{seriesId}) </insert>
 
     <delete id="deleteMovieSeriesRelation"> DELETE FROM movie_series_relation WHERE movie_id =
         #{movieId} AND series_id = #{seriesId} </delete>

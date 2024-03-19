@@ -23,7 +23,7 @@
     <!-- 插入操作 -->
 <!-- 插入单个 Actress -->
     <insert id="saveActress" parameterType="com.javbus.spider.spider.entity.base.Actress"> 
-        INSERT INTO actress( name, actress_link, photo_link, birth_day, age, height, cup, bust, waist, hip,
+        INSERT IGNORE INTO actress( name, actress_link, photo_link, birth_day, age, height, cup, bust, waist, hip,
         birth_place, hobby, is_censored ) 
         VALUES ( #{name}, #{actressLink}, #{photoLink}, #{birthDay}, #{age}, #{height}, #{cup}, #{bust}, #{waist}, #{hip}, #{birthPlace}, #{hobby},#{isCensored} )
     </insert>
@@ -64,7 +64,7 @@
 
     <!-- 插入多个 Actress -->
     <insert id="saveActresses" parameterType="java.util.List"> 
-        INSERT INTO actress (name, actress_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place, hobby, is_censored)
+        INSERT IGNORE INTO actress (name, actress_link, photo_link, birth_day, age, height, cup, bust, waist, hip, birth_place, hobby, is_censored)
         VALUES 
         <foreach collection="actresses" item="actress" separator=",">
             (#{actress.name}, #{actress.actressLink}, #{actress.photoLink}, #{actress.birthDay}, #{actress.age}, #{actress.height},

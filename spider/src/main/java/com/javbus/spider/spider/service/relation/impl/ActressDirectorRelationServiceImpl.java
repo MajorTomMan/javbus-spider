@@ -39,7 +39,7 @@ public class ActressDirectorRelationServiceImpl implements ActressDirectorRelati
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
-        if (actressIds.isEmpty()) {
+        if (actressIds.isEmpty()||actressIds.size()!=dto.getActress().size()) {
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(names);
         } else {

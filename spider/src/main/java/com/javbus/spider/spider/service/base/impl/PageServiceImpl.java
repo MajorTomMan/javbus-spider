@@ -146,7 +146,7 @@ public class PageServiceImpl implements PageService {
             List<Integer> categoryIds = movieCategoryRelations.stream().map(relation -> {
                 return relation.getCategoryId();
             }).collect(Collectors.toList());
-            List<Category> categories = categoryDao.queryCategories(categoryIds);
+            List<Category> categories = categoryDao.queryCategoriesByIds(categoryIds);
             vo.setCategories(categories);
         }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
