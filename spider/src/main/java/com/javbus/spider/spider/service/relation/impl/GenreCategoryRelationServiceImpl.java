@@ -105,6 +105,9 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         } else {
             List<GenreCategoryRelation> relations = genreCategoryDao
                     .queryGenreCategoryUncensoredRelationsByGenreId(genreId);
+            if(relations.isEmpty()){
+                return null;
+            }
             Genre genre = genreDao.queryGenreById(genreId);
             List<Integer> categoryIds = relations.stream().map(relation -> {
                 return relation.getCategoryId();
