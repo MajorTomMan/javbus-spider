@@ -68,7 +68,7 @@
     </select>
 
     <!-- queryCategories --> 
-    <select id="queryCategories" resultMap="categoryResultMap">
+    <select id="queryCategoriesByIds" resultMap="categoryResultMap">
         SELECT * FROM category WHERE id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
              #{categoryId} 
