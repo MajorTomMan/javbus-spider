@@ -20,26 +20,7 @@
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
-
-    <delete id="deleteGenreCategoryCensoredRelation">
-        DELETE FROM genre_category_censored_relation
-        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
-    </delete>
-    <delete id="deleteGenreCategoryCensoredRelation">
-        DELETE FROM genre_category_censored_relation
-        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
-    </delete>
-    <select id="queryGenreCategoryCensoredRelations" resultMap="genreCategoryRelationResultMap">
-        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId} AND category_id IN 
-        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
-            #{categoryId}
-        </foreach>
-    </select>
-
-    <select id="queryGenreCategoryCensoredRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
-        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId}
-    </select>
-
+    
     <insert id="addGenreCategoryUncensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
         INSERT INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
@@ -51,11 +32,21 @@
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id=#{genreId} and category_id=#{categoryId}
     </select>
 
+
+    <delete id="deleteGenreCategoryCensoredRelation">
+        DELETE FROM genre_category_censored_relation
+        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
+    </delete>
     <delete id="deleteGenreCategoryUncensoredRelation">
         DELETE FROM genre_category_uncensored_relation
         WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
-
+    <select id="queryGenreCategoryCensoredRelations" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId} AND category_id IN 
+        <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </select>
     <select id="queryGenreCategoryUncensoredRelations" resultMap="genreCategoryRelationResultMap">
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId} AND category_id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
@@ -65,6 +56,10 @@
 
     <select id="queryGenreCategoryUncensoredRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId}
+    </select>
+    
+    <select id="queryGenreCategoryCensoredRelationsByGenreId" resultMap="genreCategoryRelationResultMap">
+        SELECT * FROM genre_category_censored_relation WHERE genre_id = #{genreId}
     </select>
 
     <update id="updateGenreCategoryCensoredRelations" parameterType="java.util.List">
