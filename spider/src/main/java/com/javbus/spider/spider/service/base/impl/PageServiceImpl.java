@@ -44,7 +44,6 @@ import com.javbus.spider.spider.entity.relation.MovieStudioRelation;
 import com.javbus.spider.spider.entity.vo.PageVO;
 import com.javbus.spider.spider.service.base.PageService;
 
-
 @Service
 public class PageServiceImpl implements PageService {
     @Autowired
@@ -143,8 +142,7 @@ public class PageServiceImpl implements PageService {
                 .queryMovieCategoryRelationsByMovieId(movieId);
         if (movieCategoryRelations == null || movieCategoryRelations.isEmpty()) {
             vo.setCategories(null);
-        }
-        else{
+        } else {
             List<Integer> categoryIds = movieCategoryRelations.stream().map(relation -> {
                 return relation.getCategoryId();
             }).collect(Collectors.toList());
@@ -153,10 +151,9 @@ public class PageServiceImpl implements PageService {
         }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelationsByMovieId(movieId);
-        if(movieSampleImageRelations==null||movieSampleImageRelations.isEmpty()){
+        if (movieSampleImageRelations == null || movieSampleImageRelations.isEmpty()) {
             vo.setSampleImages(null);
-        }
-        else{
+        } else {
             List<Integer> sampleImageIds = movieSampleImageRelations.stream().map(relation -> {
                 return relation.getSampleImageId();
             }).collect(Collectors.toList());

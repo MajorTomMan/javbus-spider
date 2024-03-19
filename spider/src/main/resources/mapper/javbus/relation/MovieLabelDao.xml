@@ -9,7 +9,7 @@
         <result property="labelId" column="label_id" />
     </resultMap>
     <insert id="addMovieLabelRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieLabelRelation"> INSERT IGNORE
+        parameterType="com.javbus.spider.spider.entity.relation.MovieLabelRelation"> INSERT
         INTO movie_label_relation (movie_id, label_id) VALUES (#{movieId}, #{labelId}) </insert>
 
     <delete id="deleteMovieLabelRelation"> DELETE FROM movie_label_relation WHERE movie_id =
@@ -17,16 +17,23 @@
 
     <select id="queryMovieLabelRelation"
         resultMap="movieLabelRelationResultMap"> 
-        Select * 
-        FROM movie_label_relation 
+        SELECT * FROM movie_label_relation 
         WHERE movie_id = #{movieId} AND label_id = #{labelId} 
     </select>
 
     <!-- queryMovieLabelRelationByMovieId --> 
 
     <select id="queryMovieLabelRelationByMovieId" resultMap="movieLabelRelationResultMap">
-        Select * 
-        FROM movie_label_relation 
+        SELECT * FROM movie_label_relation 
         WHERE movie_id = #{movieId}
     </select>
+
+    <!-- updateMovieLabelRelation -->
+    <update id="updateMovieLabelRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_label_relation
+            SET movie_id = #{relation.movieId}, label_id = #{relation.labelId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

@@ -1,5 +1,7 @@
 package com.javbus.spider.spider.dao.relation;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.javbus.spider.spider.entity.relation.MovieBigImageRelation;
@@ -12,4 +14,6 @@ public interface MovieBigImageDao {
     void deleteMovieBigImageRelation(Integer movieId, Integer bigImageId);
     MovieBigImageRelation queryMovieBigImageRelation(Integer movieId, Integer bigImageId);
     MovieBigImageRelation queryMovieBigImageRelationByMovieId(Integer movieId);
+
+    void updateMovieBigImageRelations(List<MovieBigImageRelation> relations);
 }

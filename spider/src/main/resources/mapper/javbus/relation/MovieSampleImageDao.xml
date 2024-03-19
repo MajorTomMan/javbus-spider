@@ -11,36 +11,51 @@
 
     <insert id="addMovieSampleImageRelation"
         parameterType="com.javbus.spider.spider.entity.relation.MovieSampleImageRelation">
-        <!-- 插入单个关系 --> INSERT
-        IGNORE INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES (#{movieId},
-        #{sampleImageId}) </insert>
+        INSERT INTO movie_sample_image_relation (movie_id, sample_image_id) VALUES (#{movieId},
+        #{sampleImageId})
+    </insert>
 
     <delete id="deleteMovieSampleImageRelation">
-        <!-- 删除单个关系 --> DELETE FROM movie_sample_image_relation WHERE
-        movie_id = #{movieId} AND sample_image_id = #{sampleImageId} </delete>
+        DELETE FROM movie_sample_image_relation WHERE
+        movie_id = #{movieId} AND sample_image_id = #{sampleImageId}
+    </delete>
 
     <insert id="addMovieSampleImageRelations" parameterType="List">
-        <!-- 插入多个关系 --> INSERT IGNORE INTO
+        INSERT INTO
         movie_sample_image_relation (movie_id, sample_image_id) VALUES <foreach collection="list"
             item="relation" separator=","> (#{relation.movieId}, #{relation.sampleImageId}) </foreach>
     </insert>
+
     <select id="queryMovieSampleImageRelation"
-        resultMap="movieSampleImageRelationResultMap"> SELECT *
+        resultMap="movieSampleImageRelationResultMap"> 
+        SELECT *
         FROM movie_sample_image_relation WHERE movie_id = #{movieId} AND sample_image_id =
-        #{sampleImageId} </select>
+        #{sampleImageId} 
+    </select>
+
     <select id="queryMovieSampleImageRelations"
-    resultMap="movieSampleImageRelationResultMap"> SELECT *
+        resultMap="movieSampleImageRelationResultMap"> 
+        SELECT *
         FROM movie_sample_image_relation WHERE movie_id=#{movieId} AND sample_image_id IN <foreach
             collection="sampleImageIds" item="sampleImageId" open="(" separator="," close=")">
-        #{sampleImageId} </foreach>
+            #{sampleImageId} </foreach>
     </select>
 
     <!-- queryMovieSampleImageRelationsByMovieId --> 
 
     <select id="queryMovieSampleImageRelationsByMovieId" 
-    resultMap="movieSampleImageRelationResultMap">
+        resultMap="movieSampleImageRelationResultMap">
         SELECT *
         FROM movie_sample_image_relation 
         WHERE movie_id=#{movieId}
     </select>
+
+    <!-- updateMovieSampleImageRelation -->
+    <update id="updateMovieSampleImageRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_sample_image_relation
+            SET movie_id = #{relation.movieId}, sample_image_id = #{relation.sampleImageId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

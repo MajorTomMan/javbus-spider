@@ -14,4 +14,6 @@ public interface MovieActressDao {
     MovieActressRelation queryMovieActressRelation(Integer movieId, Integer actressId);
     List<MovieActressRelation> queryMovieActressRelations(Integer movieId, List<Integer> actressIds);
     List<MovieActressRelation> queryMovieActressRelationByMovieId(Integer movieId);
+
+    void updateMovieActressRelations(List<MovieActressRelation> relations);
 }

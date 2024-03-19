@@ -11,16 +11,24 @@ import com.javbus.spider.spider.service.base.MovieService;
 public class MovieServiceImpl implements MovieService {
     @Autowired
     private MovieDao movieDao;
+
     @Override
     public void saveMovie(Movie movie) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(movie);
+        Movie m = movieDao.queryMovieByCode(movie.getCode());
+        if (m == null) {
+            movieDao.saveMovie(movie);
+        } else {
+            movieDao.updateMovieByCode(movie);
+        }
     }
+
     @Override
     public Movie queryMovieById(Integer id) {
         // TODO Auto-generated method stub
         return movieDao.queryMovieById(id);
     }
+
     @Override
     public Movie queryMovieByCode(String code) {
         // TODO Auto-generated method stub

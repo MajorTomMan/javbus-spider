@@ -1,5 +1,7 @@
 package com.javbus.spider.spider.dao.relation;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.javbus.spider.spider.entity.relation.MovieLabelRelation;
@@ -12,4 +14,6 @@ public interface MovieLabelDao {
     MovieLabelRelation queryMovieLabelRelation(Integer movieId, Integer labelId);
 
     MovieLabelRelation queryMovieLabelRelationByMovieId(Integer movieId);
+
+    void updateMovieLabelRelations(List<MovieLabelRelation> relations);
 }

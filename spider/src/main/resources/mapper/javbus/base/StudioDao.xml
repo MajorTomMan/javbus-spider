@@ -13,7 +13,7 @@
         WHERE name = #{name}
     </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Studio">
-        INSERT IGNORE INTO studio (name,link)
+        INSERT INTO studio (name,link)
         VALUES (#{name},#{link})
     </insert>
 
@@ -24,7 +24,7 @@
 
     <update id="update" parameterType="com.javbus.spider.spider.entity.base.Studio">
         UPDATE studio
-        SET name = #{name} and link=#{link}
+        SET name = #{name},link=#{link}
         WHERE id = #{id}
     </update>
 

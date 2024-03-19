@@ -17,7 +17,7 @@ if __name__ == "__main__":
         2. search
         3. genre
         4. actress
-        5. starAllThread
+        5. startAllThread
           """
     )
     num = int(input("input:"))
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     def run_bfs(model, keyword, is_censored):
         print(f"starting {model} BFS model")
         if keyword:
-            model(baseUrl, keyword, is_censored).BFS()
+            model(baseUrl, keyword).BFS()
         else:
             model(baseUrl, is_censored).BFS()
 
@@ -114,14 +114,14 @@ if __name__ == "__main__":
             threads.append(
                 threading.Thread(
                     target=run_bfs,
-                    args=(search, keyword),
-                    name="thread_name:search/censored/" + keyword,
+                    args=(search, keyword, True),
+                    name="thread_name:search/" + keyword,
                 ),
             )
     for i, thread in enumerate(threads):
-        # 在第一个线程之外，等待前一个线程至少20秒,防止瘫痪对方服务器而察觉爬虫
+        # 在第一个线程之外，等待前一个线程至少5秒,防止瘫痪对方服务器而察觉爬虫
         if i != 0:
-            time.sleep(20)
+            time.sleep(5)
         thread.start()
     # 等待所有线程完成
     for thread in threads:

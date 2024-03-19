@@ -24,4 +24,6 @@ public interface ActressDao {
     void delete(Integer id);
 
     void saveActresses(List<Actress> actresses);
+
+    void updateActresses(List<Actress> actresses);
 }

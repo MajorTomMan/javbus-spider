@@ -14,6 +14,6 @@ public interface MovieCategoryDao {
 
     void deleteMovieCategoryRelation(Integer movieId, Integer categoryId);
     List<MovieCategoryRelation> queryMovieCategoryRelations(Integer movieId,List<Integer> categoryIds);
-
     List<MovieCategoryRelation> queryMovieCategoryRelationsByMovieId(Integer movieId);
+    void updateMovieCategoryRelations(List<MovieCategoryRelation> relations);
 }

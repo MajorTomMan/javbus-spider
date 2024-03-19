@@ -15,5 +15,5 @@ public interface SeriesDao {
 
     void delete(Integer id);
 
-    void update(Series series);
+    void updateSeries(Series series);
 }

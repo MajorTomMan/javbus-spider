@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.ActressDirectorDao">
+
     <!-- ActressSeriesRelation resultMap -->
     <resultMap id="actressDirectorRelationResultMap"
         type="com.javbus.spider.spider.entity.relation.ActressSeriesRelation">
@@ -8,27 +9,48 @@
         <result property="actressId" column="actress_id" />
         <result property="directorId" column="director_id" />
     </resultMap>
-    <insert id="addActressDirectorRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.ActressDirectorRelation"> INSERT
-        IGNORE INTO actress_director_relation (actress_id, director_id) VALUES (#{actressId},
-        #{directorId}) </insert>
 
-    <delete id="deleteActressDirectorRelation"> DELETE FROM actress_director_relation WHERE
-        actress_id = #{actressId} AND director_id = #{directorId} </delete>
+    <insert id="addActressDirectorRelation"
+        parameterType="com.javbus.spider.spider.entity.relation.ActressDirectorRelation">
+        INSERT INTO actress_director_relation (actress_id, director_id) 
+        VALUES (#{actressId}, #{directorId})
+    </insert>
+
+    <delete id="deleteActressDirectorRelation">
+        DELETE FROM actress_director_relation 
+        WHERE actress_id = #{actressId} AND director_id = #{directorId}
+    </delete>
 
     <insert id="addActressDirectorRelations" parameterType="List">
-        <!-- 插入多个关系 --> INSERT IGNORE INTO
-        actress_director_relation (actress_id, director_id) VALUES <foreach collection="list"
-            item="relation" separator=","> (#{relation.actressId}, #{relation.directorId}) </foreach>
+        <!-- 插入多个关系 -->
+        INSERT INTO actress_director_relation (actress_id, director_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.actressId}, #{relation.directorId})
+        </foreach>
     </insert>
-    <select id="queryActressDirectorRelations" resultMap="actressDirectorRelationResultMap"> SELECT
-        * FROM actress_director_relation WHERE actress_id IN <foreach
-            collection="actressIds" item="actressId" open="(" separator="," close=")"> #{actressId} </foreach>
-        AND director_id = #{directorId} </select>
-    <select id="queryActressDirectorRelation" resultMap="actressDirectorRelationResultMap"> SELECT *
-        FROM actress_director_relation WHERE actress_id = #{actressId} AND director_id =
-        #{directorId} </select>
-    <select id="queryActressDirectorRelationByActressId"
-        resultMap="actressDirectorRelationResultMap"> SELECT * FROM actress_director_relation WHERE
-        actress_id = #{actressId} </select>
+
+    <select id="queryActressDirectorRelations" resultMap="actressDirectorRelationResultMap">
+        SELECT * FROM actress_director_relation WHERE actress_id IN
+        <foreach collection="actressIds" item="actressId" open="(" separator="," close=")">
+            #{actressId}
+        </foreach>
+        AND director_id = #{directorId}
+    </select>
+
+    <select id="queryActressDirectorRelation" resultMap="actressDirectorRelationResultMap">
+        SELECT * FROM actress_director_relation WHERE actress_id = #{actressId} AND director_id = #{directorId}
+    </select>
+
+    <select id="queryActressDirectorRelationByActressId" resultMap="actressDirectorRelationResultMap">
+        SELECT * FROM actress_director_relation WHERE actress_id = #{actressId}
+    </select>
+
+    <update id="updateActressDirectorRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE actress_director_relation
+            SET actress_id = #{relation.actressId}, director_id = #{relation.directorId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
+
 </mapper>

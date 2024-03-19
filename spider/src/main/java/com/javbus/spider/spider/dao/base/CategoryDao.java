@@ -16,4 +16,5 @@ public interface CategoryDao {
     void saveCategories(List<Category> categories);
     void delete(Integer id);
     void update(Category category);
+    void updateCategories(List<Category> categories);
 }

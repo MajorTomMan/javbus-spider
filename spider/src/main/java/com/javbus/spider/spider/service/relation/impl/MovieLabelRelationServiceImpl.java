@@ -25,10 +25,21 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     @Override
     public void saveRelation(MovieLabelDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        labelDao.save(dto.getLabel());
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         Label label = labelDao.queryLabelByName(dto.getLabel().getName());
+        if (label == null) {
+            labelDao.save(dto.getLabel());
+            label = labelDao.queryLabelByName(dto.getLabel().getName());
+        } else {
+            dto.getLabel().setId(label.getId());
+            labelDao.update(dto.getLabel());
+        }
         MovieLabelRelation movieLabelRelation = movieLabelDao.queryMovieLabelRelation(movie.getId(), label.getId());
         if (movieLabelRelation == null) {
             MovieLabelRelation relation = new MovieLabelRelation();
@@ -42,7 +53,7 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     @Override
     public MovieLabelVO queryRelations(Integer movieId) {
         // TODO Auto-generated method stub
-        MovieLabelRelation relation=movieLabelDao.queryMovieLabelRelationByMovieId(movieId);
+        MovieLabelRelation relation = movieLabelDao.queryMovieLabelRelationByMovieId(movieId);
         if (relation == null) {
             return null;
         }

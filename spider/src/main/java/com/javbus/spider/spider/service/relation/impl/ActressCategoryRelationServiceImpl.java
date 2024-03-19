@@ -30,21 +30,37 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
     @Override
     public void saveRelation(ActressCategoryDTO dto) {
         // TODO Auto-generated method stub
-        actressDao.saveActresses(dto.getActress());
         List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(actressNames);
-        List<Category> categories = dto.getCategories();
-        // 先保存进数据库保证数据存在
-        categoryDao.saveCategories(categories);
-        List<String> categoryNames = categories.stream().map((category) -> {
+        if (actressIds.isEmpty()) {
+            actressDao.saveActresses(dto.getActress());
+            actressIds = actressDao.queryActressIdsByNames(actressNames);
+        } else {
+            for (int i = 0; i <= actressIds.size(); i++) {
+                dto.getActress().get(i).setId(actressIds.get(i));
+            }
+            actressDao.updateActresses(dto.getActress());
+        }
+        List<String> categoryNames = dto.getCategories().stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
-        List<ActressCategoryRelation> ActressCategoryRelations = actressCategoryDao
+        // 先保存进数据库保证数据存在
+        if(categoryIds.isEmpty()){
+            categoryDao.saveCategories(dto.getCategories());
+            categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
+        }
+        else{
+            for(int i=0;i<=categoryIds.size();i++){
+                dto.getCategories().get(i).setId(categoryIds.get(i));
+            }
+            categoryDao.updateCategories(dto.getCategories());
+        }
+        List<ActressCategoryRelation> actressCategoryRelations = actressCategoryDao
                 .queryActressCategoryRelations(actressIds, categoryIds);
-        if (ActressCategoryRelations == null || ActressCategoryRelations.isEmpty()) {
+        if (actressCategoryRelations.isEmpty()) {
             List<ActressCategoryRelation> relations = new ArrayList<>();
             // 处理多对多关系
             for (Integer actressId : actressIds) {
@@ -57,7 +73,6 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
             }
             actressCategoryDao.addActressCategoryRelations(relations);
         }
-
     }
 
     @Override

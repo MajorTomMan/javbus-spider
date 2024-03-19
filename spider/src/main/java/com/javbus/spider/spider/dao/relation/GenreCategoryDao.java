@@ -14,7 +14,7 @@ public interface GenreCategoryDao {
 
     void addGenreCategoryCensoredRelations(List<GenreCategoryRelation> relations);
 
-    void deleteGenreCategoryRelationByCensored(Integer genreId, Integer categoryId);
+    void deleteGenreCategoryCensoredRelation(Integer genreId, Integer categoryId);
     List<GenreCategoryRelation> queryGenreCategoryCensoredRelations(Integer genreId,List<Integer> categoryIds);
     List<GenreCategoryRelation> queryGenreCategoryCensoredRelationsByGenreId(Integer genreId);
 
@@ -25,4 +25,8 @@ public interface GenreCategoryDao {
     void deleteGenreCategoryUncensoredRelation(Integer genreId, Integer categoryId);
     List<GenreCategoryRelation> queryGenreCategoryUncensoredRelations(Integer genreId,List<Integer> categoryIds);
     List<GenreCategoryRelation> queryGenreCategoryUncensoredRelationsByGenreId(Integer genreId);
+
+    void updateGenreCategoryCensoredRelations(List<GenreCategoryRelation> relations);
+
+    void updateGenreCategoryUncensoredRelations(List<GenreCategoryRelation> relations);
 }

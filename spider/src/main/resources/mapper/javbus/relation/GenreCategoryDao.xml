@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.GenreCategoryDao">
+
     <!-- resultMap -->
     <resultMap id="genreCategoryRelationResultMap" type="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
         <id property="id" column="id"/>
         <result property="genreId" column="genre_id"/>
         <result property="categoryId" column="category_id"/>
     </resultMap>
+
     <insert id="addGenreCategoryCensoredRelation" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id)
+        INSERT INTO genre_category_censored_relation (genre_id, category_id)
         VALUES (#{genreId}, #{categoryId})
     </insert>
+
     <insert id="addGenreCategoryCensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_censored_relation (genre_id, category_id) VALUES
+        INSERT INTO genre_category_censored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
-    <delete id="deleteGenreCategoryRelationByCensored">
+
+    <delete id="deleteGenreCategoryCensoredRelation">
+        DELETE FROM genre_category_censored_relation
+        WHERE genre_id = #{genreId} AND category_id = #{categoryId}
+    </delete>
+    <delete id="deleteGenreCategoryCensoredRelation">
         DELETE FROM genre_category_censored_relation
         WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
@@ -33,18 +41,21 @@
     </select>
 
     <insert id="addGenreCategoryUncensoredRelations" parameterType="com.javbus.spider.spider.entity.relation.GenreCategoryRelation">
-        INSERT IGNORE INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
+        INSERT INTO genre_category_uncensored_relation (genre_id, category_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.genreId}, #{relation.categoryId})
         </foreach>
     </insert>
+
     <select id="addGenreCategoryUncensoredRelation" resultMap="genreCategoryRelationResultMap">
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id=#{genreId} and category_id=#{categoryId}
     </select>
+
     <delete id="deleteGenreCategoryUncensoredRelation">
         DELETE FROM genre_category_uncensored_relation
         WHERE genre_id = #{genreId} AND category_id = #{categoryId}
     </delete>
+
     <select id="queryGenreCategoryUncensoredRelations" resultMap="genreCategoryRelationResultMap">
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId} AND category_id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
@@ -56,4 +67,18 @@
         SELECT * FROM genre_category_uncensored_relation WHERE genre_id = #{genreId}
     </select>
 
+    <update id="updateGenreCategoryCensoredRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE genre_category_censored_relation
+            SET genre_id = #{relation.genreId}, category_id = #{relation.categoryId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
+    <update id="updateGenreCategoryUncensoredRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE genre_category_uncensored_relation
+            SET genre_id = #{relation.genreId}, category_id = #{relation.categoryId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

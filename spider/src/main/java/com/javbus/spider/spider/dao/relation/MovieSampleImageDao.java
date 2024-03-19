@@ -17,4 +17,6 @@ public interface MovieSampleImageDao {
     List<MovieSampleImageRelation> queryMovieSampleImageRelations(Integer movieId,List<Integer> sampleImageIds);
 
     List<MovieSampleImageRelation> queryMovieSampleImageRelationsByMovieId(Integer movieId);
+
+    void updateMovieSampleImageRelations(List<MovieSampleImageRelation> relations);
 }

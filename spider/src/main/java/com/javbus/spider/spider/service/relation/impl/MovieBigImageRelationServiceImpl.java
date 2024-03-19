@@ -36,10 +36,21 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
     @Override
     public void saveRelaton(MovieBigImageDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        bigImageDao.saveBigImage(dto.getBigImage());
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         BigImage bigImage = bigImageDao.queryBigImageByLink(dto.getBigImage().getLink());
+        if (bigImage == null) {
+            bigImageDao.saveBigImage(dto.getBigImage());
+            bigImage = bigImageDao.queryBigImageByLink(dto.getBigImage().getLink());
+        } else {
+            dto.getBigImage().setId(bigImage.getId());
+            bigImageDao.updateBigImage(dto.getBigImage());
+        }
         MovieBigImageRelation movieBigImageRelation = movieBigImageDao.queryMovieBigImageRelation(movie.getId(),
                 bigImage.getId());
         if (movieBigImageRelation == null) {
@@ -47,26 +58,6 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
             relation.setBigImageId(bigImage.getId());
             relation.setMovieId(movie.getId());
             movieBigImageDao.addMovieBigImageRelation(relation);
-            List<ImageDTO> imageDTOs = movieActressBigImageDao.queryImageDao(movie.getId());
-            if (imageDTOs == null || imageDTOs.isEmpty()) {
-                return;
-            }
-            List<BigImageDTO> bigImageDTOs = imageDTOs.stream().map(imageDTO -> {
-                BigImageDTO bigImageDTO = new BigImageDTO();
-                String[] split = imageDTO.getLink().split("/");
-                String fileName = split[split.length - 1];
-                bigImageDTO.setFileName(fileName);
-                bigImageDTO.setName(imageDTO.getName());
-                bigImageDTO.setCode(imageDTO.getCode());
-                if (!imageUtil.checkImageIsExists(bigImageDTO)) {
-                    byte[] data = imageUtil.download(imageDTO.getLink());
-                    bigImageDTO.setBigImage(data);
-                } else {
-                    bigImageDTO.setBigImage(null);
-                }
-                return bigImageDTO;
-            }).filter(imageDTO -> imageDTO.getBigImage() != null).collect(Collectors.toList());
-            imageUtil.saveBigImage(bigImageDTOs);
         }
     }
 

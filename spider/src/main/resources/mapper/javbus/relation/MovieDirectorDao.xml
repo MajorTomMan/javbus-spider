@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieDirectorDao">
+
     <!-- MovieDirectorRelation resultMap -->
-    <resultMap id="movieDirectorRelationResultMap"
-        type="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
+    <resultMap id="movieDirectorRelationResultMap" type="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
         <id property="id" column="id" />
         <result property="movieId" column="movie_id" />
         <result property="directorId" column="director_id" />
     </resultMap>
-    <insert id="addMovieDirectorRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation"> INSERT
-        IGNORE INTO movie_director_relation (movie_id, director_id) VALUES (#{movieId},
-        #{directorId}) </insert>
+    
+    <insert id="addMovieDirectorRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation">
+        INSERT INTO movie_director_relation (movie_id, director_id) 
+        VALUES (#{movieId}, #{directorId})
+    </insert>
 
-    <delete id="deleteMovieDirectorRelation"> DELETE FROM movie_director_relation WHERE movie_id =
-        #{movieId} AND director_id = #{directorId} </delete>
-    <select id="queryMovieDirectorRelation"
-        resultMap="movieDirectorRelationResultMap"> 
-        Select *
+    <delete id="deleteMovieDirectorRelation">
+        DELETE FROM movie_director_relation 
+        WHERE movie_id = #{movieId} AND director_id = #{directorId}
+    </delete>
+    
+    <select id="queryMovieDirectorRelation" resultMap="movieDirectorRelationResultMap"> 
+        SELECT *
         FROM movie_director_relation 
         WHERE movie_id = #{movieId} 
         AND director_id = #{directorId}
     </select>
 
-    <!-- queryMovieDirectorRelationByMovieId --> 
-
+    <!-- 查询某电影所有导演关系 -->
     <select id="queryMovieDirectorRelationByMovieId" resultMap="movieDirectorRelationResultMap">
-        Select *
+        SELECT *
         FROM movie_director_relation 
         WHERE movie_id = #{movieId} 
     </select>
+    
+    <!-- 更新电影导演关系 -->
+    <update id="updateMovieDirectorRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_director_relation
+            SET movie_id = #{relation.movieId}, director_id = #{relation.directorId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
+    
 </mapper>

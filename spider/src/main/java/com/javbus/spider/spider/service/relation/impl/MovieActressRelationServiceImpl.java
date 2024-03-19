@@ -28,13 +28,26 @@ public class MovieActressRelationServiceImpl implements MovieActressRelationServ
     @Override
     public void saveRelation(MovieActressDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        actressDao.saveActresses(dto.getActress());
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         List<String> names = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
         List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
+        if (actressIds.isEmpty()) {
+            actressDao.saveActresses(dto.getActress());
+            actressIds = actressDao.queryActressIdsByNames(names);
+        } else {
+            for (int i = 0; i <= actressIds.size(); i++) {
+                dto.getActress().get(i).setId(actressIds.get(i));
+            }
+            actressDao.updateActresses(dto.getActress());
+        }
         List<MovieActressRelation> movieActressRelations = movieActressDao.queryMovieActressRelations(movie.getId(),
                 actressIds);
         if (movieActressRelations == null || movieActressRelations.isEmpty()) {

@@ -9,8 +9,7 @@
         <result property="seriesId" column="series_id" />
     </resultMap>
     <insert id="addMovieSeriesRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieDirectorRelation"> INSERT
-        IGNORE INTO movie_series_relation (movie_id, series_id) VALUES (#{movieId}, #{seriesId}) </insert>
+        parameterType="com.javbus.spider.spider.entity.relation.MovieSeriesRelation"> INSERT INTO movie_series_relation (movie_id, series_id) VALUES (#{movieId}, #{seriesId}) </insert>
 
     <delete id="deleteMovieSeriesRelation"> DELETE FROM movie_series_relation WHERE movie_id =
         #{movieId} AND series_id = #{seriesId} </delete>
@@ -24,4 +23,13 @@
         SELECT * FROM
         movie_series_relation WHERE movie_id = #{movieId}
     </select>
+
+    <!-- updateMovieSeriesRelation -->
+    <update id="updateMovieSeriesRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_series_relation
+            SET movie_id = #{relation.movieId}, series_id = #{relation.seriesId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

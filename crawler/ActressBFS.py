@@ -70,16 +70,9 @@ class actresses:
             for brick in bricks:
                 actress_dict = self.attrsUtil.getSingleActressLink(brick)
                 if actress_dict:
-                    try:
-                        actress = self.actressUtil.getActressDetails(
-                            actress_dict["actress_link"]
-                        )
-                    except Exception as e:
-                        self.save2local(
-                            source,
-                            threading.currentThread().getName() + "__bfs",
-                            ".html",
-                        )
+                    actress = self.actressUtil.getActressDetails(
+                        actress_dict["actress_link"]
+                    )
                     if actress:
                         if not self.actressUtil.matchLinkIsCompanyLink(
                             actress_dict["photo_link"]

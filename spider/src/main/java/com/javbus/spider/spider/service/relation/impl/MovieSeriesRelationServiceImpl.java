@@ -1,5 +1,6 @@
 package com.javbus.spider.spider.service.relation.impl;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +26,21 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
     @Override
     public void saveRelaton(MovieSeriesDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        seriesDao.save(dto.getSeries());
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
+        if (series == null) {
+            seriesDao.save(series);
+            series = seriesDao.querySeriesByName(dto.getSeries().getName());
+        } else {
+            dto.getSeries().setId(series.getId());
+            seriesDao.updateSeries(dto.getSeries());
+        }
         MovieSeriesRelation movieSeriesRelation = movieSeriesDao.queryMovieSeriesRelation(movie.getId(),
                 series.getId());
         if (movieSeriesRelation == null) {

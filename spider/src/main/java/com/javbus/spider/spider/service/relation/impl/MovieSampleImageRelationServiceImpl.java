@@ -12,8 +12,6 @@ import com.javbus.spider.spider.dao.dto.MovieActressSampleImageDao;
 import com.javbus.spider.spider.dao.relation.MovieSampleImageDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.SampleImage;
-import com.javbus.spider.spider.entity.dto.ImageDTO;
-import com.javbus.spider.spider.entity.dto.SampleImageDTO;
 import com.javbus.spider.spider.entity.relation.MovieSampleImageRelation;
 import com.javbus.spider.spider.entity.vo.MovieSampleImageVO;
 import com.javbus.spider.spider.entity.dto.MovieSampleImageDTO;
@@ -36,13 +34,29 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
     @Override
     public void saveRelation(MovieSampleImageDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        sampleImageDao.saveSampleImages(dto.getSampleImages());
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
+        if(sampleImageIds.isEmpty()){
+            sampleImageDao.saveSampleImages(dto.getSampleImages());
+            sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
+        }
+        else{
+            List<SampleImage> sampleImages = dto.getSampleImages();
+            for (int i=0;i<=sampleImageIds.size();i++) {
+                SampleImage sampleImage = sampleImages.get(i);
+                sampleImage.setId(sampleImageIds.get(i));
+                sampleImageDao.updateSampleImage(sampleImage);
+            }
+        }
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);
-        if (movieSampleImageRelations == null || movieSampleImageRelations.isEmpty()) {
+        if (movieSampleImageRelations.isEmpty()) {
             final Movie final_movie = movie;
             List<MovieSampleImageRelation> relations = sampleImageIds.stream().map((id) -> {
                 MovieSampleImageRelation relation = new MovieSampleImageRelation();
@@ -51,26 +65,6 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
                 return relation;
             }).collect(Collectors.toList());
             movieSampleImageDao.addMovieSampleImageRelations(relations);
-            List<ImageDTO> imageDTOs = movieActressSampleImageDao.queryImageDao(movie.getId());
-            if (imageDTOs == null || imageDTOs.isEmpty()) {
-                return;
-            }
-            List<SampleImageDTO> sampleImageDTOs = imageDTOs.stream().map(imageDTO -> {
-                SampleImageDTO sampleImageDTO = new SampleImageDTO();
-                sampleImageDTO.setCode(imageDTO.getCode());
-                sampleImageDTO.setName(imageDTO.getName());
-                String[] split = imageDTO.getLink().split("/");
-                String fileName = split[split.length - 1];
-                sampleImageDTO.setFileName(fileName);
-                if (!imageUtil.checkImageIsExists(sampleImageDTO)) {
-                    byte[] data = imageUtil.download(imageDTO.getLink());
-                    sampleImageDTO.setSampleImage(data);
-                } else {
-                    sampleImageDTO.setSampleImage(null);
-                }
-                return sampleImageDTO;
-            }).filter(imageDTO -> imageDTO.getSampleImage() != null).collect(Collectors.toList());
-            imageUtil.saveSampleImage(sampleImageDTOs);
         }
     }
 

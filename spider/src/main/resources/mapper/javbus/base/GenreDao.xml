@@ -2,10 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.base.GenreDao">
 
-    <insert id="saveGenre" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT IGNORE
+    <insert id="saveGenre" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT
         INTO genre (name) VALUES (#{name}) </insert>
-    <insert id="saveGenres" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT
-        IGNORE INTO genre (name) VALUES <foreach collection="list" item="genre" separator=",">
+    <insert id="saveGenres" parameterType="com.javbus.spider.spider.entity.base.Genre"> INSERT INTO genre (name) VALUES <foreach collection="list" item="genre" separator=",">
         (#{genre.name}) </foreach>
     </insert>
 
@@ -14,7 +13,7 @@
 
     <!-- 更新电影记录 -->
     <update id="updateGenre" parameterType="com.javbus.spider.spider.entity.base.Genre"> UPDATE
-        genre SET name=#{name}, WHERE id = #{id} </update>
+        genre SET name=#{name} WHERE id = #{id} </update>
 
 
     <!-- queryMovieByCode -->

@@ -246,6 +246,7 @@ class PageUtil:
                     if url:
                         # 如果电影页存在
                         page = self.parseDetailPage(url, isCensored)
+
                         if page and page != -1:
                             self.sendData2Server(page)
                         elif page == -1:

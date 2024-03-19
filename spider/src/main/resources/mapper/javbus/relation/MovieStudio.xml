@@ -10,7 +10,7 @@
     </resultMap>
     <!-- 添加电影与工作室关系 -->
     <insert id="addMovieStudioRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieStudioRelation"> INSERT IGNORE
+        parameterType="com.javbus.spider.spider.entity.relation.MovieStudioRelation"> INSERT
         INTO movie_studio_relation (movie_id, studio_id) VALUES (#{movieId}, #{studioId}) </insert>
 
     <!-- 删除电影与工作室关系 -->
@@ -28,4 +28,13 @@
         FROM movie_studio_relation 
         WHERE movie_id = #{movieId}
     </select>
+
+    <!-- 更新电影与工作室关系 -->
+    <update id="updateMovieStudioRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_studio_relation
+            SET movie_id = #{relation.movieId}, studio_id = #{relation.studioId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

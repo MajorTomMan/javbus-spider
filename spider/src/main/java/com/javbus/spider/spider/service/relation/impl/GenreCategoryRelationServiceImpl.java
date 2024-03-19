@@ -28,40 +28,49 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
     @Override
     public void saveRelation(GenreCategoryDTO dto) {
         // TODO Auto-generated method stub
-        Genre genre = dto.getGenre();
-        genreDao.saveGenre(dto.getGenre());
-        categoryDao.saveCategories(dto.getCategories());
-        Integer genreId = genreDao.queryGenreIdByName(genre.getName());
         Boolean isCensored = dto.getCategories().get(0).getIsCensored();
-        List<String> categoryNames = dto.getCategories().stream().map(category -> {
+        Genre genre = genreDao.queryGenreByName(dto.getGenre().getName());
+        if (genre == null) {
+            genreDao.saveGenre(genre);
+            genre = genreDao.queryGenreByName(dto.getGenre().getName());
+        }
+        List<Category> categories = dto.getCategories();
+        List<String> names = categories.stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());
-        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(categoryNames);
+        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        if (categoryIds.isEmpty()) {
+            categoryDao.saveCategories(categories);
+            categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        } else {
+            for(int i=0;i<=categoryIds.size();i++){
+                dto.getCategories().get(i).setId(categoryIds.get(i));
+            }
+            categoryDao.updateCategories(dto.getCategories());
+        }
+        // 处理有无码的保存问题
+        final Genre final_genre = genre;
+        List<GenreCategoryRelation> genreCategoryRelations = categoryIds.stream().map(id -> {
+            GenreCategoryRelation relation = new GenreCategoryRelation();
+            relation.setCategoryId(id);
+            relation.setGenreId(final_genre.getId());
+            return relation;
+        }).collect(Collectors.toList());
         if (isCensored) {
-            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryCensoredRelations(
-                    genreId,
+            List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryCensoredRelations(genre.getId(),
                     categoryIds);
-            if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
-                List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
-                    GenreCategoryRelation relation = new GenreCategoryRelation();
-                    relation.setGenreId(genreId);
-                    relation.setCategoryId(id);
-                    return relation;
-                }).collect(Collectors.toList());
-                genreCategoryDao.addGenreCategoryCensoredRelations(relations);
+            if (relations.isEmpty()) {
+                genreCategoryDao.addGenreCategoryCensoredRelations(genreCategoryRelations);
+            } else {
+                genreCategoryDao.updateGenreCategoryCensoredRelations(genreCategoryRelations);
             }
         } else {
-            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryUncensoredRelations(
-                    genreId,
+            List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryUncensoredRelations(genre.getId(),
                     categoryIds);
-            if (genreCategoryRelations == null || genreCategoryRelations.isEmpty()) {
-                List<GenreCategoryRelation> relations = categoryIds.stream().map((id) -> {
-                    GenreCategoryRelation relation = new GenreCategoryRelation();
-                    relation.setGenreId(genreId);
-                    relation.setCategoryId(id);
-                    return relation;
-                }).collect(Collectors.toList());
-                genreCategoryDao.addGenreCategoryUncensoredRelations(relations);
+            if (relations.isEmpty()) {
+                genreCategoryDao.addGenreCategoryUncensoredRelations(genreCategoryRelations);
+            } else {
+                genreCategoryDao.updateGenreCategoryUncensoredRelations(genreCategoryRelations);
             }
         }
     }

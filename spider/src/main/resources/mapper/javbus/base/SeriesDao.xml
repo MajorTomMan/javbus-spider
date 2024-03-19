@@ -12,7 +12,7 @@
         WHERE name=#{name}
     </select>
     <insert id="save" parameterType="com.javbus.spider.spider.entity.base.Series">
-        INSERT IGNORE INTO series (name,link)
+        INSERT INTO series (name,link)
         VALUES ( #{name} , #{link} )
     </insert>
 
@@ -29,4 +29,10 @@
             #{id}
         </foreach>
     </select>
+
+    <update id="updateSeries">
+        UPDATE series
+        SET name = #{name},link=#{link}
+        WHERE id = #{id}
+    </update>
 </mapper>

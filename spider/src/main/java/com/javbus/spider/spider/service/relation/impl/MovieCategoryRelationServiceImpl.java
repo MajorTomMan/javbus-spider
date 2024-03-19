@@ -28,20 +28,33 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
     @Override
     public void saveRelation(MovieCategoryDTO dto) {
         // TODO Auto-generated method stub
-        movieDao.saveMovie(dto.getMovie());
-        categoryDao.saveCategories(dto.getCategories());
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        List<Category> categories = dto.getCategories();
+        if (movie != null) {
+            movieDao.updateMovieByCode(dto.getMovie());
+        } else {
+            movieDao.saveMovie(dto.getMovie());
+            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        }
         // 根据名字查找ID
-        List<String> names = categories.stream().map((data) -> {
+        List<String> names = dto.getCategories().stream().map((data) -> {
             return data.getName();
         }).collect(Collectors.toList());
         List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        if(categoryIds.isEmpty()){
+            categoryDao.saveCategories(dto.getCategories());
+            categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        }
+        else{
+            for(int i=0;i<=categoryIds.size();i++){
+                dto.getCategories().get(i).setId(categoryIds.get(i));
+            }
+            categoryDao.updateCategories(dto.getCategories());
+        }
         final Movie final_movie = movie;
         // 设置一对多关系
         List<MovieCategoryRelation> movieCategoryRelations = movieCategoryDao.queryMovieCategoryRelations(movie.getId(),
                 categoryIds);
-        if (movieCategoryRelations == null || movieCategoryRelations.isEmpty()) {
+        if (movieCategoryRelations.isEmpty()) {
             List<MovieCategoryRelation> relations = categoryIds.stream().map((id) -> {
                 MovieCategoryRelation relation = new MovieCategoryRelation();
                 relation.setMovieId(final_movie.getId());

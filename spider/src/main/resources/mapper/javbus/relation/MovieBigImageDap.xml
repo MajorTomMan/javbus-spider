@@ -1,28 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.relation.MovieBigImageDao">
+    
     <!-- MovieBigImageRelation resultMap -->
-    <resultMap id="movieBigImageRelationResultMap"
-        type="com.javbus.spider.spider.entity.relation.MovieBigImageRelation">
+    <resultMap id="movieBigImageRelationResultMap" type="com.javbus.spider.spider.entity.relation.MovieBigImageRelation">
         <id property="id" column="id" />
         <result property="movieId" column="movie_id" />
         <result property="bigImageId" column="big_image_id" />
     </resultMap>
-    <insert id="addMovieBigImageRelation"
-        parameterType="com.javbus.spider.spider.entity.relation.MovieBigImageRelation"> INSERT
-        IGNORE INTO movie_big_image_relation (movie_id, big_image_id) VALUES (#{movieId},
-        #{bigImageId}) </insert>
+    
+    <insert id="addMovieBigImageRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieBigImageRelation">
+        INSERT INTO movie_big_image_relation (movie_id, big_image_id) 
+        VALUES (#{movieId}, #{bigImageId})
+    </insert>
 
-    <delete id="deleteMovieBigImageRelation"> DELETE FROM movie_big_image_relation WHERE movie_id =
-        #{movieId} AND big_image_id = #{bigImageId} </delete>
+    <delete id="deleteMovieBigImageRelation">
+        DELETE FROM movie_big_image_relation 
+        WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId}
+    </delete>
 
-    <select id="queryMovieBigImageRelation"
-        resultMap="movieBigImageRelationResultMap"> SELECT * FROM
-        movie_big_image_relation WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId} </select>
+    <select id="queryMovieBigImageRelation" resultMap="movieBigImageRelationResultMap">
+        SELECT * FROM movie_big_image_relation 
+        WHERE movie_id = #{movieId} AND big_image_id = #{bigImageId}
+    </select>
 
-    <!-- queryMovieBigImageRelationByMovieId --> 
-
+    <!-- 查询某电影所有大图关系 -->
     <select id="queryMovieBigImageRelationByMovieId" resultMap="movieBigImageRelationResultMap">
         SELECT * FROM movie_big_image_relation WHERE movie_id=#{movieId}
     </select>
+
+    <!-- 更新电影大图关系 -->
+    <update id="updateMovieBigImageRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE movie_big_image_relation
+            SET movie_id = #{relation.movieId}, big_image_id = #{relation.bigImageId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
 </mapper>

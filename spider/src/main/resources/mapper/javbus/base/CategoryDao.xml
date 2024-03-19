@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.javbus.spider.spider.dao.base.CategoryDao">
+    
     <!-- categoryResultMap.xml -->
     <resultMap id="categoryResultMap" type="com.javbus.spider.spider.entity.base.Category">
         <id property="id" column="id" />
@@ -8,36 +9,67 @@
         <result property="link" column="link" />
         <result property="isCensored" column="is_censored" />
     </resultMap>
-    <select id="queryCategoryById" parameterType="java.lang.Integer"
-        resultMap="categoryResultMap"> SELECT * FROM category WHERE id = #{id} </select>
-    <select id="queryCategoryByName" parameterType="java.lang.String"
-        resultMap="categoryResultMap"> SELECT * FROM category WHERE name = #{name} </select>
-    <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category"> INSERT
-        IGNORE INTO category (id, name,link,is_censored) VALUES (#{id},
-        #{name},#{link},#{isCensored}) </insert>
-    <!-- 插入多个Category -->
-    <insert id="saveCategories" parameterType="List"> INSERT IGNORE INTO category
-        (name,link,is_censored) VALUES <foreach collection="list" item="category" separator=",">
-        (#{category.name},#{category.link},#{category.isCensored}) </foreach>
+    
+    <select id="queryCategoryById" parameterType="java.lang.Integer" resultMap="categoryResultMap">
+        SELECT * FROM category WHERE id = #{id}
+    </select>
+    
+    <select id="queryCategoryByName" parameterType="java.lang.String" resultMap="categoryResultMap">
+        SELECT * FROM category WHERE name = #{name}
+    </select>
+    
+    <!-- 插入单个Category -->
+    <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category">
+        INSERT INTO category (id, name, link, is_censored) 
+        VALUES (#{id}, #{name}, #{link}, #{isCensored})
     </insert>
-    <delete id="delete" parameterType="java.lang.Integer"> DELETE FROM category WHERE id = #{id} </delete>
+    
+    <!-- 插入多个Category -->
+    <insert id="saveCategories" parameterType="List">
+        INSERT INTO category (name, link, is_censored) 
+        VALUES <foreach collection="list" item="category" separator=",">
+        (#{category.name}, #{category.link}, #{category.isCensored})
+        </foreach>
+    </insert>
+    
+    <!-- 删除操作 -->
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM category WHERE id = #{id}
+    </delete>
 
-    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Category"> UPDATE
-        category SET name = #{name} WHERE id = #{id} </update>
+    <!-- 更新单个Category -->
+    <update id="update" parameterType="com.javbus.spider.spider.entity.base.Category">
+        UPDATE category 
+        SET 
+            name = #{name}, 
+            link = #{link}, 
+            is_censored = #{isCensored} 
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 批量更新Category -->
+    <update id="updateCategories" parameterType="java.util.List">
+        <foreach collection="categories" item="category" separator=";">
+            UPDATE category 
+            SET 
+                name = #{category.name}, 
+                link = #{category.link}, 
+                is_censored = #{category.isCensored} 
+            WHERE id = #{category.id}
+        </foreach>
+    </update>
 
-    <!-- queryCategoryByNames -->
-
-    <select id="queryCategoryIdsByNames" parameterType="java.lang.String"
-        resultType="java.lang.Integer"> SELECT id FROM category WHERE name IN <foreach
-            collection="list" item="item" open="(" separator="," close=")"> #{item} </foreach>
+    <!-- queryCategoryIdsByNames -->
+    <select id="queryCategoryIdsByNames" parameterType="java.util.List" resultType="java.lang.Integer">
+        SELECT id FROM category WHERE name IN 
+        <foreach collection="list" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </select>
 
     <!-- queryCategories --> 
-
-    <select id="queryCategories">
+    <select id="queryCategories" resultMap="categoryResultMap">
         SELECT * FROM category WHERE id IN 
         <foreach collection="categoryIds" item="categoryId" open="(" separator="," close=")">
-            #{categoryId}
+             #{categoryId} 
         </foreach>
     </select>
 </mapper>
