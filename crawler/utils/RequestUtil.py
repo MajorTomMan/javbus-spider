@@ -4,7 +4,7 @@ from utils.LogUtil import LogUtil
 
 
 class RequestUtil:
-    baseUrl = "http://localhost:8080"
+    baseUrl = "http://localhost:7788"
     headers = {"Content-Type": "application/json"}
     logUtil = LogUtil()
 
