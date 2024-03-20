@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, WebDriverException
 import undetected_chromedriver as uc
 
+from utils.IpUtil import IpUtil
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
 
@@ -14,6 +15,7 @@ from urllib3.exceptions import MaxRetryError
 class WebUtil:
     options = None
     logUtil = LogUtil()
+    ipUtil = IpUtil()
     baseUrls = [
         "https://www.cdnbus.shop/",
         "https://www.dmmsee.art",
@@ -31,6 +33,7 @@ class WebUtil:
         self.local = threading.local()
 
     def initialize_driver(self):
+        ip = self.ipUtil.getProxy()
         options = ChromeOptions()
         warnings.simplefilter("ignore", ResourceWarning)
         options.add_argument("--disable-blink-features=AutomationControlled")
@@ -44,6 +47,10 @@ class WebUtil:
         options.add_argument("--ignore-certificate-errors")
         options.add_argument("--no-sandbox")
         options.add_argument("--start-maximized")
+        if ip:
+            proxy_ip = ip["proxy"].split(":")[0]
+            proxy_port = ip["proxy"].split(":")[1]
+            options.add_argument("--proxy-server={}:{}".format(proxy_ip, proxy_port))
         # 使用eager加快加载速度
         options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
@@ -51,7 +58,7 @@ class WebUtil:
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=True,
-            driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
+            driver_executable_path="/usr/bin/chromedriver",
             options=self.local.options,
             version_main=122,
             user_multi_procs=True,
@@ -76,25 +83,7 @@ class WebUtil:
                 )
             )
             try:
-                self.initialize_driver()
-                self.logUtil.log(
-                    "starting request to " + new_url + " ...........",
-                    log_file_path=self.logFilePath,
-                )
-                self.logUtil.log(
-                    "waiting for request finished...........",
-                )
-                start_time = time.time()
-                time.sleep(20)
-                self.local.driver.get(new_url)
-                end_time = time.time()
-                self.logUtil.log("request finished....", log_file_path=self.logFilePath)
-                self.logUtil.log(
-                    "request spend time was " + str(end_time - start_time),
-                )
-                source = self.local.driver.page_source
-                self.local.driver.quit()
-                return source
+                self.send(new_url)
             except TimeoutException:
                 self.logUtil.log(
                     "request to " + new_url + " timeout in 2.5 minutes",
@@ -113,3 +102,24 @@ class WebUtil:
                 continue
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
+
+    def send(self, new_url):
+        self.initialize_driver()
+        self.logUtil.log(
+            "starting request to " + new_url + " ...........",
+            log_file_path=self.logFilePath,
+        )
+        self.logUtil.log(
+            "waiting for request finished...........",
+        )
+        start_time = time.time()
+        time.sleep(20)
+        self.local.driver.get(new_url)
+        end_time = time.time()
+        self.logUtil.log("request finished....", log_file_path=self.logFilePath)
+        self.logUtil.log(
+            "request spend time was " + str(end_time - start_time),
+        )
+        source = self.local.driver.page_source
+        self.local.driver.quit()
+        return source
