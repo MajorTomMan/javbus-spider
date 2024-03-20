@@ -16,6 +16,7 @@ class LogUtil:
             # 判断传入实参是否是对象类型
             if isinstance(log, Exception):
                 log = f"Exception: {str(log)}\n" + f"stack:{traceback.format_exc()}"
+                self.mailUtil.send_email(log)
             elif hasattr(log, "__dict__"):
                 log = log.__dict__
             with open(log_file_path, "a", encoding="utf-8") as file:
