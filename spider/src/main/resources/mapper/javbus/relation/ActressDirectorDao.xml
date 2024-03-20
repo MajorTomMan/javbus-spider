@@ -4,7 +4,7 @@
 
     <!-- ActressSeriesRelation resultMap -->
     <resultMap id="actressDirectorRelationResultMap"
-        type="com.javbus.spider.spider.entity.relation.ActressSeriesRelation">
+        type="com.javbus.spider.spider.entity.relation.ActressDirectorRelation">
         <id property="id" column="id" />
         <result property="actressId" column="actress_id" />
         <result property="directorId" column="director_id" />

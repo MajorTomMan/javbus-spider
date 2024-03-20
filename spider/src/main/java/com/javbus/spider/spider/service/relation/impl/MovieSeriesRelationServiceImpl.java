@@ -35,7 +35,7 @@ public class MovieSeriesRelationServiceImpl implements MovieSeriesRelationServic
         }
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
         if (series == null) {
-            seriesDao.save(series);
+            seriesDao.save(dto.getSeries());
             series = seriesDao.querySeriesByName(dto.getSeries().getName());
         } else {
             dto.getSeries().setId(series.getId());
