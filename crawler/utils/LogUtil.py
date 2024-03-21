@@ -51,4 +51,3 @@ class LogUtil:
             print(log_entry)
             if file:
                 file.write(log_entry)
-            file.close()

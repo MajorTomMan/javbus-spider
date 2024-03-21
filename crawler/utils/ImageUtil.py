@@ -1,7 +1,10 @@
+import base64
+import orjson
 import os
 from fake_useragent import UserAgent
 import requests
 
+from utils.RequestUtil import RequestUtil
 from utils.LogUtil import LogUtil
 
 
@@ -9,11 +12,11 @@ class ImageUtil:
     ua = None
     basePath = ""
     logUtil = LogUtil()
+    requestUtil = RequestUtil()
     logFilePath = "./image.log"
 
     def __init__(self) -> None:
         self.ua = UserAgent()
-        self.basePath = "/images/"
 
     def downloadSampleImages(self, links, actresses, code):
         if actresses == None or len(actresses) < 1:
@@ -35,7 +38,7 @@ class ImageUtil:
                     log_file_path=self.logFilePath,
                 )
                 continue
-            response = requests.get(link, headers=headers)
+            response = requests.get(link, headers=headers, verify=False)
             self.logUtil.log(
                 "image response code is " + str(response.status_code),
                 log_file_path=self.logFilePath,
@@ -45,12 +48,16 @@ class ImageUtil:
                     "image " + response.url + " download success",
                     log_file_path=self.logFilePath,
                 )
-                self.__save2Local(
-                    response=response,
-                    actresses=actresses,
-                    code=code,
-                    filename=filename,
-                    isBigImage=False,
+                # self.__save2Local(
+                #    response=response,
+                #    actresses=actresses,
+                #    code=code,
+                #    filename=filename,
+                #    isBigImage1=False,
+                # )
+                path = "/sampleimage/save/" + actresses + "/" + code + "/" + "sample"
+                self.requestUtil.sendImage(
+                    response.content, path=path, filename=filename
                 )
             else:
                 self.logUtil.log(
@@ -75,7 +82,7 @@ class ImageUtil:
             )
             return
         headers = {"User-Agent": self.ua.random}
-        response = requests.get(link, headers=headers)
+        response = requests.get(link, headers=headers, verify=False)
         self.logUtil.log(
             "image response code is " + str(response.status_code),
             log_file_path=self.logFilePath,
@@ -89,16 +96,16 @@ class ImageUtil:
                 "image " + response.url + " download success",
                 log_file_path=self.logFilePath,
             )
-            url = response.url
-            paths = url.split("/")
-            filename = paths[-1]
-            self.__save2Local(
-                response=response,
-                actresses=actresses,
-                code=code,
-                filename=filename,
-                isBigImage=True,
-            )
+            filename = link.split("/")[-1]
+            # self.__save2Local(
+            #    response=response,
+            #    actresses=actresses,
+            #    code=code,
+            #    filename=filename,
+            #    isBigImage=True,
+            # )
+            path = "/bigimage/save/" + actresses + "/" + code + "/" + "bigimage"
+            self.requestUtil.sendImage(response.content, path=path, filename=filename)
         else:
             self.logUtil.log(
                 "image " + response.url + " download failure",

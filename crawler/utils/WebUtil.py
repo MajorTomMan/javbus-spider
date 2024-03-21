@@ -3,7 +3,7 @@ from urllib.parse import urlparse, urlunparse
 import threading
 import warnings
 from bs4 import BeautifulSoup
-from seleniumwire.undetected_chromedriver import Chrome, ChromeOptions
+from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
 from utils.IpUtil import IpUtil
@@ -32,28 +32,24 @@ class WebUtil:
         self.local = threading.local()
 
     def initialize_driver(self):
-        ip = self.ipUtil.getProxy()
         options = ChromeOptions()
         warnings.simplefilter("ignore", ResourceWarning)
         options.add_argument("--disable-images")
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
-        if ip:
-            options.add_argument("--proxy-server=https://" + ip)
         # 使用eager加快加载速度
         options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
-        if ip:
-            self.local.driver = Chrome(
-                headless=True,
-                driver_executable_path="/usr/bin/chromedriver",
-                options=self.local.options,
-                version_main=122,
-                user_multi_procs=True,
-                use_subprocess=True,
-            )
+        self.local.driver = Chrome(
+            headless=True,
+            driver_executable_path="/usr/bin/chromedriver",
+            options=self.local.options,
+            version_main=122,
+            user_multi_procs=True,
+            use_subprocess=True,
+        )
         # 超时时间设为2.5分钟
         self.local.driver.set_page_load_timeout(150)
         self.local.driver.set_script_timeout(150)
@@ -74,8 +70,8 @@ class WebUtil:
             )
             try:
                 source = self.send(new_url)
-                while self.checkIsBeDetected(source):
-                    source = self.send(new_url)
+                if self.checkIsBeDetected(source):
+                    return None
                 return source
             except TimeoutException:
                 self.logUtil.log(
@@ -110,9 +106,6 @@ class WebUtil:
         time.sleep(20)
         self.local.driver.get(new_url)
         end_time = time.time()
-        self.logUtil.log(
-            "using ip:" + self.local.driver.requests[0].response.json()["origin"]
-        )
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
         self.logUtil.log(
             "request spend time was " + str(end_time - start_time),

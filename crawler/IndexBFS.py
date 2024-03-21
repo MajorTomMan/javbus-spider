@@ -43,7 +43,7 @@ class index:
                             )
                     else:
                         self.logUtil.log("final page is reach")
-                        self.__bfs(source)
+                        self.pageUtil.parseMovieListPage(link, self.isCensored)
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")
