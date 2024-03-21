@@ -2,10 +2,9 @@ import time
 from urllib.parse import urlparse, urlunparse
 import threading
 import warnings
-from undetected_chromedriver import Chrome, ChromeOptions
-from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+from seleniumwire.undetected_chromedriver import Chrome, ChromeOptions
 from selenium.common.exceptions import TimeoutException, WebDriverException
-import undetected_chromedriver as uc
 
 from utils.IpUtil import IpUtil
 from utils.LogUtil import LogUtil
@@ -36,34 +35,25 @@ class WebUtil:
         ip = self.ipUtil.getProxy()
         options = ChromeOptions()
         warnings.simplefilter("ignore", ResourceWarning)
-        options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_argument("--disable-images")
-        options.add_argument("--disable-extensions")
         options.add_argument("--disable-gpu")
-        options.add_argument("--disable-infobars")
-        options.add_argument("--disable-notifications")
-        options.add_argument("--disable-popup-blocking")
-        options.add_argument("--disable-web-security")
         options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--start-maximized")
         if ip:
-            proxy_ip = ip["proxy"].split(":")[0]
-            proxy_port = ip["proxy"].split(":")[1]
-            options.add_argument("--proxy-server={}:{}".format(proxy_ip, proxy_port))
+            options.add_argument("--proxy-server=https://" + ip)
         # 使用eager加快加载速度
         options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
-        self.local.driver = Chrome(
-            headless=True,
-            driver_executable_path="/usr/bin/chromedriver",
-            options=self.local.options,
-            version_main=122,
-            user_multi_procs=True,
-            use_subprocess=True,
-        )
+        if ip:
+            self.local.driver = Chrome(
+                headless=True,
+                driver_executable_path="/usr/bin/chromedriver",
+                options=self.local.options,
+                version_main=122,
+                user_multi_procs=True,
+                use_subprocess=True,
+            )
         # 超时时间设为2.5分钟
         self.local.driver.set_page_load_timeout(150)
         self.local.driver.set_script_timeout(150)
@@ -83,7 +73,10 @@ class WebUtil:
                 )
             )
             try:
-                self.send(new_url)
+                source = self.send(new_url)
+                while self.checkIsBeDetected(source):
+                    source = self.send(new_url)
+                return source
             except TimeoutException:
                 self.logUtil.log(
                     "request to " + new_url + " timeout in 2.5 minutes",
@@ -95,6 +88,7 @@ class WebUtil:
                 continue
             except WebDriverException as e:
                 self.logUtil.log(e)
+                self.local.driver.quit()
                 continue
             except MaxRetryError as e:
                 self.logUtil.log("MaxRetry Link->")
@@ -116,6 +110,9 @@ class WebUtil:
         time.sleep(20)
         self.local.driver.get(new_url)
         end_time = time.time()
+        self.logUtil.log(
+            "using ip:" + self.local.driver.requests[0].response.json()["origin"]
+        )
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
         self.logUtil.log(
             "request spend time was " + str(end_time - start_time),
@@ -123,3 +120,9 @@ class WebUtil:
         source = self.local.driver.page_source
         self.local.driver.quit()
         return source
+
+    def checkIsBeDetected(self, source):
+        bs = BeautifulSoup(source, "html.parser")
+        if "Age" in bs.title.text:
+            return True
+        return False
