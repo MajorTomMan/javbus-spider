@@ -1,6 +1,7 @@
 package com.javbus.spider.spider.controller.base;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.javbus.spider.spider.service.base.ImageService;
 import com.javbus.spider.spider.utils.R;
@@ -48,6 +49,7 @@ public class ImageController {
     }
 
     @GetMapping("query/{isCensored}/{pageSize}/{offset}")
+    @ResponseBody
     public R queryAllMovieCode(@PathVariable Boolean isCensored, @PathVariable Integer pageSize,
             @PathVariable Integer offset) {
         if (isCensored == null || pageSize == null || offset == null || offset < 0 || pageSize < 0) {

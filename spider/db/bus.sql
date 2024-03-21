@@ -1,3 +1,4 @@
+-- Active: 1710944181917@@localhost@3306@javbus
 DROP DATABASE if EXISTS javbus; 
 CREATE DATABASE IF NOT EXISTS javbus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 -- 切换到 javbus 数据库
