@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.javbus.spider.spider.entity.dto.BigImageDTO;
-import com.javbus.spider.spider.entity.dto.SampleImageDTO;
-
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -43,46 +40,39 @@ public class ImageUtil {
         return image.getBody();
     }
 
-    public void saveBigImage(BigImageDTO image) {
-        String imagePath = imageFolder + image.getName() + File.separator + image.getCode() + File.separator
-                + "bigimage"
-                + File.separator;
-        save(image.getBigImage(), imagePath, image.getFileName());
+    public void saveBigImage(byte[] image, String path, String fileName) {
+        save(image, path, fileName);
     }
 
-    public void saveBigImage(List<BigImageDTO> images) {
-        for (BigImageDTO dto : images) {
-            String imagePath = imageFolder + dto.getName() + File.separator + dto.getCode() + File.separator
-                    + "bigimage"
-                    + File.separator;
-            save(dto.getBigImage(), imagePath, dto.getFileName());
+    public void saveBigImages(List<byte[]> images, String path, String fileName) {
+        for (byte[] image : images) {
+            save(image, path, fileName);
         }
     }
 
-    public void saveSampleImage(SampleImageDTO image) {
-        String imagePath = imageFolder + image.getName() + File.separator + image.getCode() + File.separator + "sample"
-                + File.separator;
-        save(image.getSampleImage(), imagePath, image.getFileName());
+    public void saveSampleImage(byte[] image, String path, String fileName) {
+        save(image, path, fileName);
     }
 
-    public void saveSampleImage(List<SampleImageDTO> images) {
-        for (SampleImageDTO dto : images) {
-            String imagePath = imageFolder + dto.getName() + File.separator + dto.getCode() + File.separator
-                    + "sample"
-                    + File.separator;
-            save(dto.getSampleImage(), imagePath, dto.getFileName());
+    public void saveSampleImage(List<byte[]> images, String path, String fileName) {
+        for (byte[] image : images) {
+            save(image, path, fileName);
         }
     }
 
     private void save(byte[] image, String path, String fileName) {
         log.info("image store folder is " + path);
-        File folder = new File(path);
-        if (!folder.exists()) {
+        File folder = new File(imageFolder + File.separator + path);
+        if (!checkImageFolderIsExists(path)) {
             log.info("image store folder " + path + " not exists");
             folder.mkdirs();
             log.info("image store folder " + path + " created");
         } else {
             log.info("image store folder " + path + " exists");
+        }
+        if (checkImageIsExists(imageFolder + File.separator + path, fileName)) {
+            log.info("image " + imageFolder + File.separator + path + File.separator + fileName + " exists");
+            return;
         }
         try (FileOutputStream fos = new FileOutputStream(new File(path + fileName))) {
             fos.write(image);
@@ -94,25 +84,19 @@ public class ImageUtil {
         }
     }
 
-    public boolean checkImageIsExists(BigImageDTO dto) {
-        String imagePath = imageFolder + dto.getName() + File.separator + dto.getCode() + File.separator
-                + "bigimage"
-                + File.separator + dto.getFileName();
-        File file = new File(imagePath);
+    public boolean checkImageFolderIsExists(String path) {
+        File file = new File(path);
         if (file.exists()) {
-            log.info("image " + imagePath + " was exists");
+            log.info("image " + path + " was exists");
             return true;
         }
         return false;
     }
 
-    public boolean checkImageIsExists(SampleImageDTO dto) {
-        String imagePath = imageFolder + dto.getName() + File.separator + dto.getCode() + File.separator
-                + "sample"
-                + File.separator + dto.getFileName();
-        File file = new File(imagePath);
+    public boolean checkImageIsExists(String path, String fileName) {
+        File file = new File(path + File.separator + fileName);
         if (file.exists()) {
-            log.info("image " + imagePath + " was exists");
+            log.info("image " + file.getAbsolutePath() + " was exists");
             return true;
         }
         return false;

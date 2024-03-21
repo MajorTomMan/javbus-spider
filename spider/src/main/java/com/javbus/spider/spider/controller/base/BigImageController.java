@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.javbus.spider.spider.entity.base.BigImage;
 import com.javbus.spider.spider.service.base.BigImageService;
+import com.javbus.spider.spider.utils.ImageUtil;
 import com.javbus.spider.spider.utils.R;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class BigImageController {
     @Autowired
     private BigImageService bigImageService;
-
+    @Autowired 
+    private ImageUtil imageUtil;
     @PostMapping("save")
     public R saveBigImage(@RequestBody BigImage bigImage) {
         // TODO: process POST request
@@ -32,5 +34,9 @@ public class BigImageController {
         BigImage image=bigImageService.queryBigImageById(id);
         return R.ok().put("bigImage",image);
     }
-    
+    @PostMapping("save/{path}/{fileName}")
+    public R saveImage(@RequestBody byte[] data,String path,String fileName) {
+        imageUtil.saveBigImage(data, path, path);
+        return R.ok();
+    }
 }

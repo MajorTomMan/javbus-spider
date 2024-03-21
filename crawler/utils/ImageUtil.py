@@ -13,7 +13,7 @@ class ImageUtil:
 
     def __init__(self) -> None:
         self.ua = UserAgent()
-        self.basePath = "../images/"
+        self.basePath = "/images/"
 
     def downloadSampleImages(self, links, actresses, code):
         if actresses == None or len(actresses) < 1:
