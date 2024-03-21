@@ -37,9 +37,10 @@ public class SampleImageController {
         SampleImage sampleImage = sampleImageService.querySampleImageById(id);
         return R.ok().put("sampleImage", sampleImage);
     }
-    @PostMapping("save/{path}/{fileName}")
-    public R saveImage(@RequestBody byte[] data,String path,String fileName) {
-        imageUtil.saveSampleImage(data, path, path);
+    @PostMapping("save/{actress}/{code}/sample/{fileName}")
+    public R saveImage(@RequestBody byte[] data,@PathVariable String actress,@PathVariable String code,@PathVariable String fileName) {
+        String path=actress+"/"+code;
+        imageUtil.saveSampleImage(data, path, fileName);
         return R.ok();
     }
 }

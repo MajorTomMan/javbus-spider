@@ -27,16 +27,17 @@ public class BigImageController {
             return R.error();
         }
         bigImageService.saveBigImage(bigImage);
-        return R.ok();
+        return R.ok();  
     }
     @GetMapping("query/id/{id}")
     public R queryBigImageByLink(@PathVariable Integer id) {
         BigImage image=bigImageService.queryBigImageById(id);
         return R.ok().put("bigImage",image);
     }
-    @PostMapping("save/{path}/{fileName}")
-    public R saveImage(@RequestBody byte[] data,String path,String fileName) {
-        imageUtil.saveBigImage(data, path, path);
+    @PostMapping("save/{actress}/{code}/bigimage/{fileName}")
+    public R saveImage(@RequestBody byte[] data,@PathVariable String actress,@PathVariable String code,@PathVariable String fileName) {
+        String path=actress+"/"+code;
+        imageUtil.saveBigImage(data, path, fileName);
         return R.ok();
     }
 }

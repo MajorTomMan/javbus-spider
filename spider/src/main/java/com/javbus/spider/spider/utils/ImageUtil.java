@@ -41,28 +41,34 @@ public class ImageUtil {
     }
 
     public void saveBigImage(byte[] image, String path, String fileName) {
-        save(image, path, fileName);
+        save(image, path, fileName,true);
     }
 
     public void saveBigImages(List<byte[]> images, String path, String fileName) {
         for (byte[] image : images) {
-            save(image, path, fileName);
+            save(image, path, fileName,true);
         }
     }
 
     public void saveSampleImage(byte[] image, String path, String fileName) {
-        save(image, path, fileName);
+        save(image, path, fileName,false);
     }
 
     public void saveSampleImage(List<byte[]> images, String path, String fileName) {
         for (byte[] image : images) {
-            save(image, path, fileName);
+            save(image, path, fileName,false);
         }
     }
 
-    private void save(byte[] image, String path, String fileName) {
+    private void save(byte[] image, String path,String fileName,Boolean isBigImage) {
         log.info("image store folder is " + path);
-        File folder = new File(imageFolder + File.separator + path);
+        File folder=null;
+        if(isBigImage){
+            folder = new File(imageFolder + File.separator + path+"/"+"bigimage/");
+        }
+        else{
+            folder = new File(imageFolder + File.separator + path+"/"+"sample/");
+        }
         if (!checkImageFolderIsExists(path)) {
             log.info("image store folder " + path + " not exists");
             folder.mkdirs();
@@ -70,11 +76,11 @@ public class ImageUtil {
         } else {
             log.info("image store folder " + path + " exists");
         }
-        if (checkImageIsExists(imageFolder + File.separator + path, fileName)) {
+        if (checkImageIsExists(folder.getAbsolutePath()+File.separator+fileName, fileName)) {
             log.info("image " + imageFolder + File.separator + path + File.separator + fileName + " exists");
             return;
         }
-        try (FileOutputStream fos = new FileOutputStream(new File(path + fileName))) {
+        try (FileOutputStream fos = new FileOutputStream(new File(folder.getAbsolutePath()+"/"+fileName))) {
             fos.write(image);
             log.info("image " + fileName + " downloaded");
             log.info("image store path is " + path + fileName);
