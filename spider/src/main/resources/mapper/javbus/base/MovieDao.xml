@@ -68,6 +68,9 @@
         SELECT * FROM movie WHERE code=#{code} 
     </select>
 
+    <select id="queryMovieCodes" resultType="java.lang.String"> 
+        SELECT code FROM movie WHERE is_censored=#{isCensored} LIMIT #{pageSize} OFFSET #{offset} 
+    </select>
     <!-- 查询电影（根据title） -->
     <select id="queryMovieByTitle" parameterType="java.lang.String" resultMap="movieResultMap"> 
         SELECT * FROM movie WHERE title=#{title} 

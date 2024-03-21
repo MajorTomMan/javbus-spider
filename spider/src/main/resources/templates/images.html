@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>preview images</title>
+</head>
+<body>
+    <div th:each="base64Image : ${base64Images}">
+        <img th:src="'data:image/png;base64,' + ${base64Image}" style="display:block; margin-bottom: 20px;">
+    </div>
+</body>
+</html>

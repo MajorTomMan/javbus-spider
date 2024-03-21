@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +18,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Component
 public class ImageUtil {
-    private String imageFolder = "./images/";
+    @Autowired
+    private ResourceLoader resourceLoader;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -41,46 +44,64 @@ public class ImageUtil {
     }
 
     public void saveBigImage(byte[] image, String path, String fileName) {
-        save(image, path, fileName,true);
+        try {
+            save(image, path, fileName,true);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void saveBigImages(List<byte[]> images, String path, String fileName) {
         for (byte[] image : images) {
-            save(image, path, fileName,true);
+            try {
+                save(image, path, fileName,true);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
     public void saveSampleImage(byte[] image, String path, String fileName) {
-        save(image, path, fileName,false);
+        try {
+            save(image, path, fileName,false);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void saveSampleImage(List<byte[]> images, String path, String fileName) {
         for (byte[] image : images) {
-            save(image, path, fileName,false);
+            try {
+                save(image, path, fileName,false);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
-    private void save(byte[] image, String path,String fileName,Boolean isBigImage) {
+    private void save(byte[] image, String path, String fileName, Boolean isBigImage) throws IOException {
         log.info("image store folder is " + path);
-        File folder=null;
-        if(isBigImage){
-            folder = new File(imageFolder + File.separator + path+"/"+"bigimage/");
-        }
-        else{
-            folder = new File(imageFolder + File.separator + path+"/"+"sample/");
-        }
-        if (!checkImageFolderIsExists(path)) {
-            log.info("image store folder " + path + " not exists");
+        Resource resource = resourceLoader.getResource("classpath:static/images/");
+        File folder = new File(resource.getFile().getAbsolutePath() + File.separator + path + (isBigImage ? "/bigimage/" : "/sample/"));
+
+        if (!checkImageFolderIsExists(folder.getAbsolutePath())) {
+            log.info("image store folder " + folder.getAbsolutePath() + " not exists");
             folder.mkdirs();
-            log.info("image store folder " + path + " created");
+            log.info("image store folder " + folder.getAbsolutePath() + " created");
         } else {
-            log.info("image store folder " + path + " exists");
+            log.info("image store folder " + folder.getAbsolutePath() + " exists");
         }
-        if (checkImageIsExists(folder.getAbsolutePath()+File.separator+fileName, fileName)) {
-            log.info("image " + imageFolder + File.separator + path + File.separator + fileName + " exists");
+
+        if (checkImageIsExists(folder.getAbsolutePath() + File.separator + fileName, fileName)) {
+            log.info("image " + folder.getAbsolutePath() + File.separator + fileName + " exists");
             return;
         }
-        try (FileOutputStream fos = new FileOutputStream(new File(folder.getAbsolutePath()+"/"+fileName))) {
+
+        try (FileOutputStream fos = new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName))) {
             fos.write(image);
             log.info("image " + fileName + " downloaded");
             log.info("image store path is " + path + fileName);
