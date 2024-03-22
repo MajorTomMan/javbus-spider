@@ -2,6 +2,7 @@ package com.javbus.spider.spider.controller.base;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.javbus.spider.spider.service.base.ImageService;
 import com.javbus.spider.spider.utils.R;
@@ -24,7 +25,7 @@ public class ImageController {
     private ImageService imageService;
 
     @GetMapping("query/{code}")
-    public String queryImage(@PathVariable String code, Model model) {
+    public ModelAndView queryImage(@PathVariable String code, Model model) {
         if (code == null) {
             return null;
         }
@@ -36,7 +37,7 @@ public class ImageController {
             e.printStackTrace();
         }
         if (images == null||images.isEmpty()) {
-            return "images";
+            return new ModelAndView("images");
         }
         // 将每个字节数组转换为Base64字符串，并添加到列表中
         List<String> base64Images = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ImageController {
 
         // 将Base64字符串列表传递给Thymeleaf模板
         model.addAttribute("base64Images", base64Images);
-        return "images";
+        return new ModelAndView("images");
     }
 
     @GetMapping("query/{isCensored}/{pageSize}/{offset}")
