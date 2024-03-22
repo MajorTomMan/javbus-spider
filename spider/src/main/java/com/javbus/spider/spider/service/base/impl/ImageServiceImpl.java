@@ -23,7 +23,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<byte[]> getImagesByCode(String code) throws IOException {
         // TODO Auto-generated method stub
-        Resource resource = resourceLoader.getResource("classpath:static/images/");
+        Resource resource = resourceLoader.getResource("classpath:images/");
         return findImage(new File(resource.getFile().getAbsolutePath()), code);
     }
     @Override
