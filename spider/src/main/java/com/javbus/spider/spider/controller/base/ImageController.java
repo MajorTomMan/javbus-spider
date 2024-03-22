@@ -28,14 +28,16 @@ public class ImageController {
         if (code == null) {
             return null;
         }
-        List<byte[]> images=new ArrayList<>();
+        List<byte[]> images = null;
         try {
             images = imageService.getImagesByCode(code);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-         
+        if (images == null) {
+            return "images";
+        }
         // 将每个字节数组转换为Base64字符串，并添加到列表中
         List<String> base64Images = new ArrayList<>();
         for (byte[] bytes : images) {
