@@ -39,21 +39,17 @@ public class ImageServiceImpl implements ImageService {
             return null;
         }
         List<byte[]> images = new ArrayList<>();
-        for (File child : file.listFiles()) {
-            if (child.getName().equals(code)) {
-                List<byte[]> image = findAllImage(child);
-                if (!image.isEmpty() || image != null) {
-                    images.addAll(image);
-                }
-            }
-            if (child.isDirectory()) {
+        if (file.getName().equals(code)) {
+            images.addAll(findAllImage(file));
+        } else {
+            for (File child : file.listFiles()) {
                 List<byte[]> subImages = findImage(child, code);
                 if (subImages != null) {
                     images.addAll(subImages);
                 }
             }
         }
-        return null;
+        return images;
     }
 
     private List<byte[]> findAllImage(File directory) {

@@ -35,7 +35,7 @@ public class ImageController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        if (images == null) {
+        if (images == null||images.isEmpty()) {
             return "images";
         }
         // 将每个字节数组转换为Base64字符串，并添加到列表中
