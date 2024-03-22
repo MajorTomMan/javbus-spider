@@ -69,7 +69,7 @@ class PageUtil:
                     )
                 except Exception as e:
                     self.logUtil.log(
-                        "-------------image error info start------------------"
+                        "-------------image error info actresst------------------"
                     )
                     self.logUtil.log("Error while downloading images: ")
                     self.logUtil.log(e)
@@ -299,23 +299,30 @@ class PageUtil:
             )
         if page.actresses and len(page.actresses) >= 1:
             if page.director:
-                starDirectorVo = {"actress": page.actresses, "director": page.director}
-                self.requestUtil.send(starDirectorVo, "/actress/relation/director/save")
+                actressDirectorVo = {
+                    "actress": page.actresses,
+                    "director": page.director,
+                }
+                self.requestUtil.send(
+                    actressDirectorVo, "/actress/relation/director/save"
+                )
             if page.studio:
-                starStudioVo = {"actress": page.actresses, "studio": page.studio}
-                self.requestUtil.send(starStudioVo, "/actress/relation/studio/save")
+                actressStudioVo = {"actress": page.actresses, "studio": page.studio}
+                self.requestUtil.send(actressStudioVo, "/actress/relation/studio/save")
             if page.series:
-                starSeriesVo = {"actress": page.actresses, "series": page.series}
-                self.requestUtil.send(starSeriesVo, "/actress/relation/series/save")
+                actressSeriesVo = {"actress": page.actresses, "series": page.series}
+                self.requestUtil.send(actressSeriesVo, "/actress/relation/series/save")
             if page.movie:
                 movieActressVo = {"movie": page.movie, "actress": page.actresses}
                 self.requestUtil.send(movieActressVo, "/movie/relation/actress/save")
             if page.categories and len(page.categories) >= 1:
-                starCategoryVo = {
+                actressCategoryVo = {
                     "actress": page.actresses,
                     "categories": page.categories,
                 }
-                self.requestUtil.send(starCategoryVo, "/actress/relation/category/save")
+                self.requestUtil.send(
+                    actressCategoryVo, "/actress/relation/category/save"
+                )
         if page.studio and len(page.studio) >= 1:
             movieStudioVo = {"movie": page.movie, "studio": page.studio}
             self.requestUtil.send(movieStudioVo, "/movie/relation/studio/save")
@@ -326,7 +333,7 @@ class PageUtil:
     def printPage(self, page):
         with page.lock:
             self.logUtil.log(
-                "------------------------------page info start--------------------------------------"
+                "------------------------------page info actresst--------------------------------------"
             )
             self.logUtil.log(page)
             self.logUtil.log(
@@ -334,7 +341,7 @@ class PageUtil:
             )
             if page.actresses:
                 self.logUtil.log(
-                    "------------------------------actress info start--------------------------------------"
+                    "------------------------------actress info actresst--------------------------------------"
                 )
                 for actress in page.actresses:
                     self.logUtil.log(actress)

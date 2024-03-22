@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.common.exceptions import TimeoutException, WebDriverException
 
-from utils.IpUtil import IpUtil
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
 
@@ -14,7 +13,6 @@ from urllib3.exceptions import MaxRetryError
 class WebUtil:
     options = None
     logUtil = LogUtil()
-    ipUtil = IpUtil()
     baseUrls = [
         "https://www.cdnbus.shop/",
         "https://www.dmmsee.art",
@@ -116,6 +114,7 @@ class WebUtil:
 
     def checkIsBeDetected(self, source):
         bs = BeautifulSoup(source, "html.parser")
-        if "Age" in bs.title.text:
-            return True
-        return False
+        if bs:
+            if "Age" in bs.title.text:
+                return True
+            return False
