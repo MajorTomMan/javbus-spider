@@ -20,16 +20,18 @@ public class ImageServiceImpl implements ImageService {
     private ResourceLoader resourceLoader;
     @Autowired
     private MovieDao movieDao;
+
     @Override
     public List<byte[]> getImagesByCode(String code) throws IOException {
         // TODO Auto-generated method stub
         Resource resource = resourceLoader.getResource("classpath:static/images/");
         return findImage(new File(resource.getFile().getAbsolutePath()), code);
     }
+
     @Override
     public List<String> queryAllMovieCode(Boolean isCensored, Integer pageSize, Integer offset) {
         // TODO Auto-generated method stub
-        return movieDao.queryMovieCodes(isCensored,pageSize,offset);
+        return movieDao.queryMovieCodes(isCensored, pageSize, offset);
     }
 
     private List<byte[]> findImage(File file, String code) {
@@ -39,15 +41,12 @@ public class ImageServiceImpl implements ImageService {
         List<byte[]> images = new ArrayList<>();
         for (File child : file.listFiles()) {
             if (child.getName().equals(code)) {
-                for(File children: child.listFiles()){
-                    if(children.getName().endsWith(".jpg")){
-                        byte[] data=readImage(children);
-                        images.add(data);
-                    }
+                List<byte[]> image = findAllImage(child);
+                if (!image.isEmpty() || image != null) {
+                    images.addAll(image);
                 }
-                return images;
             }
-            if(child.isDirectory()){
+            if (child.isDirectory()) {
                 List<byte[]> subImages = findImage(child, code);
                 if (subImages != null) {
                     images.addAll(subImages);
@@ -57,23 +56,48 @@ public class ImageServiceImpl implements ImageService {
         return null;
     }
 
+    private List<byte[]> findAllImage(File directory) {
+        List<byte[]> images = new ArrayList<>();
+        if (directory == null || !directory.exists()) {
+            return images;
+        }
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return images;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                images.addAll(findAllImage(file));
+            } else if (file.isFile() && (file.getName().endsWith(".jpg") || file.getName().endsWith(".png"))) {
+                byte[] image = readImage(file);
+                if (image != null) {
+                    images.add(readImage(file));
+                }
+
+            }
+        }
+        return images;
+    }
+
     private byte[] readImage(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            byte[] data = new byte[inputStream.available()];
-            int bytesRead = inputStream.read(data);
-            if (bytesRead == -1) {
-                // 读取失败，返回空数组
-                return new byte[0];
-            } else {
-                // 读取成功，返回读取的数据
-                return data;
+            byte[] buffer = new byte[8192]; // 8KB buffer
+            int bytesRead;
+            List<Byte> byteList = new ArrayList<>();
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                for (int i = 0; i < bytesRead; i++) {
+                    byteList.add(buffer[i]);
+                }
             }
+            byte[] imageData = new byte[byteList.size()];
+            for (int i = 0; i < byteList.size(); i++) {
+                imageData[i] = byteList.get(i);
+            }
+            return imageData;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
-
 
 }
