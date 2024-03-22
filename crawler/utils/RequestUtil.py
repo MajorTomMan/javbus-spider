@@ -4,7 +4,7 @@ from utils.LogUtil import LogUtil
 
 
 class RequestUtil:
-    baseUrl = "http://101.43.91.110:7788/spider-1.0"
+    baseUrl = "http://101.43.91.110:7788/spider"
     headers = {"Content-Type": "application/json"}
     logUtil = LogUtil()
     image_headers = {"Content-Type": "image/jpeg"}
