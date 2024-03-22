@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
     <style>
-        /* 样式可以根据需求进行修改 */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -76,12 +75,10 @@
     <div class="container">
         <h2>Image Gallery</h2>
         <div class="gallery">
-            <!-- 引用位于 resources/static/images/ 目录下的图片 -->
-            <img src="images/1.jpg" alt="images/5.webp">
-            <img src="images/2.jpg" alt="images/5.webp">
-            <img src="images/3.jpg" alt="images/5.webp">
-            <img src="images/4.jpg" alt="images/5.webp">
-            <!-- 添加更多图片 -->
+            <img th:src="@{/image/1.jpg}" alt="@{/image/5.webp}">
+            <img th:src="@{/image/2.jpg}" alt="@{/image/5.webp}">
+            <img th:src="@{/image/3.jpg}" alt="@{/image/5.webp}">
+            <img th:src="@{/image/4.jpg}" alt="@{/image/5.webp}">
         </div>
     </div>
     <footer>

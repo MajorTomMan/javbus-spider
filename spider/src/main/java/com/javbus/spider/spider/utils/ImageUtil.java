@@ -85,7 +85,7 @@ public class ImageUtil {
 
     private void save(byte[] image, String path, String fileName, Boolean isBigImage) throws IOException {
         log.info("image store folder is " + path);
-        Resource resource = resourceLoader.getResource("classpath:static/images/");
+        Resource resource = resourceLoader.getResource("classpath:static/image/");
         File folder = new File(resource.getFile().getAbsolutePath() + File.separator + path + (isBigImage ? "/bigimage/" : "/sample/"));
 
         if (!checkImageFolderIsExists(folder.getAbsolutePath())) {
