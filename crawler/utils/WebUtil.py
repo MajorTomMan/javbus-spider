@@ -42,7 +42,7 @@ class WebUtil:
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=True,
-            driver_executable_path="/usr/bin/chromedriver",
+            driver_executable_path="C:\Program Files\Google\Chrome\Application\chromedriver.exe",
             options=self.local.options,
             version_main=122,
             user_multi_procs=True,
@@ -114,7 +114,7 @@ class WebUtil:
 
     def checkIsBeDetected(self, source):
         bs = BeautifulSoup(source, "html.parser")
-        if bs:
+        if bs and bs.title:
             if "Age" in bs.title.text:
                 return True
             return False

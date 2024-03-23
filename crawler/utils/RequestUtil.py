@@ -2,6 +2,8 @@ import requests
 
 from utils.LogUtil import LogUtil
 
+requests.packages.urllib3.disable_warnings()
+
 
 class RequestUtil:
     baseUrl = "http://101.43.91.110:7788/spider"
