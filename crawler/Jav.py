@@ -9,12 +9,13 @@ from ActressBFS import actresses
 if __name__ == "__main__":
     keywords = [
         "北野未奈",
-        "rion",
+        "Rion",
         "大橋未久",
-        "藤森里穗",
+        "藤森里穂",
         "安齋らら",
         "吉沢明歩",
         "メロディー・雛・マークス",
+        "星宮一花",
     ]
     baseUrl = "https://www.cdnbus.shop/"
     print(
