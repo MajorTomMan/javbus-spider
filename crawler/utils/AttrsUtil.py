@@ -15,7 +15,7 @@ class AttrsUtil:
         if a:
             link = a["href"]
             return link
-        self.logUtil.log("link not found")
+        self.logUtil.log("singer movie link not found,skip")
         return None
 
     def getTitle(self, bs):
