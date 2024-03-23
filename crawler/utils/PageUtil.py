@@ -61,12 +61,14 @@ class PageUtil:
                     for actress in actresses:
                         names.append(actress.get("name"))
                 try:
-                    self.imageUtil.downloadSampleImages(
-                        links=links, actresses=names, code=code
-                    )
-                    self.imageUtil.downloadBigImage(
-                        link=page.bigimage["link"], actresses=names, code=code
-                    )
+                    if links and len(links) >= 1:
+                        self.imageUtil.downloadSampleImages(
+                            links=links, actresses=names, code=code
+                        )
+                    if page.bigimage["link"]:
+                        self.imageUtil.downloadBigImage(
+                            link=page.bigimage["link"], actresses=names, code=code
+                        )
                 except Exception as e:
                     self.logUtil.log(
                         "-------------image error info actresst------------------"
@@ -246,14 +248,13 @@ class PageUtil:
                     if url:
                         # 如果电影页存在
                         page = self.parseDetailPage(url, isCensored)
-
                         if page and page != -1:
                             self.sendData2Server(page)
                         elif page == -1:
                             continue
                         else:
                             self.logUtil.log("add " + url + " to timeouts")
-                            self.timeouts.append(url)
+                            self.timeoutUtil.addLink(link, isCensored)
                 except Exception as e:
                     self.logUtil.log(e)
             self.logUtil.log("all link was visited jump to next page")
