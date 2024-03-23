@@ -80,4 +80,8 @@
     <select id="queryMovieById" parameterType="java.lang.Integer" resultMap="movieResultMap"> 
         SELECT * FROM movie WHERE id=#{id} 
     </select>
+        <!-- 查询电影（根据id） -->
+    <select id="queryMovieByLink" parameterType="java.lang.String" resultMap="movieResultMap"> 
+        SELECT * FROM movie WHERE link=#{link} 
+    </select>
 </mapper>

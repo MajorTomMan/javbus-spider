@@ -21,4 +21,6 @@ public interface MovieDao {
 
     List<String> queryMovieCodes(Boolean isCensored, Integer pageSize, Integer offset);
 
+    Movie queryMovieByLink(String link);
+
 }

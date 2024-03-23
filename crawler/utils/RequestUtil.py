@@ -6,6 +6,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 class RequestUtil:
+    # baseUrl = "http://localhost:7788"
     baseUrl = "http://101.43.91.110:7788/spider"
     headers = {"Content-Type": "application/json"}
     logUtil = LogUtil()
@@ -49,7 +50,7 @@ class RequestUtil:
         response = self.post(data=data, path=path)
         if not response:
             self.logUtil.log("error request to " + path, "./errorRequestServer.log")
-            self.logUtil.log("error data is " + data, "./errorRequestServer.log")
+            self.logUtil.log("error data is ", "./errorRequestServer.log")
             self.logUtil.log(data, "./errorRequestServer.log")
             self.logUtil.log(
                 "request not response pls check server is open or has expection "

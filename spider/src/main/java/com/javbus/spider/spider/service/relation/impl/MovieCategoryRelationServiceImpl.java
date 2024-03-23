@@ -28,12 +28,13 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
     @Override
     public void saveRelation(MovieCategoryDTO dto) {
         // TODO Auto-generated method stub
-        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
-        if (movie != null) {
-            movieDao.updateMovieByCode(dto.getMovie());
-        } else {
+        Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
+        if (movie == null) {
             movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+            movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
+        } else {
+            dto.getMovie().setId(movie.getId());
+            movieDao.updateMovie(dto.getMovie());
         }
         // 根据名字查找ID
         List<String> names = dto.getCategories().stream().map((data) -> {
