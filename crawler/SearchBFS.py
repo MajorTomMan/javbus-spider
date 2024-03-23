@@ -78,3 +78,5 @@ class search:
 
         else:
             self.logUtil.log("bricks not found")
+            self.logUtil.log("save error page to local")
+            self.pageUtil.save2local(source, self.tag, ".html")

@@ -90,6 +90,8 @@ class actresses:
             self.requestUtil.send(actressList, "/actress/save")
         else:
             self.logUtil.log("bricks not found")
+            self.logUtil.log("save error page to local")
+            self.pageUtil.save2local(source, "actress", ".html")
 
     def printActresses(self, actress):
         with actresses.lock:

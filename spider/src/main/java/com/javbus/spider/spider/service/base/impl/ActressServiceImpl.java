@@ -1,5 +1,6 @@
 package com.javbus.spider.spider.service.base.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,5 +55,15 @@ public class ActressServiceImpl implements ActressService {
     public Actress queryActressByName(String name) {
         // TODO Auto-generated method stub
         return actressDao.queryActressByName(name);
+    }
+
+    @Override
+    public List<String> queryActresses(Integer offset) {
+        // TODO Auto-generated method stub
+        List<String> names=actressDao.queryActresses(offset);
+        if(!names.isEmpty()){
+            return names;
+        }
+        return new ArrayList<>();
     }
 }

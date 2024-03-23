@@ -116,4 +116,9 @@
         </foreach>
     </update>
 
+    <!-- queryActresses --> 
+
+    <select id="queryActresses">
+        SELECT name from actress LIMIT 10 OFFSET #{offset}
+    </select>
 </mapper>

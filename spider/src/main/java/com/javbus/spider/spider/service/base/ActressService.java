@@ -12,4 +12,6 @@ public interface ActressService{
     Actress queryActressById(Integer id);
 
     Actress queryActressByName(String name);
+
+    List<String> queryActresses(Integer offset);
 }

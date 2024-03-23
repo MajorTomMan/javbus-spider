@@ -26,4 +26,6 @@ public interface ActressDao {
     void saveActresses(List<Actress> actresses);
 
     void updateActresses(List<Actress> actresses);
+
+    List<String> queryActresses(Integer offset);
 }

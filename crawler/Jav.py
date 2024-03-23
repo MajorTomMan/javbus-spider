@@ -7,7 +7,15 @@ from ActressBFS import actresses
 
 
 if __name__ == "__main__":
-    keywords = ["北野未奈", "rion", "大橋未久", "藤森里穗"]
+    keywords = [
+        "北野未奈",
+        "rion",
+        "大橋未久",
+        "藤森里穗",
+        "安齋らら",
+        "吉沢明歩",
+        "メロディー・雛・マークス",
+    ]
     baseUrl = "https://www.cdnbus.shop/"
     print(
         """

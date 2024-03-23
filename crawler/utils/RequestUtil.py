@@ -48,6 +48,8 @@ class RequestUtil:
     def send(self, data, path):
         response = self.post(data=data, path=path)
         if not response:
+            self.logUtil.log("error request to " + path, "./errorRequestServer.log")
+            self.logUtil.log("error data is " + data, "./errorRequestServer.log")
             self.logUtil.log(
                 "request not response pls check server is open or has expection "
             )
@@ -59,6 +61,8 @@ class RequestUtil:
     def sendImage(self, data, path, filename):
         response = self.postImage(data=data, path=path, filename=filename)
         if not response:
+            self.logUtil.log("error request to " + path, "./errorRequestServer.log")
+            self.logUtil.log("error data is " + data, "./errorRequestServer.log")
             self.logUtil.log(
                 "request not response pls check server is open or has expection "
             )

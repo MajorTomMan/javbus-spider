@@ -50,4 +50,10 @@ public class ActressController {
         }
         return R.ok().put("actress", actress);
     }
+
+    @GetMapping("query/{offset}")
+    public R queryActresses(@PathVariable Integer offset) {
+        List<String> actresses = actressService.queryActresses(offset);
+        return R.ok().put("actresses", actresses);
+    }
 }

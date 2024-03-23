@@ -261,6 +261,10 @@ class PageUtil:
                 return False
             else:
                 return True
+        else:
+            self.logUtil.log("bricks not found")
+            self.logUtil.log("save error page to local")
+            self.save2local(source, link, ".html")
 
     def save2local(self, content, link, extensions):
         # 获取链接的路径名
