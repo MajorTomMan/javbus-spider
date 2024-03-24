@@ -21,7 +21,11 @@ class LogUtil:
                 log = log.__dict__
             with self.lock:  # 使用锁确保多线程环境下的安全性
                 with open(log_file_path, "a", encoding="utf-8") as file:
-                    self.log_recursive(log, current_time, thread_name, file)
+                    try:
+                        self.log_recursive(log, current_time, thread_name, file)
+                    except OSError as e:
+                        if not file.closed():
+                            file.close()
 
     def log_recursive(
         self, obj, current_time, thread_name, file=None, indent=0, parent_key=None
