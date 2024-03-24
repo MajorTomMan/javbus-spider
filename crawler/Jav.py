@@ -1,9 +1,21 @@
+import os
 import threading
 import time
 from GenreBFS import genre
 from SearchBFS import search
 from IndexBFS import index
 from ActressBFS import actresses
+import atexit
+
+
+def cleanChromeDriver():
+    try:
+        os.system("taskkill /F /im chromedriver.exe")
+        os.system("taskkill /F /im undetected_chromedriver.exe")
+        os.system("taskkill /F /im chrome.exe")
+        os.system("taskkill /F /im python.exe")
+    except TypeError as e:
+        pass
 
 
 if __name__ == "__main__":
@@ -135,5 +147,6 @@ if __name__ == "__main__":
     # 等待所有线程完成
     for thread in threads:
         thread.join()
-
     print("All threads have finished.")
+    print("exec clean operation")
+    atexit.register(cleanChromeDriver)
