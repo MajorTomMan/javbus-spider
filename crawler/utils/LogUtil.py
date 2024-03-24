@@ -19,8 +19,9 @@ class LogUtil:
                 self.mailUtil.send_email(log)
             elif hasattr(log, "__dict__"):
                 log = log.__dict__
-            with open(log_file_path, "a", encoding="utf-8") as file:
-                self.log_recursive(log, current_time, thread_name, file)
+            with self.lock:  # 使用锁确保多线程环境下的安全性
+                with open(log_file_path, "a", encoding="utf-8") as file:
+                    self.log_recursive(log, current_time, thread_name, file)
 
     def log_recursive(
         self, obj, current_time, thread_name, file=None, indent=0, parent_key=None
