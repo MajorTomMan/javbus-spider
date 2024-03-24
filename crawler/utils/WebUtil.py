@@ -8,6 +8,9 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
+from winproxy import ProxySetting
+
+proxy = ProxySetting()
 
 
 class WebUtil:
@@ -25,6 +28,7 @@ class WebUtil:
         "https://www.buscdn.art",
     ]
     logFilePath = "./driver.log"
+    lock = threading.Lock()
 
     def __init__(self) -> None:
         self.local = threading.local()
@@ -42,7 +46,7 @@ class WebUtil:
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=True,
-            driver_executable_path="C:\Program Files\Google\Chrome\Application\chromedriver.exe",
+            driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
             options=self.local.options,
             version_main=122,
             user_multi_procs=True,
@@ -67,6 +71,11 @@ class WebUtil:
                 )
             )
             try:
+                with self.lock:
+                    proxy.registry_read()
+                    if proxy.enable == True:
+                        proxy.enable = False
+                        proxy.registry_write()
                 source = self.send(new_url)
                 if self.checkIsBeDetected(source):
                     return None
@@ -88,6 +97,8 @@ class WebUtil:
                 self.logUtil.log("MaxRetry Link->")
                 self.logUtil.log(e.reason)
                 continue
+            except ConnectionResetError as e:
+                self.logUtil.log("Connection reset skipping")
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
 

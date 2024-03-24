@@ -233,11 +233,12 @@ class PageUtil:
         return False
 
     def parseMovieListPage(self, link, isCensored):
+        if self.timeoutUtil is None:
+            self.timeoutUtil = TimeoutUtil(self)
         source = self.webUtil.getWebSite(link)
         if not source:
-            if self.timeoutUtil is None:
-                self.timeoutUtil = TimeoutUtil(self)
-            self.timeoutUtil.addLink(link, isCensored)
+            if self.timeoutUtil:
+                self.timeoutUtil.addLink(link, isCensored)
             return True
         bs = BeautifulSoup(source, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
