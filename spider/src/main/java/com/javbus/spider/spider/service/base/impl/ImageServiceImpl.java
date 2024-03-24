@@ -39,7 +39,7 @@ public class ImageServiceImpl implements ImageService {
             return null;
         }
         List<byte[]> images = new ArrayList<>();
-        if (file.getName().equals(code)) {
+        if (file.getName().contains(code)) {
             images.addAll(findAllImage(file));
         } else {
             for (File child : file.listFiles()) {
