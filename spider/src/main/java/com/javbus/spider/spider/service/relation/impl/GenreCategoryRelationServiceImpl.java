@@ -41,18 +41,14 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
             return category.getName();
         }).collect(Collectors.toList());
         List<Category> categories = categoryDao.queryCategoriesByNames(names);
-        if (categories.isEmpty()|| categories.size()!=dto.getCategories().size()) {
+        if (categories.isEmpty() || categories.size() != dto.getCategories().size()) {
             categoryDao.saveCategories(dto.getCategories());
             categories = categoryDao.queryCategoriesByNames(names);
-        } else {
-            for (int i = 0; i < categories.size(); i++) {
-                dto.getCategories().get(i).setId(categories.get(i).getId());
-            }
-            categoryDao.updateCategories(dto.getCategories());
         }
         // 处理有无码的保存问题
         final Genre final_genre = genre;
-        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);;
+        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        ;
         List<GenreCategoryRelation> genreCategoryRelations = categoryIds.stream().map(id -> {
             GenreCategoryRelation relation = new GenreCategoryRelation();
             relation.setCategoryId(id);
@@ -105,7 +101,7 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         } else {
             List<GenreCategoryRelation> relations = genreCategoryDao
                     .queryGenreCategoryUncensoredRelationsByGenreId(genreId);
-            if(relations.isEmpty()){
+            if (relations.isEmpty()) {
                 return null;
             }
             Genre genre = genreDao.queryGenreById(genreId);

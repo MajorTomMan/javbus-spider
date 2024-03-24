@@ -44,11 +44,6 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
         if (categoryIds.isEmpty() || categoryIds.size() != dto.getCategories().size()) {
             categoryDao.saveCategories(dto.getCategories());
             categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        } else {
-            for (int i = 0; i < categoryIds.size(); i++) {
-                dto.getCategories().get(i).setId(categoryIds.get(i));
-            }
-            categoryDao.updateCategories(dto.getCategories());
         }
         final Movie final_movie = movie;
         // 设置一对多关系

@@ -37,11 +37,6 @@ public class ActressCategoryRelationServiceImpl implements ActressCategoryRelati
         if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
             actressDao.saveActresses(dto.getActress());
             actressIds = actressDao.queryActressIdsByNames(actressNames);
-        } else {
-            for (int i = 0; i < actressIds.size(); i++) {
-                dto.getActress().get(i).setId(actressIds.get(i));
-            }
-            actressDao.updateActresses(dto.getActress());
         }
         List<String> categoryNames = dto.getCategories().stream().map((category) -> {
             return category.getName();
