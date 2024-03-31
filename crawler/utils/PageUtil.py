@@ -354,3 +354,20 @@ class PageUtil:
                 self.logUtil.log(
                     "------------------------------actress info ended--------------------------------------"
                 )
+
+    def findRelatedWebSite(self, bs):
+        links = []
+        if bs:
+            elements = bs.find_all("a")
+            if elements:
+                for element in elements:
+                    link = self.attrsUtil.getLink(element)
+                    if link:
+                        links.append(link)
+                    else:
+                        pass
+                return links
+            else:
+                return None
+        else:
+            return None

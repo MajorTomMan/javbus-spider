@@ -1,10 +1,10 @@
 import os
 import threading
 import time
-from GenreBFS import genre
-from SearchBFS import search
-from IndexBFS import index
-from ActressBFS import actresses
+from Genre import genre
+from Search import search
+from Index import index
+from Actress import actresses
 import atexit
 
 

@@ -1,5 +1,4 @@
 import base64
-import orjson
 import os
 from fake_useragent import UserAgent
 import requests

@@ -48,7 +48,7 @@ class WebUtil:
             headless=True,
             driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
             options=self.local.options,
-            version_main=122,
+            version_main=123,
             user_multi_procs=True,
             use_subprocess=True,
         )
