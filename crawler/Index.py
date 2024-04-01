@@ -42,11 +42,9 @@ class index:
                 source = self.webUtil.getWebSite(link)
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
-                    if self.pageUtil.hasNextPage(bs):
-                        self.logUtil.log("now page num is " + str(self.pageNum))
-                        self.bfs(bs)
-                    else:
-                        self.bfs(bs)
+                    self.logUtil.log("now page num is " + str(self.pageNum))
+                    self.bfs(bs)
+                    if not self.pageUtil.hasNextPage(bs):
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")
