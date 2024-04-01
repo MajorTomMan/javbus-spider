@@ -1,4 +1,5 @@
 import time
+import random
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
 
@@ -60,12 +61,12 @@ class index:
             if not self.timeoutUtil.isEmpty():
                 self.timeoutUtil.requestTimeoutLink()
 
-    def DFS(self,link):
-        visited[link]=False
-        self.dfs(link)
+    def DFS(self, link):
+        visited[link] = False
+        self.dfs(link,0)
 
-    def dfs(self, link):
-        if visited[link] == True:
+    def dfs(self, link, depth):
+        if visited[link] == True or depth >= 30:
             return
         visited[link] = True
         source = self.webUtil.getWebSite(link)
@@ -85,7 +86,7 @@ class index:
                             visited[link] = False
                     link = self.randomChoiceOneLink()
                     if link:
-                        dfs(link)
+                        self.dfs(link, depth + 1)
                     else:
                         return
                 else:

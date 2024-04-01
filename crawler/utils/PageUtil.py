@@ -361,11 +361,7 @@ class PageUtil:
             elements = bs.find_all("a")
             if elements:
                 for element in elements:
-                    link = self.attrsUtil.getLink(element)
-                    if link:
-                        links.append(link)
-                    else:
-                        pass
+                    links.append(element.attrs["href"])
                 return links
             else:
                 return None
