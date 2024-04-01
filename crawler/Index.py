@@ -1,8 +1,9 @@
 import time
 import random
+import queue
 from bs4 import BeautifulSoup
 from utils.LogUtil import LogUtil
-
+from utils.AttrsUtil import AttrsUtil
 from utils.PageUtil import PageUtil
 from utils.WebUtil import WebUtil
 from utils.TimeoutUtil import TimeoutUtil
@@ -10,8 +11,8 @@ from utils.RequestUtil import RequestUtil
 
 from collections import OrderedDict
 
-
 visited = OrderedDict()
+queue = queue.Queue()
 
 
 class index:
@@ -23,7 +24,7 @@ class index:
     baseUrl = ""
     isCensored = True
     timeoutUtil = None
-
+    attrsUtil=AttrsUtil()
     def __init__(self, url, is_censored):
         self.baseUrl = url
         self.pageUtil = PageUtil(url)
@@ -41,16 +42,11 @@ class index:
                 source = self.webUtil.getWebSite(link)
                 if source:
                     bs = BeautifulSoup(source, "html.parser")
-                    self.logUtil.log("now page num is " + str(self.pageNum))
                     if self.pageUtil.hasNextPage(bs):
-                        isFinalPage = False
-                        while not isFinalPage:
-                            isFinalPage = self.pageUtil.parseMovieListPage(
-                                link, self.isCensored
-                            )
+                        self.logUtil.log("now page num is " + str(self.pageNum))
+                        self.bfs(bs)
                     else:
-                        self.logUtil.log("final page is reach")
-                        self.pageUtil.parseMovieListPage(link, self.isCensored)
+                        self.bfs(bs)
                         break
                 else:
                     self.logUtil.log("request page timeout try next page")
@@ -61,9 +57,30 @@ class index:
             if not self.timeoutUtil.isEmpty():
                 self.timeoutUtil.requestTimeoutLink()
 
+    def bfs(self, bs):
+        bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
+        if bricks:
+            for brick in bricks:
+                link = self.attrsUtil.getLink(brick)
+                if link:
+                    visited[link] = False
+                    queue.put(link)
+            while not queue.empty():
+                link = queue.get()
+                if not visited[link]:
+                    visited[link]=True
+                page = self.pageUtil.parseDetailPage(link,self.isCensored)
+                if page and page!=-1:
+                    self.pageUtil.sendData2Server(page)
+                else:
+                    return
+                
+        else:
+            return
+
     def DFS(self, link):
         visited[link] = False
-        self.dfs(link,0)
+        self.dfs(link, 0)
 
     def dfs(self, link, depth):
         if visited[link] == True or depth >= 30:
@@ -73,7 +90,7 @@ class index:
         if source:
             bs = BeautifulSoup(source, "html.parser")
             if bs:
-                page = self.pageUtil.getPage(bs, self.isCensored)
+                page = self.pageUtil.parseDetailPage(bs, self.isCensored)
                 if page:
                     self.pageUtil.sendData2Server(page)
                 else:

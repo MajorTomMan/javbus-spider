@@ -22,4 +22,5 @@ if __name__ == "__main__":
     #driver.get("https://www.baidu.com")
     #driver.quit()
     #MailUtil().send_email("hello from spider")
-    index("https://www.cdnbus.shop/",True).DFS("https://www.cdnbus.shop/WAAA-363")
+    #index("https://www.cdnbus.shop/",True).DFS("https://www.cdnbus.shop/WAAA-363")
+    index("https://www.cdnbus.shop/",True).BFS()
