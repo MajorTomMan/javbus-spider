@@ -20,23 +20,23 @@ class ImageUtil:
     def downloadSampleImages(self, links, actresses, code):
         if actresses == None or len(actresses) < 1:
             actresses = "未知演员"
-        elif len(actresses) > 1:
-            actresses = "-".join(actresses)
-        elif len(actresses) == 1:
-            actresses = actresses[0]
         headers = {"User-Agent": self.ua.random}
+        bytesList = []
+        namesList=[]
         for link in links:
             filename = link.split("/")[-1]
-            if self.__checkFileIsExists(
-                actresses=actresses, code=code, filename=filename, isBigImage=False
-            ):
-                self.logUtil.log(
-                    "local sample file "
-                    + filename
-                    + " already exists skipping download",
-                    log_file_path=self.logFilePath,
-                )
-                continue
+            namesList.append(filename)
+            # if self.__checkFileIsExists(
+            #   actresses=actresses, code=code, filename=filename, isBigImage=False
+            # ):
+            # self.logUtil.log(
+            #     "local sample file "
+            #     + filename
+            #     + " already exists skipping download",
+            #     log_file_path=self.logFilePath,
+            # )
+            # continue
+            # 下载图片
             response = requests.get(link, headers=headers, verify=False)
             self.logUtil.log(
                 "image response code is " + str(response.status_code),
@@ -54,32 +54,37 @@ class ImageUtil:
                 #    filename=filename,
                 #    isBigImage1=False,
                 # )
-                path = "/sampleimage/save/" + actresses + "/" + code + "/" + "sample"
-                self.requestUtil.sendImage(
-                    response.content, path=path, filename=filename
-                )
+                bytesList.append(str(response.content))
             else:
                 self.logUtil.log(
                     "image " + response.url + " download failure",
                     log_file_path=self.logFilePath,
                 )
+        path = "/sampleimage/save/sample/"
+        self.requestUtil.sendImage(
+            {
+                "bytes": bytesList,
+                "actresses": actresses,
+                "code": code,
+                "names": namesList,
+            },
+            path=path,
+            filename=filename,
+        )
 
     def downloadBigImage(self, link, actresses, code):
+        bytesList = []
         if actresses == None or len(actresses) < 1:
             actresses = "未知演员"
-        elif len(actresses) > 1:
-            actresses = "-".join(actresses)
-        elif len(actresses) == 1:
-            actresses = actresses[0]
         filename = link.split("/")[-1]
-        if self.__checkFileIsExists(
-            actresses=actresses, code=code, filename=filename, isBigImage=True
-        ):
-            self.logUtil.log(
-                "local bigImage file " + filename + " already exists skipping download",
-                log_file_path=self.logFilePath,
-            )
-            return
+        # if self.__checkFileIsExists(
+        #    actresses=actresses, code=code, filename=filename, isBigImage=True
+        # ):
+        #   self.logUtil.log(
+        #      "local bigImage file " + filename + " already exists skipping download",
+        #     log_file_path=self.logFilePath,
+        # )
+        # return
         headers = {"User-Agent": self.ua.random}
         response = requests.get(link, headers=headers, verify=False)
         self.logUtil.log(
@@ -103,13 +108,18 @@ class ImageUtil:
             #    filename=filename,
             #    isBigImage=True,
             # )
-            path = "/bigimage/save/" + actresses + "/" + code + "/" + "bigimage"
-            self.requestUtil.sendImage(response.content, path=path, filename=filename)
+            bytesList.append(response.content)
         else:
             self.logUtil.log(
                 "image " + response.url + " download failure",
                 log_file_path=self.logFilePath,
             )
+        path = "/bigimage/save/bigimage/" + filename
+        self.requestUtil.sendImage(
+            {"bytes": bytesList, "actresses": actresses, "code": code},
+            path=path,
+            filename=filename,
+        )
 
     def __save2Local(self, response, actresses, code, filename, isBigImage):
         if not isBigImage:

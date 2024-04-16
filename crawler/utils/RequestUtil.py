@@ -6,8 +6,8 @@ requests.packages.urllib3.disable_warnings()
 
 
 class RequestUtil:
-    # baseUrl = "http://localhost:7788"
-    baseUrl = "http://101.43.91.110:7788/spider"
+    baseUrl = "http://localhost:7788"
+    #baseUrl = "http://101.43.91.110:7788/spider"
     headers = {"Content-Type": "application/json"}
     logUtil = LogUtil()
     image_headers = {"Content-Type": "image/jpeg"}
@@ -25,9 +25,9 @@ class RequestUtil:
     def postImage(self, data, path, filename):
         try:
             return requests.post(
-                url=self.baseUrl + path + "/" + filename,
-                data=data,
-                headers=self.image_headers,
+                url=self.baseUrl + path,
+                json=data,
+                headers=self.headers,
             )
         except ConnectionError as connectionError:
             self.logUtil.log(connectionError)

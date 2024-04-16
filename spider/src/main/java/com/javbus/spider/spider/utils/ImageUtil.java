@@ -1,3 +1,4 @@
+
 package com.javbus.spider.spider.utils;
 
 import java.io.File;
@@ -5,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -12,6 +14,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import com.javbus.spider.spider.entity.base.Actress;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -43,19 +47,19 @@ public class ImageUtil {
         return image.getBody();
     }
 
-    public void saveBigImage(byte[] image, String path, String fileName) {
+    public void saveBigImage(byte[] image, List<Actress> actresses, String code, String fileName) {
         try {
-            save(image, path, fileName,true);
+            save(image, actresses, code, fileName, true);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public void saveBigImages(List<byte[]> images, String path, String fileName) {
-        for (byte[] image : images) {
+    public void saveBigImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames) {
+        for (int i=0;i<=images.size();i++) {
             try {
-                save(image, path, fileName,true);
+                save(images.get(i), actresses, code, fileNames.get(i), false);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -63,19 +67,60 @@ public class ImageUtil {
         }
     }
 
-    public void saveSampleImage(byte[] image, String path, String fileName) {
+    public void saveSampleImage(byte[] image, List<Actress> actresses, String code, String fileName) {
         try {
-            save(image, path, fileName,false);
+            save(image, actresses, code, fileName, false);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public void saveSampleImage(List<byte[]> images, String path, String fileName) {
-        for (byte[] image : images) {
+    public void saveSampleImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames) {
+        for (int i=0;i<=images.size();i++) {
             try {
-                save(image, path, fileName,false);
+                save(images.get(i), actresses, code, fileNames.get(i), false);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void save(byte[] image, List<Actress> actresses, String code, String fileName, Boolean isBigImage)
+            throws IOException {
+        List<String> names = actresses.stream().map(Actress::getName).collect(Collectors.toList());
+        Resource resource = resourceLoader.getResource("classpath:static/image/");
+        ;
+        File file = new File(resource.getFile().getAbsolutePath());
+        save(file.getAbsolutePath(), names, code, isBigImage, fileName, image);
+    }
+
+    private void save(String path, List<String> names, String code, boolean isBigImage, String fileName, byte[] image) {
+        String root = path;
+        saveRecursive(root, names, code, fileName, isBigImage, image);
+    }
+
+    private void saveRecursive(String root, List<String> names, String code, String fileName, boolean isBigImage,
+            byte[] image) {
+        if (names.isEmpty()) {
+            return;
+        }
+
+        // 获取当前人名
+        String currentName = names.get(0);
+
+        // 构建当前文件夹路径
+        String currentFolderPath = root + File.separator + currentName;
+
+        // 递归创建子文件夹
+        saveRecursive(currentFolderPath, names.subList(1, names.size()), code, fileName, isBigImage, image);
+
+        // 如果是最后一个人名，执行创建和写入操作
+        if (names.size() == 1) {
+            try {
+                currentFolderPath += File.separator + code;
+                save(image, currentFolderPath, fileName, isBigImage);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -85,9 +130,7 @@ public class ImageUtil {
 
     private void save(byte[] image, String path, String fileName, Boolean isBigImage) throws IOException {
         log.info("image store folder is " + path);
-        Resource resource = resourceLoader.getResource("classpath:static/image/");
-        File folder = new File(resource.getFile().getAbsolutePath() + File.separator + path + (isBigImage ? "/bigimage/" : "/sample/"));
-
+        File folder = new File(path + (isBigImage ? "/bigimage/" : "/sample/"));
         if (!checkImageFolderIsExists(folder.getAbsolutePath())) {
             log.info("image store folder " + folder.getAbsolutePath() + " not exists");
             folder.mkdirs();
@@ -100,11 +143,11 @@ public class ImageUtil {
             log.info("image " + folder.getAbsolutePath() + File.separator + fileName + " exists");
             return;
         }
-
-        try (FileOutputStream fos = new FileOutputStream(new File(folder.getAbsolutePath() + File.separator + fileName))) {
+        File file = new File(folder.getAbsolutePath() + File.separator + fileName);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(image);
             log.info("image " + fileName + " downloaded");
-            log.info("image store path is " + path + fileName);
+            log.info("image store path is " + file.getAbsolutePath());
         } catch (IOException e) {
             log.error("image " + fileName + " download failed");
             log.error("reason:" + e.getMessage());

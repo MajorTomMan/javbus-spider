@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-04-16 22:13:00
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-04-16 23:35:44
+ * @FilePath: \Python\JavBus\spider\src\main\java\com\javbus\spider\spider\controller\base\SampleImageController.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider.controller.base;
 
 import java.util.List;
@@ -11,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javbus.spider.spider.entity.base.SampleImage;
+import com.javbus.spider.spider.entity.dto.ActressesImageDTO;
 import com.javbus.spider.spider.service.base.SampleImageService;
 import com.javbus.spider.spider.utils.ImageUtil;
 import com.javbus.spider.spider.utils.R;
@@ -20,8 +28,9 @@ import com.javbus.spider.spider.utils.R;
 public class SampleImageController {
     @Autowired
     private SampleImageService sampleImageService;
-    @Autowired 
+    @Autowired
     private ImageUtil imageUtil;
+
     @PostMapping("save")
     public R saveSample(@RequestBody List<SampleImage> sampleImages) {
         // TODO: process POST request
@@ -37,10 +46,16 @@ public class SampleImageController {
         SampleImage sampleImage = sampleImageService.querySampleImageById(id);
         return R.ok().put("sampleImage", sampleImage);
     }
-    @PostMapping("save/{actress}/{code}/sample/{fileName}")
-    public R saveImage(@RequestBody byte[] data,@PathVariable String actress,@PathVariable String code,@PathVariable String fileName) {
-        String path=actress+"/"+code;
-        imageUtil.saveSampleImage(data, path, fileName);
+
+    @PostMapping("save/sample/")
+    public R saveImage(@RequestBody ActressesImageDTO dto) {
+        if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getBytes() == null
+                || dto.getBytes().isEmpty()
+                || dto.getCode() == null
+                || dto.getCode().isEmpty()) {
+            return R.error();
+        }
+        imageUtil.saveSampleImages(dto.getBytes(), dto.getActresses(), dto.getCode(),dto.getFileNames());
         return R.ok();
     }
 }

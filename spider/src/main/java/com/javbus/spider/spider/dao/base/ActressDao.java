@@ -13,6 +13,7 @@ public interface ActressDao {
     Integer queryActressIdByName(Integer id);
 
     Actress queryActressById(Integer id);
+
     List<Actress> queryActressesById(List<Integer> ids);
 
     Actress queryActressByName(String name);
