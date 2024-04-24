@@ -39,15 +39,15 @@ public class BigImageController {
         return R.ok().put("bigImage", image);
     }
 
-    @PostMapping("save/bigimage/")
+    @PostMapping("save/bigimage")
     public R saveImage(@RequestBody ActressesImageDTO dto) {
-        if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getBytes() == null
-                || dto.getBytes().isEmpty()
+        if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getImages() == null
+                || dto.getImages().isEmpty()
                 || dto.getCode() == null
                 || dto.getCode().isEmpty()) {
             return R.error();
         }
-        imageUtil.saveBigImages(dto.getBytes(), dto.getActresses(), dto.getCode(),dto.getFileNames());
+        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(),dto.getNames(),true);
         return R.ok();
     }
 }

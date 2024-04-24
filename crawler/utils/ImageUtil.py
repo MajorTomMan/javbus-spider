@@ -5,7 +5,7 @@ import requests
 
 from utils.RequestUtil import RequestUtil
 from utils.LogUtil import LogUtil
-
+from utils.attrs.Image import Image
 
 class ImageUtil:
     ua = None
@@ -21,11 +21,11 @@ class ImageUtil:
         if actresses == None or len(actresses) < 1:
             actresses = "未知演员"
         headers = {"User-Agent": self.ua.random}
-        bytesList = []
-        namesList=[]
+        imageList = []
+        nameList=[]
+        image=Image()
         for link in links:
             filename = link.split("/")[-1]
-            namesList.append(filename)
             # if self.__checkFileIsExists(
             #   actresses=actresses, code=code, filename=filename, isBigImage=False
             # ):
@@ -54,29 +54,30 @@ class ImageUtil:
                 #    filename=filename,
                 #    isBigImage1=False,
                 # )
-                bytesList.append(str(response.content))
+                imageList.append(str(response.content,"base-64"))
+                nameList.append(filename)
             else:
                 self.logUtil.log(
                     "image " + response.url + " download failure",
                     log_file_path=self.logFilePath,
                 )
-        path = "/sampleimage/save/sample/"
+        image.actresses=actresses
+        image.code=code
+        image.names=nameList
+        image.images=imageList
+        path = "/sampleimage/save/sample"
         self.requestUtil.sendImage(
-            {
-                "bytes": bytesList,
-                "actresses": actresses,
-                "code": code,
-                "names": namesList,
-            },
+            image.toDict(),
             path=path,
-            filename=filename,
         )
 
     def downloadBigImage(self, link, actresses, code):
-        bytesList = []
         if actresses == None or len(actresses) < 1:
             actresses = "未知演员"
         filename = link.split("/")[-1]
+        imageList = []
+        nameList=[]
+        image=Image()
         # if self.__checkFileIsExists(
         #    actresses=actresses, code=code, filename=filename, isBigImage=True
         # ):
@@ -108,17 +109,21 @@ class ImageUtil:
             #    filename=filename,
             #    isBigImage=True,
             # )
-            bytesList.append(response.content)
+            imageList.append(base64.b64encode(response.content))
+            nameList.append(filename)
         else:
             self.logUtil.log(
                 "image " + response.url + " download failure",
                 log_file_path=self.logFilePath,
             )
-        path = "/bigimage/save/bigimage/" + filename
+        path = "/bigimage/save/bigimage"
+        image.actresses=actresses
+        image.code=code
+        image.names=nameList
+        image.images=imageList
         self.requestUtil.sendImage(
-            {"bytes": bytesList, "actresses": actresses, "code": code},
+            image.toDict(),
             path=path,
-            filename=filename,
         )
 
     def __save2Local(self, response, actresses, code, filename, isBigImage):

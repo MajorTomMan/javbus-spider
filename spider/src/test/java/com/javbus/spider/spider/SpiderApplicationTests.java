@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-04-24 20:38:19
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-04-24 20:45:04
+ * @FilePath: \Python\JavBus\spider\src\test\java\com\javbus\spider\spider\SpiderApplicationTests.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider;
 
 import java.util.List;
@@ -28,12 +35,5 @@ class SpiderApplicationTests {
 	}
 	@Test
 	void testImage(){
-		List<Integer> of = List.of(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20);
-		List<Actress> queryActresses = actressDao.queryActressesById(of);
-		queryActresses.forEach(a->{
-			log.info(a);
-		});
-		byte[] bytes={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-		imageUtil.saveBigImage(bytes,queryActresses,"114514","test.jpg");
 	}
 }

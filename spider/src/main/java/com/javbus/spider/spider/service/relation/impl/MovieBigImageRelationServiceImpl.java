@@ -1,7 +1,11 @@
+/*
+ * @Date: 2024-04-24 20:38:18
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-04-24 20:44:43
+ * @FilePath: \Python\JavBus\spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieBigImageRelationServiceImpl.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider.service.relation.impl;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,8 +16,6 @@ import com.javbus.spider.spider.dao.dto.MovieActressBigImageDao;
 import com.javbus.spider.spider.dao.relation.MovieBigImageDao;
 import com.javbus.spider.spider.entity.base.BigImage;
 import com.javbus.spider.spider.entity.base.Movie;
-import com.javbus.spider.spider.entity.dto.BigImageDTO;
-import com.javbus.spider.spider.entity.dto.ImageDTO;
 import com.javbus.spider.spider.entity.relation.MovieBigImageRelation;
 import com.javbus.spider.spider.entity.vo.MovieBigImageVO;
 import com.javbus.spider.spider.entity.dto.MovieBigImageDTO;

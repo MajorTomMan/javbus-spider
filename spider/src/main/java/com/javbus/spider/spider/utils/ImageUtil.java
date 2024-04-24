@@ -47,39 +47,10 @@ public class ImageUtil {
         return image.getBody();
     }
 
-    public void saveBigImage(byte[] image, List<Actress> actresses, String code, String fileName) {
-        try {
-            save(image, actresses, code, fileName, true);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void saveBigImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames) {
+    public void saveImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames,Boolean isBigImage) {
         for (int i=0;i<=images.size();i++) {
             try {
-                save(images.get(i), actresses, code, fileNames.get(i), false);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void saveSampleImage(byte[] image, List<Actress> actresses, String code, String fileName) {
-        try {
-            save(image, actresses, code, fileName, false);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void saveSampleImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames) {
-        for (int i=0;i<=images.size();i++) {
-            try {
-                save(images.get(i), actresses, code, fileNames.get(i), false);
+                save(images.get(i), actresses, code, fileNames.get(i), isBigImage);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

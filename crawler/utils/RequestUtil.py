@@ -22,10 +22,11 @@ class RequestUtil:
         except Exception as e:
             self.logUtil.log(e)
 
-    def postImage(self, data, path, filename):
+    def postImage(self, data, path):
+        imageurl=self.baseUrl + path
         try:
             return requests.post(
-                url=self.baseUrl + path,
+                imageurl,
                 json=data,
                 headers=self.headers,
             )
@@ -60,8 +61,8 @@ class RequestUtil:
         else:
             self.logUtil.log("send data to " + path + " was failure")
 
-    def sendImage(self, data, path, filename):
-        response = self.postImage(data=data, path=path, filename=filename)
+    def sendImage(self, data, path):
+        response = self.postImage(data=data, path=path)
         if not response:
             self.logUtil.log("error request to " + path, "./errorRequestServer.log")
             self.logUtil.log("error data is ", "./errorRequestServer.log")
@@ -72,4 +73,6 @@ class RequestUtil:
         elif response.status_code == 200:
             self.logUtil.log("send data to " + path + " was success")
         else:
+            self.logUtil.log("status code:"+response.status_code)
+            self.logUtil.log("reason:"+response.reason)
             self.logUtil.log("send data to " + path + " was failure")

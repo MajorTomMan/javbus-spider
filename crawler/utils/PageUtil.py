@@ -73,7 +73,7 @@ class PageUtil:
                         )
                 except Exception as e:
                     self.logUtil.log(
-                        "-------------image error info actresst------------------"
+                        "-------------image error info actresses------------------"
                     )
                     self.logUtil.log("Error while downloading images: ")
                     self.logUtil.log(e)

@@ -1,10 +1,3 @@
-/*
- * @Date: 2024-04-16 22:13:00
- * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-04-16 23:35:44
- * @FilePath: \Python\JavBus\spider\src\main\java\com\javbus\spider\spider\controller\base\SampleImageController.java
- * @Description: MajorTomMan @版权声明 保留文件所有权利
- */
 package com.javbus.spider.spider.controller.base;
 
 import java.util.List;
@@ -47,15 +40,15 @@ public class SampleImageController {
         return R.ok().put("sampleImage", sampleImage);
     }
 
-    @PostMapping("save/sample/")
+    @PostMapping("save/sample")
     public R saveImage(@RequestBody ActressesImageDTO dto) {
-        if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getBytes() == null
-                || dto.getBytes().isEmpty()
+        if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getImages() == null
+                || dto.getImages().isEmpty()
                 || dto.getCode() == null
                 || dto.getCode().isEmpty()) {
             return R.error();
         }
-        imageUtil.saveSampleImages(dto.getBytes(), dto.getActresses(), dto.getCode(),dto.getFileNames());
+        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(),dto.getNames(),true);
         return R.ok();
     }
 }
