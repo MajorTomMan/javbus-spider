@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-04-24 20:38:18
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-04-25 21:52:59
+ * @FilePath: \Python\JavBus\spider\src\main\java\com\javbus\spider\spider\controller\base\SampleImageController.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider.controller.base;
 
 import java.util.List;
@@ -48,7 +55,7 @@ public class SampleImageController {
                 || dto.getCode().isEmpty()) {
             return R.error();
         }
-        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(),dto.getNames(),true);
+        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(),dto.getNames(),false);
         return R.ok();
     }
 }

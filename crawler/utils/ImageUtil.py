@@ -54,7 +54,7 @@ class ImageUtil:
                 #    filename=filename,
                 #    isBigImage1=False,
                 # )
-                imageList.append(str(response.content,"base-64"))
+                imageList.append(base64.b64encode(response.content).decode("utf-8"))
                 nameList.append(filename)
             else:
                 self.logUtil.log(
@@ -109,7 +109,7 @@ class ImageUtil:
             #    filename=filename,
             #    isBigImage=True,
             # )
-            imageList.append(base64.b64encode(response.content))
+            imageList.append(base64.b64encode(response.content).decode("utf-8"))
             nameList.append(filename)
         else:
             self.logUtil.log(

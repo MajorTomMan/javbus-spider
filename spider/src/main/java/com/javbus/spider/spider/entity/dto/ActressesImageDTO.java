@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class ActressesImageDTO {
-    private List<Actress> actresses;
+    private List<String> actresses;
     private List<byte[]> images;
     private List<String> names;
     private String code;

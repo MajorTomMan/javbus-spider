@@ -67,7 +67,7 @@ class PageUtil:
                         self.imageUtil.downloadSampleImages(
                             links=links, actresses=names, code=code
                         )
-                    if hasattr(page.bigimage, "link") and page.bigimage["link"]:
+                    if page.bigimage["link"]:
                         self.imageUtil.downloadBigImage(
                             link=page.bigimage["link"], actresses=names, code=code
                         )

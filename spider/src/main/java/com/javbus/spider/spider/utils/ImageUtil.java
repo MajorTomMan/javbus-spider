@@ -47,8 +47,8 @@ public class ImageUtil {
         return image.getBody();
     }
 
-    public void saveImages(List<byte[]> images, List<Actress> actresses, String code, List<String> fileNames,Boolean isBigImage) {
-        for (int i=0;i<=images.size();i++) {
+    public void saveImages(List<byte[]> images, List<String> actresses, String code, List<String> fileNames,Boolean isBigImage) {
+        for (int i=0;i<images.size();i++) {
             try {
                 save(images.get(i), actresses, code, fileNames.get(i), isBigImage);
             } catch (IOException e) {
@@ -58,13 +58,11 @@ public class ImageUtil {
         }
     }
 
-    private void save(byte[] image, List<Actress> actresses, String code, String fileName, Boolean isBigImage)
+    private void save(byte[] image, List<String> actresses, String code, String fileName, Boolean isBigImage)
             throws IOException {
-        List<String> names = actresses.stream().map(Actress::getName).collect(Collectors.toList());
         Resource resource = resourceLoader.getResource("classpath:static/image/");
-        ;
         File file = new File(resource.getFile().getAbsolutePath());
-        save(file.getAbsolutePath(), names, code, isBigImage, fileName, image);
+        save(file.getAbsolutePath(), actresses, code, isBigImage, fileName, image);
     }
 
     private void save(String path, List<String> names, String code, boolean isBigImage, String fileName, byte[] image) {
