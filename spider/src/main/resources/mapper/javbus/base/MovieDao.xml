@@ -14,7 +14,7 @@
     
     <!-- 插入电影记录 -->
     <insert id="saveMovie" parameterType="com.javbus.spider.spider.entity.base.Movie"> 
-        INSERT IGNORE INTO movie (code, title, release_date, length, link, is_censored) 
+        INSERT INTO movie (code, title, release_date, length, link, is_censored) 
         VALUES (#{code}, #{title}, #{releaseDate}, #{length}, #{link}, #{isCensored}) 
     </insert>
 

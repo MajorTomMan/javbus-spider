@@ -22,7 +22,7 @@ from utils.attrs.SampleImage import SampleImage
 from utils.attrs.Studio import Studio
 from utils.attrs.Series import Series
 from utils.attrs.Label import Label
-
+from utils.attrs.Magnet import Magnet
 from utils.attrs.BigImage import BigImage
 
 
@@ -99,6 +99,7 @@ class PageUtil:
         label = Label()
         actressesList = []
         samples = []
+        magnets = []
         title = self.attrsUtil.getTitle(bs)
         if title:
             movie.title = title
@@ -194,6 +195,16 @@ class PageUtil:
                 return -1
         else:
             self.logUtil.log("info not found")
+        magnetLinks = self.attrsUtil.getMagnets(bs)
+        if magnetLinks:
+            for link in magnetLinks:
+                m = Magnet()
+                m.name = link["name"]
+                m.link = link["link"]
+                m.size = link["size"]
+                m.share_date = link["share_date"]
+                magnets.append(m.toDict())
+            page.magnets=magnets
         if series:
             page.series = series.toDict()
         if bigimage:
@@ -304,6 +315,11 @@ class PageUtil:
             movieSampleImageVo = {"movie": page.movie, "sampleImages": page.sampleimage}
             self.requestUtil.send(
                 movieSampleImageVo, "/movie/relation/sampleimage/save"
+            )
+        if page.magnets and len(page.magnets)>=1:
+            movieMagnetsVo = {"movie": page.movie, "magnets": page.magnets}
+            self.requestUtil.send(
+                movieMagnetsVo, "/movie/relation/magnet/save"
             )
         if page.actresses and len(page.actresses) >= 1:
             if page.director:

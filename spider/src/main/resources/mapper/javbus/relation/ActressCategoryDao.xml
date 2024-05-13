@@ -11,12 +11,12 @@
     </resultMap>
     
     <insert id="addActressCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.ActressCategoryRelation">
-        INSERT IGNORE INTO actress_category_relation (actress_id, category_id) 
+        INSERT INTO actress_category_relation (actress_id, category_id) 
         VALUES (#{actressId}, #{categoryId})
     </insert>
     
     <insert id="addActressCategoryRelations" parameterType="com.javbus.spider.spider.entity.relation.ActressCategoryRelation">
-        INSERT IGNORE INTO actress_category_relation (actress_id, category_id) VALUES
+        INSERT INTO actress_category_relation (actress_id, category_id) VALUES
         <foreach collection="list" item="item" separator=",">
             (#{item.actressId}, #{item.categoryId})
         </foreach>

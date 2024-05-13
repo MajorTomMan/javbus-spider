@@ -11,7 +11,7 @@
     </resultMap>
     
     <insert id="addActressStudioRelation" parameterType="com.javbus.spider.spider.entity.relation.ActressStudioRelation">
-        INSERT IGNORE INTO actress_studio_relation (actress_id, studio_id) 
+        INSERT INTO actress_studio_relation (actress_id, studio_id) 
         VALUES (#{actressId}, #{studioId})
     </insert>
 
@@ -22,7 +22,7 @@
     
     <!-- 批量添加明星与工作室关系 -->
     <insert id="addActressStudioRelations" parameterType="java.util.List">
-        INSERT IGNORE INTO actress_studio_relation (actress_id, studio_id) VALUES
+        INSERT INTO actress_studio_relation (actress_id, studio_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.actressId}, #{relation.studioId})
         </foreach>

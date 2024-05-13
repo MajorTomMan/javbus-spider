@@ -20,13 +20,13 @@
     
     <!-- 插入单个Category -->
     <insert id="saveCategory" parameterType="com.javbus.spider.spider.entity.base.Category">
-        INSERT IGNORE INTO category (id, name, link, is_censored) 
+        INSERT INTO category (id, name, link, is_censored) 
         VALUES (#{id}, #{name}, #{link}, #{isCensored})
     </insert>
     
     <!-- 插入多个Category -->
     <insert id="saveCategories" parameterType="List">
-        INSERT IGNORE INTO category (name, link, is_censored) 
+        INSERT INTO category (name, link, is_censored) 
         VALUES <foreach collection="list" item="category" separator=",">
         (#{category.name}, #{category.link}, #{category.isCensored})
         </foreach>

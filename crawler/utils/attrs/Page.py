@@ -8,6 +8,7 @@ class Page:
     bigimage = None
     categories = None
     sampleimage = None
+    magnets = None
 
     def toDict(self):
         return self.__dict__

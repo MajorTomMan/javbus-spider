@@ -11,7 +11,7 @@
         </foreach>
     </select>
     <insert id="saveSampleImages" parameterType="List">
-        INSERT IGNORE INTO sample_image (link) VALUES
+        INSERT INTO sample_image (link) VALUES
         <foreach collection="sampleImages" item="image" separator=",">
             (#{image.link})
         </foreach>

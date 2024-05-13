@@ -12,7 +12,7 @@
 
     <insert id="addActressDirectorRelation"
         parameterType="com.javbus.spider.spider.entity.relation.ActressDirectorRelation">
-        INSERT IGNORE INTO actress_director_relation (actress_id, director_id) 
+        INSERT INTO actress_director_relation (actress_id, director_id) 
         VALUES (#{actressId}, #{directorId})
     </insert>
 
@@ -23,7 +23,7 @@
 
     <insert id="addActressDirectorRelations" parameterType="List">
         <!-- 插入多个关系 -->
-        INSERT IGNORE INTO actress_director_relation (actress_id, director_id) VALUES
+        INSERT INTO actress_director_relation (actress_id, director_id) VALUES
         <foreach collection="list" item="relation" separator=",">
             (#{relation.actressId}, #{relation.directorId})
         </foreach>

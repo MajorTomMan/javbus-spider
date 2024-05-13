@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javbus.spider.spider.dao.relation.MovieMagnetDao">
+    <!-- 保存单个关系记录 -->
+    <insert id="saveRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieMagnetRelation">
+        INSERT INTO movie_magnet_relation (movie_id, magnet_id)
+        VALUES (#{movieId}, #{magnetId})
+    </insert>
+
+    <!-- 批量保存关系记录 -->
+    <insert id="saveRelations" parameterType="java.util.List">
+        <!-- 使用 foreach 循环遍历关系列表 -->
+        <foreach collection="list" item="relation" separator=";">
+            INSERT INTO movie_magnet_relation (movie_id, magnet_id)
+            VALUES (#{relation.movieId}, #{relation.magnetId})
+        </foreach>
+    </insert>
+
+    <!-- 更新单个关系记录 -->
+    <update id="updateRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieMagnetRelation">
+        UPDATE movie_magnet_relation
+        SET movie_id = #{movieId}, magnet_id = #{magnetId}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量更新关系记录 -->
+    <update id="updateRelations" parameterType="java.util.List">
+        <!-- 使用 foreach 循环遍历关系列表 -->
+        <foreach collection="list" item="relation" separator=";">
+            UPDATE movie_magnet_relation
+            SET movie_id = #{relation.movieId}, magnet_id = #{relation.magnetId}
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
+
+    <!-- 根据电影 ID 查询关联的磁力链接记录 -->
+    <select id="queryRelationsByMovieId" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.relation.MovieMagnetRelation">
+        SELECT * FROM movie_magnet_relation WHERE movie_id = #{movieId}
+    </select>
+
+    <!-- 根据磁力链接 ID 查询关联的电影记录 -->
+    <select id="queryRelationsByMagnetId" parameterType="java.lang.Integer" resultType="com.javbus.spider.spider.entity.relation.MovieMagnetRelation">
+        SELECT * FROM movie_magnet_relation WHERE magnet_id = #{magnetId}
+    </select>
+</mapper>

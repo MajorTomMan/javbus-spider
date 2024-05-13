@@ -1,10 +1,12 @@
 from utils.LogUtil import LogUtil
 from utils.attrs.BanList import Ban
+from utils.WebUtil import WebUtil
 
 
 class AttrsUtil:
     ban = Ban()
     logUtil = LogUtil()
+    webUtil = WebUtil()
 
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})
@@ -242,3 +244,32 @@ class AttrsUtil:
                 return True
             elif "无碼" in button.text.strip():
                 return False
+
+    def getMagnets(self, bs):
+        magnets = []
+        tables = bs.find("table", id="magnet-table")
+        if tables:
+            trs = tables.find_all("tr", attrs={"height": "35px"})
+            if trs:
+                for tr in trs:
+                    magnet = {}
+                    tds = tr.find_all("td")
+                    if tds:
+                        a = tds[0].find("a")
+                        if a:
+                            magnet["name"] = a.text.strip()
+                            magnet["link"] = a["href"]
+                        a = tds[1].find("a")
+                        if a:
+                            magnet["size"] = a.text.strip()
+                        a = tds[2].find("a")
+                        if a:
+                            magnet["share_date"] = a.text.strip()
+                        magnets.append(magnet)
+                    else:
+                        return None
+                return magnets
+            else:
+                return None
+        else:
+            return None

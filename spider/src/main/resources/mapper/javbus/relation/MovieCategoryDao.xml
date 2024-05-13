@@ -11,7 +11,7 @@
     </resultMap>
     
     <insert id="addMovieCategoryRelation" parameterType="com.javbus.spider.spider.entity.relation.MovieCategoryRelation">
-        INSERT IGNORE INTO movie_category_relation (movie_id, category_id) 
+        INSERT INTO movie_category_relation (movie_id, category_id) 
         VALUES (#{movieId}, #{categoryId})
     </insert>
 
@@ -24,7 +24,7 @@
 
     <!-- 批量添加电影与分类关系 -->
     <insert id="addMovieCategoryRelations" parameterType="java.util.List">
-        INSERT IGNORE INTO movie_category_relation (movie_id, category_id) VALUES 
+        INSERT INTO movie_category_relation (movie_id, category_id) VALUES 
         <foreach collection="list" item="item" separator=","> 
             (#{item.movieId}, #{item.categoryId}) 
         </foreach>
