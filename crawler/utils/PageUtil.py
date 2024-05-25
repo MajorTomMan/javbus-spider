@@ -44,7 +44,7 @@ class PageUtil:
     def parseDetailPage(self, link, isCensored):
         self.logUtil.log("sleeping in 10 seconds")
         time.sleep(10)
-        source = self.webUtil.getWebSite(link)
+        source = self.webUtil.getWebSite(link,True)
         if source:
             bs = BeautifulSoup(source, "html.parser")
             page = self.getPage(bs, isCensored)
@@ -248,7 +248,7 @@ class PageUtil:
     def parseMovieListPage(self, link, isCensored):
         if self.timeoutUtil is None:
             self.timeoutUtil = TimeoutUtil(self)
-        source = self.webUtil.getWebSite(link)
+        source = self.webUtil.getWebSite(link,True)
         if not source:
             if self.timeoutUtil:
                 self.timeoutUtil.addLink(link, isCensored)

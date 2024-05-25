@@ -33,30 +33,40 @@ class WebUtil:
     def __init__(self) -> None:
         self.local = threading.local()
 
-    def initialize_driver(self):
+    def initialize_driver(self, isNormal=False):
         options = ChromeOptions()
+        options.set_capability(
+            "goog:loggingPrefs", {"performance": "INFO", "browser": "INFO"}
+        )
         warnings.simplefilter("ignore", ResourceWarning)
         options.add_argument("--disable-images")
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
         # 使用eager加快加载速度
-        options.page_load_strategy = "eager"
+        if not isNormal:
+            options.page_load_strategy = "eager"
+        else:
+            options.page_load_strategy = "normal"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
-            headless=True,
+            headless=False,
             driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
             options=self.local.options,
             version_main=123,
             user_multi_procs=True,
             use_subprocess=True,
         )
+        self.local.driver.execute_cdp_cmd(
+            "Page.addScriptToEvaluateOnNewDocument",
+            {"source": open("utils\hook.js", encoding="utf-8").read()},
+        )
         # 超时时间设为2.5分钟
         self.local.driver.set_page_load_timeout(150)
         self.local.driver.set_script_timeout(150)
 
-    def getWebSite(self, link):
+    def getWebSite(self, link, isNormal=False):
         parsed_url = urlparse(link)
         for base_url in self.baseUrls:
             base_parsed_url = urlparse(base_url)
@@ -76,7 +86,7 @@ class WebUtil:
                     if proxy.enable == True:
                         proxy.enable = False
                         proxy.registry_write()
-                source = self.send(new_url)
+                source = self.send(new_url, isNormal)
                 if self.checkIsBeDetected(source):
                     return None
                 return source
@@ -102,8 +112,8 @@ class WebUtil:
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
 
-    def send(self, new_url):
-        self.initialize_driver()
+    def send(self, new_url, isNormal):
+        self.initialize_driver(False)
         self.logUtil.log(
             "starting request to " + new_url + " ...........",
             log_file_path=self.logFilePath,
@@ -119,8 +129,19 @@ class WebUtil:
         self.logUtil.log(
             "request spend time was " + str(end_time - start_time),
         )
+        entity = self.local.driver.get_log("browser")
+
+        """
+         torrent=""
+        for e in entity:
+            if e["level"] == "INFO" and "tr" in e["message"]:
+                self.logUtil.log(
+                    "console.log->" + e["message"],
+                ) 
+        """
         source = self.local.driver.page_source
         self.local.driver.quit()
+
         return source
 
     def checkIsBeDetected(self, source):
