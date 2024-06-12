@@ -247,9 +247,9 @@ class AttrsUtil:
 
     def getMagnets(self, bs):
         magnets = []
-        tables = bs.find("table", id="magnet-table")
-        if tables:
-            trs = tables.find_all("tr", attrs={"height": "35px"})
+        tbody = bs.find_all("tbody")[2]
+        if tbody:
+            trs = tbody.find_all("tr", attrs={"height": "35px"})
             if trs:
                 for tr in trs:
                     magnet = {}

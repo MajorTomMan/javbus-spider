@@ -5,7 +5,7 @@ import warnings
 from bs4 import BeautifulSoup
 from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.common.exceptions import TimeoutException, WebDriverException
-
+from browsermobproxy import Server
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
 from winproxy import ProxySetting
@@ -29,38 +29,34 @@ class WebUtil:
     ]
     logFilePath = "./driver.log"
     lock = threading.Lock()
-
+    server=None
+    proxy=None
     def __init__(self) -> None:
         self.local = threading.local()
+        self.server=Server("proxy\\bin\\browsermob-proxy.bat")
+        self.server.start()
+        self.proxy=self.server.create_proxy()
 
     def initialize_driver(self, isNormal=False):
         options = ChromeOptions()
-        options.set_capability(
-            "goog:loggingPrefs", {"performance": "INFO", "browser": "INFO"}
-        )
         warnings.simplefilter("ignore", ResourceWarning)
         options.add_argument("--disable-images")
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--proxy-server={0}".format(self.proxy.proxy))
         # 使用eager加快加载速度
-        if not isNormal:
-            options.page_load_strategy = "eager"
-        else:
-            options.page_load_strategy = "normal"
+        options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=False,
-            driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
+            #driver_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chromedriver.exe",
+            #browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\Chrome.exe",
             options=self.local.options,
-            version_main=123,
             user_multi_procs=True,
             use_subprocess=True,
-        )
-        self.local.driver.execute_cdp_cmd(
-            "Page.addScriptToEvaluateOnNewDocument",
-            {"source": open("utils\hook.js", encoding="utf-8").read()},
+            version_main=125,
         )
         # 超时时间设为2.5分钟
         self.local.driver.set_page_load_timeout(150)
@@ -123,22 +119,26 @@ class WebUtil:
         )
         start_time = time.time()
         time.sleep(20)
+        self.proxy.new_har("https://www.cdnbus.shop/ajax/uncledatoolsbyajax.php",options={'captureContent': True})
         self.local.driver.get(new_url)
+        self.proxy.wait_for_traffic_to_stop(1,240)
         end_time = time.time()
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
         self.logUtil.log(
             "request spend time was " + str(end_time - start_time),
         )
-        entity = self.local.driver.get_log("browser")
-
-        """
-         torrent=""
-        for e in entity:
-            if e["level"] == "INFO" and "tr" in e["message"]:
-                self.logUtil.log(
-                    "console.log->" + e["message"],
-                ) 
-        """
+        har=self.proxy.har
+        for entry in har["log"]["entries"]:
+            if "uncledatoolsbyajax.php" in entry["request"]["url"]:
+                if entry["response"]["status"] == 200:
+                    source=BeautifulSoup(self.local.driver.page_source,"html.parser")
+                    table=source.find("table",id="magnet-table")
+                    tag=source.new_tag("p")
+                    tag.string=str(entry["response"]["content"]["text"])
+                    if table:
+                        table.append(tag)
+                    self.local.driver.quit()
+                    return str(source)
         source = self.local.driver.page_source
         self.local.driver.quit()
 

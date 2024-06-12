@@ -202,8 +202,8 @@ CREATE TABLE movie_magnet_relation (
     id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID',
     movie_id INT COMMENT '类型ID',
     magnet_id INT COMMENT '磁力ID',
-    FOREIGN KEY (movie_id) REFERENCES genre (id),
-    FOREIGN KEY (magnet_id) REFERENCES magnet (id)
+    FOREIGN KEY (movie_id) REFERENCES movie(id),
+    FOREIGN KEY (magnet_id) REFERENCES magnet(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '影片-磁力关系表';
 -- 对于 movie_label_relation 表
 ALTER TABLE movie_label_relation
