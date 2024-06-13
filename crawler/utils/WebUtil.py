@@ -29,13 +29,8 @@ class WebUtil:
     ]
     logFilePath = "./driver.log"
     lock = threading.Lock()
-    server=None
-    proxy=None
     def __init__(self) -> None:
         self.local = threading.local()
-        self.server=Server("proxy\\bin\\browsermob-proxy.bat")
-        self.server.start()
-        self.proxy=self.server.create_proxy()
 
     def initialize_driver(self, isNormal=False):
         options = ChromeOptions()
@@ -43,16 +38,18 @@ class WebUtil:
         options.add_argument("--disable-images")
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--proxy-server={0}".format(self.proxy.proxy))
         # 使用eager加快加载速度
-        options.page_load_strategy = "eager"
+        if isNormal:
+            options.page_load_strategy = "normal"
+        else:
+            options.page_load_strategy = "eager"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=False,
-            #driver_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chromedriver.exe",
-            #browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\Chrome.exe",
+            # driver_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chromedriver.exe",
+            # browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\Chrome.exe",
             options=self.local.options,
             user_multi_procs=True,
             use_subprocess=True,
@@ -109,7 +106,7 @@ class WebUtil:
         return None
 
     def send(self, new_url, isNormal):
-        self.initialize_driver(False)
+        self.initialize_driver(isNormal)
         self.logUtil.log(
             "starting request to " + new_url + " ...........",
             log_file_path=self.logFilePath,
@@ -119,26 +116,14 @@ class WebUtil:
         )
         start_time = time.time()
         time.sleep(20)
-        self.proxy.new_har("https://www.cdnbus.shop/ajax/uncledatoolsbyajax.php",options={'captureContent': True})
+        if isNormal:
+            self.local.driver.implicitly_wait(160)
         self.local.driver.get(new_url)
-        self.proxy.wait_for_traffic_to_stop(1,240)
         end_time = time.time()
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
         self.logUtil.log(
             "request spend time was " + str(end_time - start_time),
         )
-        har=self.proxy.har
-        for entry in har["log"]["entries"]:
-            if "uncledatoolsbyajax.php" in entry["request"]["url"]:
-                if entry["response"]["status"] == 200:
-                    source=BeautifulSoup(self.local.driver.page_source,"html.parser")
-                    table=source.find("table",id="magnet-table")
-                    tag=source.new_tag("p")
-                    tag.string=str(entry["response"]["content"]["text"])
-                    if table:
-                        table.append(tag)
-                    self.local.driver.quit()
-                    return str(source)
         source = self.local.driver.page_source
         self.local.driver.quit()
 
