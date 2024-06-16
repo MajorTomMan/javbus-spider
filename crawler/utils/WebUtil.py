@@ -8,10 +8,8 @@ from selenium.common.exceptions import (
     TimeoutException,
     WebDriverException,
     NoSuchElementException,
+    NoSuchWindowException,
 )
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from browsermobproxy import Server
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
@@ -58,7 +56,7 @@ class WebUtil:
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
-            headless=False,
+            headless=True,
             # driver_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chromedriver.exe",
             # browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\Chrome.exe",
             options=self.local.options,
@@ -120,6 +118,8 @@ class WebUtil:
                 self.logUtil.log("Connection reset skipping")
             except NoSuchElementException as e:
                 self.logUtil.log("torrent not found origin:" + new_url + " skipping")
+            except NoSuchWindowException as e:
+                self.logUtil.log(e.msg)
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
 
