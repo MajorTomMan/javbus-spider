@@ -4,7 +4,14 @@ import threading
 import warnings
 from bs4 import BeautifulSoup
 from undetected_chromedriver import Chrome, ChromeOptions
-from selenium.common.exceptions import TimeoutException, WebDriverException
+from selenium.common.exceptions import (
+    TimeoutException,
+    WebDriverException,
+    NoSuchElementException,
+)
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from browsermobproxy import Server
 from utils.LogUtil import LogUtil
 from urllib3.exceptions import MaxRetryError
@@ -17,6 +24,9 @@ class WebUtil:
     options = None
     logUtil = LogUtil()
     baseUrls = [
+        "https://www.buscdn.shop/",
+        "https://www.seedmm.shop/",
+        "https://www.seejav.shop/",
         "https://www.cdnbus.shop/",
         "https://www.dmmsee.art",
         "https://www.busfan.shop",
@@ -29,6 +39,7 @@ class WebUtil:
     ]
     logFilePath = "./driver.log"
     lock = threading.Lock()
+
     def __init__(self) -> None:
         self.local = threading.local()
 
@@ -83,18 +94,23 @@ class WebUtil:
                 if self.checkIsBeDetected(source):
                     return None
                 return source
-            except TimeoutException:
+            except TimeoutException as e:
+                self.logUtil.log(
+                    "request timeout reason:" + e.msg,
+                )
                 self.logUtil.log(
                     "request to " + new_url + " timeout in 2.5 minutes",
                 )
                 self.logUtil.log(
                     "waiting 5 seconds to request backup link",
                 )
+                self.local.driver.close()
                 time.sleep(5)
                 continue
             except WebDriverException as e:
                 self.logUtil.log(e)
-                self.local.driver.quit()
+                if self.local.driver:
+                    self.local.driver.quit()
                 continue
             except MaxRetryError as e:
                 self.logUtil.log("MaxRetry Link->")
@@ -102,6 +118,8 @@ class WebUtil:
                 continue
             except ConnectionResetError as e:
                 self.logUtil.log("Connection reset skipping")
+            except NoSuchElementException as e:
+                self.logUtil.log("torrent not found origin:" + new_url + " skipping")
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
 
@@ -115,9 +133,9 @@ class WebUtil:
             "waiting for request finished...........",
         )
         start_time = time.time()
-        time.sleep(20)
         if isNormal:
-            self.local.driver.implicitly_wait(160)
+            self.local.driver.implicitly_wait(120)
+        time.sleep(20)
         self.local.driver.get(new_url)
         end_time = time.time()
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
@@ -126,7 +144,6 @@ class WebUtil:
         )
         source = self.local.driver.page_source
         self.local.driver.quit()
-
         return source
 
     def checkIsBeDetected(self, source):
