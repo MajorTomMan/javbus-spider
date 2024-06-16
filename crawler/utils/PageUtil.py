@@ -209,7 +209,7 @@ class PageUtil:
             page.series = series.toDict()
         if bigimage:
             page.bigimage = bigimage.toDict()
-        if bigimage:
+        if samples:
             page.sampleimage = samples
         if movie:
             movie.is_censored = isCensored
