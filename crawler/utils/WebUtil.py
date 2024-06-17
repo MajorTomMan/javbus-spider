@@ -58,7 +58,10 @@ class WebUtil:
         options.add_argument("--disable-images")
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
-        options.page_load_strategy = "eager"
+        if isNormal:
+            options.page_load_strategy = "normal"
+        else:
+            options.page_load_strategy = "eager"
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
