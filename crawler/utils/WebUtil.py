@@ -48,21 +48,20 @@ class WebUtil:
         options.add_argument("--disable-gpu")
         options.add_argument("--ignore-certificate-errors")
         # 使用eager加快加载速度
-        if isNormal:
-            options.page_load_strategy = "normal"
-        else:
+        if not isNormal:
             options.page_load_strategy = "eager"
+        else:
+            options.page_load_strategy = "normal"
         # options.add_argument("--remote-debugging-port=12000")
         self.local.options = options
         self.logUtil.log("driver initial")
         self.local.driver = Chrome(
             headless=True,
-            # driver_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chromedriver.exe",
-            # browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\Chrome.exe",
+            driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
             options=self.local.options,
+            version_main=125,
             user_multi_procs=True,
             use_subprocess=True,
-            version_main=125,
         )
         # 超时时间设为2.5分钟
         self.local.driver.set_page_load_timeout(150)
@@ -102,7 +101,6 @@ class WebUtil:
                 self.logUtil.log(
                     "waiting 5 seconds to request backup link",
                 )
-                self.local.driver.close()
                 time.sleep(5)
                 continue
             except WebDriverException as e:
@@ -135,7 +133,6 @@ class WebUtil:
         start_time = time.time()
         if isNormal:
             self.local.driver.implicitly_wait(120)
-        time.sleep(20)
         self.local.driver.get(new_url)
         end_time = time.time()
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
@@ -144,6 +141,7 @@ class WebUtil:
         )
         source = self.local.driver.page_source
         self.local.driver.quit()
+
         return source
 
     def checkIsBeDetected(self, source):

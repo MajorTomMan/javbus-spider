@@ -1,11 +1,13 @@
 import os
-import threading
-import time
+import concurrent.futures
+import queue
 from Genre import genre
 from Search import search
 from Index import index
 from Actress import actresses
 import atexit
+
+q = queue.Queue()
 
 
 def cleanChromeDriver():
@@ -16,6 +18,24 @@ def cleanChromeDriver():
         os.system("taskkill /F /im python.exe")
     except TypeError as e:
         pass
+
+
+def run_bfs(model, keyword, is_censored):
+    print(f"starting {model} BFS model")
+    if keyword:
+        model(baseUrl, keyword).BFS()
+    else:
+        model(baseUrl, is_censored).BFS()
+
+
+def queue_worker():
+    while True:
+        item = q.get()
+        if item is None:
+            break
+        model, keyword, is_censored = item
+        run_bfs(model, keyword, is_censored)
+        q.task_done()
 
 
 if __name__ == "__main__":
@@ -30,6 +50,7 @@ if __name__ == "__main__":
         "星宮一花",
     ]
     baseUrl = "https://www.cdnbus.shop/"
+
     print(
         """
         welcome to the jav program
@@ -39,114 +60,63 @@ if __name__ == "__main__":
         3. genre
         4. actress
         5. startAllThread
-          """
+        """
     )
-    num = int(input("input:"))
+    while True:
+        try:
+            num = int(input("input:"))
 
-    def run_bfs(model, keyword, is_censored):
-        print(f"starting {model} BFS model")
-        if keyword:
-            model(baseUrl, keyword).BFS()
-        else:
-            model(baseUrl, is_censored).BFS()
+            if num in range(1, 6):
+                break
+            else:
+                print("Please enter a number between 1 and 5.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
 
     if num == 1:
-        threads = [
-            threading.Thread(
-                target=run_bfs,
-                args=(index, None, True),
-                name="thread_name:index/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(index, None, False),
-                name="thread_name:index/uncensored",
-            ),
+        tasks = [
+            (index, None, True),
+            (index, None, False),
         ]
     elif num == 2:
         keyword = input("input what keyword you want to search:")
-        threads = [
-            threading.Thread(
-                target=run_bfs,
-                args=(search, keyword, True),
-                name="thread_name:search/censored",
-            ),
+        tasks = [
+            (search, keyword, True),
         ]
     elif num == 3:
-        threads = [
-            threading.Thread(
-                target=run_bfs,
-                args=(genre, None, True),
-                name="thread_name:genre/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(genre, None, False),
-                name="thread_name:genre/uncensored",
-            ),
+        tasks = [
+            (genre, None, True),
+            (genre, None, False),
         ]
     elif num == 4:
-        threads = [
-            threading.Thread(
-                target=run_bfs,
-                args=(actresses, None, True),
-                name="thread_name:actresses/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(actresses, None, False),
-                name="thread_name:actresses/uncensored",
-            ),
+        tasks = [
+            (actresses, None, True),
+            (actresses, None, False),
         ]
     elif num == 5:
-        threads = [
-            threading.Thread(
-                target=run_bfs,
-                args=(index, None, True),
-                name="thread_name:index/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(index, None, False),
-                name="thread_name:index/uncensored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(genre, None, True),
-                name="thread_name:genre/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(genre, None, False),
-                name="thread_name:genre/uncensored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(actresses, None, True),
-                name="thread_name:actresses/censored",
-            ),
-            threading.Thread(
-                target=run_bfs,
-                args=(actresses, None, False),
-                name="thread_name:actresses/uncensored",
-            ),
+        tasks = [
+            (index, None, True),
+            (index, None, False),
+            (genre, None, True),
+            (genre, None, False),
+            (actresses, None, True),
+            (actresses, None, False),
         ]
         for keyword in keywords:
-            threads.append(
-                threading.Thread(
-                    target=run_bfs,
-                    args=(search, keyword, True),
-                    name="thread_name:search/" + keyword,
-                ),
-            )
-    for i, thread in enumerate(threads):
-        # 在第一个线程之外，等待前一个线程至少5秒,防止瘫痪对方服务器而察觉爬虫
-        if i != 0:
-            time.sleep(5)
-        thread.start()
-    # 等待所有线程完成
-    for thread in threads:
-        thread.join()
+            tasks.append((search, keyword, True))
+
+    # 创建ThreadPoolExecutor，设置最大并发线程数为5
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3,thread_name_prefix="jav-thread") as executor:
+        # 提交任务给线程池执行
+        for task in tasks:
+            executor.submit(run_bfs, *task)
+
+    print("All tasks have been submitted to the thread pool.")
+    print("Waiting for all tasks to complete...")
+
+    # 等待队列中的任务完成
+    q.join()
+
     print("All threads have finished.")
     print("exec clean operation")
     atexit.register(cleanChromeDriver)
