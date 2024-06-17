@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-04-24 20:38:18
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-06-18 00:25:05
+ * @LastEditTime: 2024-06-18 01:16:36
  * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieSampleImageRelationServiceImpl.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  * 
@@ -50,7 +50,7 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
         List<SampleImage> sampleImages = sampleImageDao
                 .querySampleImageByLinks(dto.getSampleImages().stream().map(sample -> sample.getLink()).toList());
         if (sampleImages.isEmpty()) {
-            sampleImageDao.saveSampleImages(sampleImages);
+            sampleImageDao.saveSampleImages(dto.getSampleImages());
         } else if (sampleImages.size() <= dto.getSampleImages().size()) {
             List<SampleImage> finalSampleImages = sampleImages;
             List<SampleImage> newSampleImages = dto.getSampleImages().stream().filter(sample -> {
@@ -58,7 +58,7 @@ public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRela
             }).toList();
             sampleImageDao.saveSampleImages(newSampleImages);
         } else {
-            sampleImageDao.updateSampleImages(sampleImages);
+            sampleImageDao.updateSampleImages(dto.getSampleImages());
         }
         sampleImages = sampleImageDao
                 .querySampleImageByLinks(dto.getSampleImages().stream().map(sample -> sample.getLink()).toList());

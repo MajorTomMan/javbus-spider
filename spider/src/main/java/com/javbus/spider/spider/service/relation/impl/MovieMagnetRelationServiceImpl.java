@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-05-13 20:52:17
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-06-18 01:18:24
+ * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieMagnetRelationServiceImpl.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider.service.relation.impl;
 
 import java.util.List;
@@ -41,7 +48,7 @@ public class MovieMagnetRelationServiceImpl implements MovieMagnetRelationServic
         List<Magnet> magnets = magnetDao
                 .queryMagnets(dto.getMagnets().stream().map(magnet -> magnet.getLink()).toList());
         if (magnets.isEmpty()) {
-            magnetDao.saveMagnets(magnets);
+            magnetDao.saveMagnets(dto.getMagnets());
         } else if (magnets.size() < dto.getMagnets().size()) {
             List<Magnet> finalMagnets = magnets;
             List<Magnet> newMagnetList = dto.getMagnets().stream()
