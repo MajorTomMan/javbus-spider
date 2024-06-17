@@ -10,10 +10,10 @@
             #{link}
         </foreach>
     </select>
-    <insert id="saveSampleImages" parameterType="List">
-        INSERT INTO sample_image (link) VALUES
-        <foreach collection="sampleImages" item="image" separator=",">
-            (#{image.link})
+    <insert id="saveSampleImages" parameterType="java.util.List"> 
+        INSERT INTO sample_image (link) VALUES 
+        <foreach collection="list" item="image" separator=","> 
+            (#{image.link}) 
         </foreach>
     </insert>
 
@@ -33,9 +33,9 @@
         SET link=#{link}
         WHERE id = #{id}
     </update>
-        <!-- 批量更新操作 -->
+    <!-- 批量更新操作 -->
     <update id="updateSampleImages" parameterType="java.util.List">
-        <foreach collection="sampleImages" item="sampleImage" index="index" separator=";">
+        <foreach collection="sampleImages" item="sampleImage" separator=";">
             UPDATE sample_image
             SET link=#{sampleImage.link}
             WHERE id=#{sampleImage.id}
