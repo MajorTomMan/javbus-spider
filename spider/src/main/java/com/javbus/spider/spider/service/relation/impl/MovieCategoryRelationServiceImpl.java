@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.dao.base.CategoryDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -26,6 +27,7 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
     private MovieDao movieDao;
 
     @Override
+    @Transactional
     public void saveRelation(MovieCategoryDTO dto) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());

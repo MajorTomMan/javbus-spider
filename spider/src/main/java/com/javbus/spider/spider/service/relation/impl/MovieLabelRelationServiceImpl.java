@@ -1,7 +1,15 @@
+/*
+ * @Date: 2024-04-24 20:38:18
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-06-18 00:24:39
+ * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieLabelRelationServiceImpl.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 package com.javbus.spider.spider.service.relation.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.dao.base.LabelDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -23,6 +31,7 @@ public class MovieLabelRelationServiceImpl implements MovieLabelRelationService 
     private MovieDao movieDao;
 
     @Override
+    @Transactional
     public void saveRelation(MovieLabelDTO dto) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());

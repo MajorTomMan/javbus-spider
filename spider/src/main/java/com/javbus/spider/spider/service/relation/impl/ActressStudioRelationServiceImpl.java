@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.entity.dto.ActressStudioDTO;
 import com.javbus.spider.spider.service.relation.ActressStudioRelationService;
@@ -27,6 +28,7 @@ public class ActressStudioRelationServiceImpl implements ActressStudioRelationSe
     private ActressDao actressDao;
 
     @Override
+    @Transactional
     public void saveRelation(ActressStudioDTO dto) {
         // TODO Auto-generated method stub
         // -------------------------Actresses--------------------------

@@ -9,6 +9,7 @@ package com.javbus.spider.spider.service.relation.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.dao.base.BigImageDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -30,6 +31,7 @@ public class MovieBigImageRelationServiceImpl implements MovieBigImageRelationSe
     private BigImageDao bigImageDao;
 
     @Override
+    @Transactional
     public void saveRelaton(MovieBigImageDTO dto) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.dao.base.MagnetDao;
 import com.javbus.spider.spider.dao.base.MovieDao;
@@ -25,6 +26,7 @@ public class MovieMagnetRelationServiceImpl implements MovieMagnetRelationServic
     private MovieMagnetDao movieMagnetDao;
 
     @Override
+    @Transactional
     public void saveRelation(MovieMagnetDTO dto) {
         // TODO Auto-generated method stub
         // 保存或更新电影信息

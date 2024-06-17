@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.javbus.spider.spider.dao.base.CategoryDao;
 import com.javbus.spider.spider.dao.base.GenreDao;
@@ -26,6 +27,7 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
     private GenreDao genreDao;
 
     @Override
+    @Transactional
     public void saveRelation(GenreCategoryDTO dto) {
         // TODO Auto-generated method stub
         Boolean isCensored = dto.getCategories().get(0).getIsCensored();
