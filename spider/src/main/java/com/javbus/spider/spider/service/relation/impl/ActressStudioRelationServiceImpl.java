@@ -29,39 +29,55 @@ public class ActressStudioRelationServiceImpl implements ActressStudioRelationSe
     @Override
     public void saveRelation(ActressStudioDTO dto) {
         // TODO Auto-generated method stub
+        // -------------------------Actresses--------------------------
         List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> actressIds = actressDao.queryActressIdsByNames(actressNames);
-        if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
+        List<Actress> actresses = actressDao.queryActressesByNames(actressNames);
+        if (actresses.isEmpty()) {
             actressDao.saveActresses(dto.getActress());
-            actressIds = actressDao.queryActressIdsByNames(actressNames);
+        } else if (actresses.size() < actressNames.size()) {
+            List<Actress> finalActresses = actresses;
+            List<Actress> newActressList = dto.getActress().stream()
+                    .filter(actress -> {
+                        return finalActresses.stream().noneMatch(a -> a.getName().equals(actress.getName()));
+                    }).toList();
+            actressDao.saveActresses(newActressList);
         } else {
-            for (int i = 0; i < actressIds.size(); i++) {
-                dto.getActress().get(i).setId(actressIds.get(i));
-            }
             actressDao.updateActresses(dto.getActress());
         }
+        actresses = actressDao.queryActressesByNames(actressNames);
+        List<Integer> actressIds = actresses.stream().map(actress -> actress.getId()).collect(Collectors.toList());
+        // -----------------------------Studio----------------------------------
         Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
         if (studio == null) {
             studioDao.save(dto.getStudio());
-            studio = studioDao.queryStudioByName(dto.getStudio().getName());
+        } else {
+            studioDao.update(dto.getStudio());
         }
-        else{
-            studioDao.update(studio);
-        }
-
+        studio = studioDao.queryStudioByName(dto.getStudio().getName());
+        // ---------------------------Relation----------------------------
         List<ActressStudioRelation> actressStudioRelations = actressStudioDao.queryActressStudioRelations(actressIds,
                 studio.getId());
+        final Studio final_studio = studio;
+        List<ActressStudioRelation> relations = actressIds.stream().map((id) -> {
+            ActressStudioRelation relation = new ActressStudioRelation();
+            relation.setActressId(id);
+            relation.setStudioId(final_studio.getId());
+            return relation;
+        }).collect(Collectors.toList());
         if (actressStudioRelations.isEmpty()) {
-            final Studio final_studio = studio;
-            List<ActressStudioRelation> relations = actressIds.stream().map((id) -> {
-                ActressStudioRelation relation = new ActressStudioRelation();
-                relation.setActressId(id);
-                relation.setStudioId(final_studio.getId());
-                return relation;
-            }).collect(Collectors.toList());
             actressStudioDao.addActressStudioRelations(relations);
+        } else if (actressStudioRelations.size() < relations.size()) {
+            // 处理新增的关系
+            List<ActressStudioRelation> newRelation = relations.stream().filter(relation -> {
+                return actressStudioRelations.stream().noneMatch(r -> {
+                    return relation.getActressId() == r.getActressId() && relation.getStudioId() == r.getStudioId();
+                });
+            }).toList();
+            actressStudioDao.addActressStudioRelations(newRelation);
+        } else {
+            actressStudioDao.updateActressStudioRelations(relations);
         }
 
     }

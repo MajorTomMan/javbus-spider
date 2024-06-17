@@ -35,32 +35,48 @@ public class ActressDirectorRelationServiceImpl implements ActressDirectorRelati
         } else {
             directorDao.update(dto.getDirector());
         }
-        List<String> names = dto.getActress().stream().map((Actress) -> {
+        // -------------------------Actresses--------------------------
+        List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
-        if (actressIds.isEmpty()||actressIds.size()!=dto.getActress().size()) {
+        List<Actress> actresses = actressDao.queryActressesByNames(actressNames);
+        if (actresses.isEmpty()) {
             actressDao.saveActresses(dto.getActress());
-            actressIds = actressDao.queryActressIdsByNames(names);
+        } else if (actresses.size() < actressNames.size()) {
+            List<Actress> finalActresses = actresses;
+            List<Actress> newActressList = dto.getActress().stream()
+                    .filter(actress -> {
+                        return finalActresses.stream().noneMatch(a -> a.getName().equals(actress.getName()));
+                    }).toList();
+            actressDao.saveActresses(newActressList);
         } else {
-            for (int i = 0; i < actressIds.size(); i++) {
-                dto.getActress().get(i).setId(actressIds.get(i));
-            }
             actressDao.updateActresses(dto.getActress());
         }
+        actresses = actressDao.queryActressesByNames(actressNames);
+        List<Integer> actressIds = actresses.stream().map(actress -> actress.getId()).collect(Collectors.toList());
+        // --------------------------Relation------------------------------
         List<ActressDirectorRelation> actressDirectorRelations = actressDirectorDao
                 .queryActressDirectorRelations(actressIds, director.getId());
+        final Director final_Director = director;
+        List<ActressDirectorRelation> relations = actressIds.stream().map((id) -> {
+            ActressDirectorRelation relation = new ActressDirectorRelation();
+            relation.setDirectorId(final_Director.getId());
+            relation.setActressId(id);
+            return relation;
+        }).collect(Collectors.toList());
         if (actressDirectorRelations.isEmpty()) {
-            final Director final_Director = director;
-            List<ActressDirectorRelation> relations = actressIds.stream().map((id) -> {
-                ActressDirectorRelation relation = new ActressDirectorRelation();
-                relation.setDirectorId(final_Director.getId());
-                relation.setActressId(id);
-                return relation;
-            }).collect(Collectors.toList());
             actressDirectorDao.addActressDirectorRelations(relations);
         }
-
+        if (actressDirectorRelations.size() < relations.size()) {
+            List<ActressDirectorRelation> newRelation = relations.stream().filter(relation -> {
+                return actressDirectorRelations.stream().noneMatch(r -> {
+                    return relation.getActressId() == r.getActressId() && relation.getDirectorId() == r.getDirectorId();
+                });
+            }).toList();
+            actressDirectorDao.addActressDirectorRelations(newRelation);
+        } else {
+            actressDirectorDao.updateActressDirectorRelations(relations);
+        }
     }
 
     @Override

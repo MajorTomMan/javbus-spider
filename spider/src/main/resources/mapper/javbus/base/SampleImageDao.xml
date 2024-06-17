@@ -6,8 +6,8 @@
     </select>
     <select id="querySampleImageIdsByLinks" resultType="java.lang.Integer">
         SELECT id FROM sample_image WHERE link IN
-        <foreach item="sampleImage" collection="sampleImages" open="(" separator="," close=")">
-            #{sampleImage.link}
+        <foreach item="link" collection="links" open="(" separator="," close=")">
+            #{link}
         </foreach>
     </select>
     <insert id="saveSampleImages" parameterType="List">
@@ -41,4 +41,14 @@
             WHERE id=#{sampleImage.id}
         </foreach>
     </update>
+
+    <!-- querySampleImageByLinks --> 
+
+
+    <select id="querySampleImageByLinks" resultType="com.javbus.spider.spider.entity.base.SampleImage">
+        SELECT * FROM sample_image WHERE id IN
+        <foreach collection="links" item="link" open="(" separator="," close=")">
+            #{link}
+        </foreach>
+    </select>
 </mapper>

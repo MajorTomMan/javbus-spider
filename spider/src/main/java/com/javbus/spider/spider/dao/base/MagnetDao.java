@@ -24,6 +24,7 @@ public interface MagnetDao {
 
     // 更新 Magnet 记录
     void updateMagnet(Magnet magnet);
+    void updateMagnets(List<Magnet> magnets);
 
     // 根据 ID 查询 Magnet 记录
     Magnet queryMagnetById(Integer id);

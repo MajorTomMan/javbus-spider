@@ -32,45 +32,71 @@ public class GenreCategoryRelationServiceImpl implements GenreCategoryRelationSe
         Genre genre = genreDao.queryGenreByName(dto.getGenre().getName());
         if (genre == null) {
             genreDao.saveGenre(dto.getGenre());
-            genre = genreDao.queryGenreByName(dto.getGenre().getName());
         } else {
             dto.getGenre().setId(genre.getId());
-            genreDao.updateGenre(genre);
+            genreDao.updateGenre(dto.getGenre());
         }
-        List<String> names = dto.getCategories().stream().map((category) -> {
+        genre = genreDao.queryGenreByName(dto.getGenre().getName());
+        // -----------------Category-----------------------------
+        List<String> categoryNames = dto.getCategories().stream().map((category) -> {
             return category.getName();
         }).collect(Collectors.toList());
-        List<Category> categories = categoryDao.queryCategoriesByNames(names);
-        if (categories.isEmpty() || categories.size() != dto.getCategories().size()) {
+        List<Category> categories = categoryDao.queryCategoriesByNames(categoryNames);
+        if (categories.isEmpty()) {
             categoryDao.saveCategories(dto.getCategories());
-            categories = categoryDao.queryCategoriesByNames(names);
+        } else if (categories.size() < dto.getCategories().size()) {
+            List<Category> finalCategories = categories;
+            List<Category> newCategoryList = dto.getCategories().stream()
+                    .filter(category -> {
+                        return finalCategories.stream().noneMatch(c -> c.getName().equals(category.getName()));
+                    }).toList();
+            categoryDao.saveCategories(newCategoryList);
+        } else {
+            categoryDao.updateCategories(categories);
         }
+        categories = categoryDao.queryCategoriesByNames(categoryNames);
+        List<Integer> categoryIds = categories.stream().map(category -> category.getId()).collect(Collectors.toList());
+        // -------------------------Relations------------------------------
         // 处理有无码的保存问题
-        final Genre final_genre = genre;
-        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        ;
-        List<GenreCategoryRelation> genreCategoryRelations = categoryIds.stream().map(id -> {
+        Genre final_genre = genre;
+        // 多对一的关系
+        List<GenreCategoryRelation> relations = categoryIds.stream().map(id -> {
             GenreCategoryRelation relation = new GenreCategoryRelation();
             relation.setCategoryId(id);
             relation.setGenreId(final_genre.getId());
             return relation;
         }).collect(Collectors.toList());
         if (isCensored) {
-            List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryCensoredRelations(genre.getId(),
+            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryCensoredRelations(genre.getId(),
                     categoryIds);
             if (relations.isEmpty()) {
                 genreCategoryDao.addGenreCategoryCensoredRelations(genreCategoryRelations);
+            } else if (genreCategoryRelations.size() < relations.size()) {
+                // 处理新增的关系
+                List<GenreCategoryRelation> newRelation = relations.stream().filter(relation -> {
+                    return genreCategoryRelations.stream().noneMatch(r -> {
+                        return relation.getGenreId() == r.getGenreId() && relation.getCategoryId() == r.getCategoryId();
+                    });
+                }).toList();
+                genreCategoryDao.addGenreCategoryCensoredRelations(newRelation);
             } else {
-                genreCategoryDao.updateGenreCategoryCensoredRelations(genreCategoryRelations);
+                genreCategoryDao.updateGenreCategoryCensoredRelations(relations);
             }
         } else {
-            List<GenreCategoryRelation> relations = genreCategoryDao.queryGenreCategoryUncensoredRelations(
-                    genre.getId(),
-                    categoryIds);
+            List<GenreCategoryRelation> genreCategoryRelations = genreCategoryDao.queryGenreCategoryUncensoredRelations(
+                    genre.getId(),categoryIds);
             if (relations.isEmpty()) {
-                genreCategoryDao.addGenreCategoryUncensoredRelations(genreCategoryRelations);
+                genreCategoryDao.addGenreCategoryUncensoredRelations(relations);
+            } else if (genreCategoryRelations.size() < relations.size()) {
+                // 处理新增的关系
+                List<GenreCategoryRelation> newRelation = relations.stream().filter(relation -> {
+                    return genreCategoryRelations.stream().noneMatch(r -> {
+                        return relation.getGenreId() == r.getGenreId() && relation.getCategoryId() == r.getCategoryId();
+                    });
+                }).toList();
+                genreCategoryDao.addGenreCategoryUncensoredRelations(newRelation);
             } else {
-                genreCategoryDao.updateGenreCategoryUncensoredRelations(genreCategoryRelations);
+                genreCategoryDao.updateGenreCategoryUncensoredRelations(relations);
             }
         }
     }

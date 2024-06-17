@@ -36,27 +36,47 @@ public class MovieCategoryRelationServiceImpl implements MovieCategoryRelationSe
             dto.getMovie().setId(movie.getId());
             movieDao.updateMovie(dto.getMovie());
         }
-        // 根据名字查找ID
-        List<String> names = dto.getCategories().stream().map((data) -> {
-            return data.getName();
+        // -----------------Category-----------------------------
+        List<String> categoryNames = dto.getCategories().stream().map((category) -> {
+            return category.getName();
         }).collect(Collectors.toList());
-        List<Integer> categoryIds = categoryDao.queryCategoryIdsByNames(names);
-        if (categoryIds.isEmpty() || categoryIds.size() != dto.getCategories().size()) {
+        List<Category> categories = categoryDao.queryCategoriesByNames(categoryNames);
+        if (categories.isEmpty()) {
             categoryDao.saveCategories(dto.getCategories());
-            categoryIds = categoryDao.queryCategoryIdsByNames(names);
+        } else if (categories.size() < dto.getCategories().size()) {
+            List<Category> finalCategories = categories;
+            List<Category> newCategoryList = dto.getCategories().stream()
+                    .filter(category -> {
+                        return finalCategories.stream().noneMatch(c -> c.getName().equals(category.getName()));
+                    }).toList();
+            categoryDao.saveCategories(newCategoryList);
+        } else {
+            categoryDao.updateCategories(categories);
         }
+        categories = categoryDao.queryCategoriesByNames(categoryNames);
+        List<Integer> categoryIds = categories.stream().map(category -> category.getId()).collect(Collectors.toList());
+        // ---------------------------------Relations------------------------
         final Movie final_movie = movie;
         // 设置一对多关系
         List<MovieCategoryRelation> movieCategoryRelations = movieCategoryDao.queryMovieCategoryRelations(movie.getId(),
                 categoryIds);
+        List<MovieCategoryRelation> relations = categoryIds.stream().map((id) -> {
+            MovieCategoryRelation relation = new MovieCategoryRelation();
+            relation.setMovieId(final_movie.getId());
+            relation.setCategoryId(id);
+            return relation;
+        }).collect(Collectors.toList());
         if (movieCategoryRelations.isEmpty()) {
-            List<MovieCategoryRelation> relations = categoryIds.stream().map((id) -> {
-                MovieCategoryRelation relation = new MovieCategoryRelation();
-                relation.setMovieId(final_movie.getId());
-                relation.setCategoryId(id);
-                return relation;
-            }).collect(Collectors.toList());
             movieCategoryDao.addMovieCategoryRelations(relations);
+        } else if (movieCategoryRelations.size() < relations.size()) {
+            List<MovieCategoryRelation> newRelation = relations.stream().filter(relation -> {
+                return movieCategoryRelations.stream().noneMatch(r -> {
+                    return relation.getCategoryId() == r.getCategoryId() && relation.getMovieId() == r.getMovieId();
+                });
+            }).toList();
+            movieCategoryDao.addMovieCategoryRelations(newRelation);
+        } else {
+            movieCategoryDao.updateMovieCategoryRelations(relations);
         }
     }
 

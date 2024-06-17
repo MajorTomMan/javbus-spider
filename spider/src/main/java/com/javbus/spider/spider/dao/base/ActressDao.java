@@ -1,3 +1,4 @@
+
 package com.javbus.spider.spider.dao.base;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public interface ActressDao {
     Actress queryActressByName(String name);
 
     List<Integer> queryActressIdsByNames(List<String> names);
+    
+    List<Actress> queryActressesByNames(List<String> names);
 
     void update(Actress actress);
 

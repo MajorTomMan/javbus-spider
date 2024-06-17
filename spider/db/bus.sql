@@ -1,4 +1,4 @@
--- Active: 1688392670869@@192.168.253.131@3306@javbus
+-- Active: 1683961904399@@localhost@3306@javbus
 DROP DATABASE if EXISTS javbus;
 
 CREATE DATABASE IF NOT EXISTS javbus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

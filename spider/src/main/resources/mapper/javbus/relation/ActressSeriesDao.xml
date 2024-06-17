@@ -30,7 +30,7 @@
         </foreach>
     </insert>
     
-    <update id="updateActressSeriesRelation" parameterType="com.javbus.spider.spider.entity.relation.ActressSeriesRelation">
+    <update id="updateActressSeriesRelations" parameterType="com.javbus.spider.spider.entity.relation.ActressSeriesRelation">
         <!-- 更新单个关系 -->
         UPDATE actress_series_relation 
         SET actress_id = #{actressId}, series_id = #{seriesId} 

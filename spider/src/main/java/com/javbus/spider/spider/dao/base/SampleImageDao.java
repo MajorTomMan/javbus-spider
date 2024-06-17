@@ -12,7 +12,9 @@ public interface SampleImageDao {
 
     void saveSampleImages(List<SampleImage> sampleImages);
 
-    List<Integer> querySampleImageIdsByLinks(List<SampleImage> sampleImages);
+    List<Integer> querySampleImageIdsByLinks(List<String> links);
+
+    List<SampleImage> querySampleImageByLinks(List<String> links);
 
     List<SampleImage> querySampleImagesByIds(List<Integer> sampleImageIds);
 

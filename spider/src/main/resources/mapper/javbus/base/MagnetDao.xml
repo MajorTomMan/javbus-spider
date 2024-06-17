@@ -52,4 +52,20 @@
         </foreach>
     </select>
 
+    <!-- updateMagnets --> 
+
+<!-- 批量更新 Magnet 对象的 MyBatis XML 映射文件配置 -->
+<update id="updateMagnets" parameterType="java.util.List">
+    <foreach collection="magnets" item="magnet" separator=";">
+        <![CDATA[
+        UPDATE magnet
+        SET 
+                name = #{magnet.name},
+                link = #{magnet.link},
+                size = #{magnet.size},
+               share_date = #{magnet.shareDate}
+        WHERE id = #{magnet.id}
+         ]]>
+     </foreach>
+    </update>
 </mapper>

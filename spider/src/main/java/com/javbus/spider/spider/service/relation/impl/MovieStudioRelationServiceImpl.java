@@ -36,11 +36,11 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
         Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
         if (studio == null) {
             studioDao.save(dto.getStudio());
-            studio = studioDao.queryStudioByName(dto.getStudio().getName());
         } else {
             dto.getStudio().setId(studio.getId());
             studioDao.update(dto.getStudio());
         }
+        studio = studioDao.queryStudioByName(dto.getStudio().getName());
         MovieStudioRelation movieStudioRelation = movieStudioDao.queryMovieStudioRelation(movie.getId(),
                 studio.getId());
         if (movieStudioRelation == null) {

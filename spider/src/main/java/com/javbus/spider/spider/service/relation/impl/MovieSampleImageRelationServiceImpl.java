@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.javbus.spider.spider.dao.base.MovieDao;
 import com.javbus.spider.spider.dao.base.SampleImageDao;
-import com.javbus.spider.spider.dao.dto.MovieActressSampleImageDao;
 import com.javbus.spider.spider.dao.relation.MovieSampleImageDao;
 import com.javbus.spider.spider.entity.base.Movie;
 import com.javbus.spider.spider.entity.base.SampleImage;
@@ -16,53 +15,66 @@ import com.javbus.spider.spider.entity.relation.MovieSampleImageRelation;
 import com.javbus.spider.spider.entity.vo.MovieSampleImageVO;
 import com.javbus.spider.spider.entity.dto.MovieSampleImageDTO;
 import com.javbus.spider.spider.service.relation.MovieSampleImageRelationService;
-import com.javbus.spider.spider.utils.ImageUtil;
 
 @Service
 public class MovieSampleImageRelationServiceImpl implements MovieSampleImageRelationService {
-    @Autowired
-    private MovieActressSampleImageDao movieActressSampleImageDao;
     @Autowired
     private MovieSampleImageDao movieSampleImageDao;
     @Autowired
     private SampleImageDao sampleImageDao;
     @Autowired
     private MovieDao movieDao;
-    @Autowired
-    private ImageUtil imageUtil;
-
     @Override
     public void saveRelation(MovieSampleImageDTO dto) {
         // TODO Auto-generated method stub
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         if (movie == null) {
             movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         } else {
             dto.getMovie().setId(movie.getId());
             movieDao.updateMovie(dto.getMovie());
         }
-        List<Integer> sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
-        if (sampleImageIds.isEmpty() || sampleImageIds.size() != dto.getSampleImages().size()) {
-            sampleImageDao.saveSampleImages(dto.getSampleImages());
-            sampleImageIds = sampleImageDao.querySampleImageIdsByLinks(dto.getSampleImages());
+        movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
+        // --------------------Sample Image ---------------------------
+        List<SampleImage> sampleImages = sampleImageDao
+                .querySampleImageByLinks(dto.getSampleImages().stream().map(sample -> sample.getLink()).toList());
+        if (sampleImages.isEmpty()) {
+            sampleImageDao.saveSampleImages(sampleImages);
+        } else if (sampleImages.size() <= dto.getSampleImages().size()) {
+            List<SampleImage> finalSampleImages = sampleImages;
+            List<SampleImage> newSampleImages = dto.getSampleImages().stream().filter(sample -> {
+                return finalSampleImages.stream().noneMatch(s -> s.getLink().equals(sample.getLink()));
+            }).toList();
+            sampleImageDao.saveSampleImages(newSampleImages);
         } else {
-            for (int i = 0; i < sampleImageIds.size(); i++) {
-                dto.getSampleImages().get(i).setId(sampleImageIds.get(i));
-            }
-            sampleImageDao.updateSampleImages(dto.getSampleImages());
+            sampleImageDao.updateSampleImages(sampleImages);
         }
+        sampleImages = sampleImageDao
+                .querySampleImageByLinks(dto.getSampleImages().stream().map(sample -> sample.getLink()).toList());
+        List<Integer> sampleImageIds = sampleImageDao
+                .querySampleImageIdsByLinks(dto.getSampleImages().stream().map(sample -> sample.getLink()).toList());
+        // -------------------Relations--------------------------
         List<MovieSampleImageRelation> movieSampleImageRelations = movieSampleImageDao
                 .queryMovieSampleImageRelations(movie.getId(), sampleImageIds);
+        final Movie final_movie = movie;
+        List<MovieSampleImageRelation> relations = sampleImageIds.stream().map((id) -> {
+            MovieSampleImageRelation relation = new MovieSampleImageRelation();
+            relation.setMovieId(final_movie.getId());
+            relation.setSampleImageId(id);
+            return relation;
+        }).collect(Collectors.toList());
         if (movieSampleImageRelations.isEmpty()) {
-            final Movie final_movie = movie;
-            List<MovieSampleImageRelation> relations = sampleImageIds.stream().map((id) -> {
-                MovieSampleImageRelation relation = new MovieSampleImageRelation();
-                relation.setMovieId(final_movie.getId());
-                relation.setSampleImageId(id);
-                return relation;
-            }).collect(Collectors.toList());
             movieSampleImageDao.addMovieSampleImageRelations(relations);
+        } else if (movieSampleImageRelations.size() < relations.size()) {
+            List<MovieSampleImageRelation> newRelation = relations.stream().filter(relation -> {
+                return movieSampleImageRelations.stream().noneMatch(r -> {
+                    return relation.getSampleImageId() == r.getSampleImageId()
+                            && relation.getMovieId() == r.getMovieId();
+                });
+            }).toList();
+            movieSampleImageDao.addMovieSampleImageRelations(newRelation);
+        } else {
+            movieSampleImageDao.updateMovieSampleImageRelations(relations);
         }
     }
 

@@ -13,7 +13,6 @@ import com.javbus.spider.spider.entity.base.Magnet;
 import com.javbus.spider.spider.service.base.MagnetService;
 import com.javbus.spider.spider.utils.R;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

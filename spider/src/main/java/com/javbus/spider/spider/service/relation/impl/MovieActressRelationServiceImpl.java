@@ -31,35 +31,51 @@ public class MovieActressRelationServiceImpl implements MovieActressRelationServ
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         if (movie == null) {
             movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         } else {
             dto.getMovie().setId(movie.getId());
             movieDao.updateMovie(dto.getMovie());
         }
-        List<String> names = dto.getActress().stream().map((Actress) -> {
+        movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
+        // ------------------------Actresses--------------------------------
+        List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
-        if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
+        List<Actress> actresses = actressDao.queryActressesByNames(actressNames);
+        if (actresses.isEmpty()) {
             actressDao.saveActresses(dto.getActress());
-            actressIds = actressDao.queryActressIdsByNames(names);
+        } else if (actresses.size() < actressNames.size()) {
+            List<Actress> finalActresses = actresses;
+            List<Actress> newActressList = dto.getActress().stream()
+                    .filter(actress -> {
+                        return finalActresses.stream().noneMatch(a -> a.getName().equals(actress.getName()));
+                    }).toList();
+            actressDao.saveActresses(newActressList);
         } else {
-            for (int i = 0; i < actressIds.size(); i++) {
-                dto.getActress().get(i).setId(actressIds.get(i));
-            }
             actressDao.updateActresses(dto.getActress());
         }
+        actresses = actressDao.queryActressesByNames(actressNames);
+        List<Integer> actressIds = actresses.stream().map(actress -> actress.getId()).collect(Collectors.toList());
+        // -----------------------------------Relations------------------------------
         List<MovieActressRelation> movieActressRelations = movieActressDao.queryMovieActressRelations(movie.getId(),
                 actressIds);
-        if (movieActressRelations == null || movieActressRelations.isEmpty()) {
-            final Movie final_movie = movie;
-            List<MovieActressRelation> relations = actressIds.stream().map((id) -> {
-                MovieActressRelation relation = new MovieActressRelation();
-                relation.setMovieId(final_movie.getId());
-                relation.setActressId(id);
-                return relation;
-            }).collect(Collectors.toList());
+        final Movie final_movie = movie;
+        List<MovieActressRelation> relations = actressIds.stream().map((id) -> {
+            MovieActressRelation relation = new MovieActressRelation();
+            relation.setMovieId(final_movie.getId());
+            relation.setActressId(id);
+            return relation;
+        }).collect(Collectors.toList());
+        if (movieActressRelations.isEmpty()) {
             movieActressDao.addMovieActressRelations(relations);
+        } else if (movieActressRelations.size() < relations.size()) {
+            List<MovieActressRelation> newRelation = relations.stream().filter(relation -> {
+                return movieActressRelations.stream().noneMatch(r -> {
+                    return relation.getActressId() == r.getActressId() && relation.getMovieId() == r.getMovieId();
+                });
+            }).toList();
+            movieActressDao.addMovieActressRelations(newRelation);
+        } else {
+            movieActressDao.updateMovieActressRelations(relations);
         }
     }
 

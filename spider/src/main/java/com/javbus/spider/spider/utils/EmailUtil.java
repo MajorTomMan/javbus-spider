@@ -27,10 +27,10 @@ public class EmailUtil {
             helper.setTo(mailUsername);
             helper.setSubject(subject);
             helper.setText(body, true);
+            javaMailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        javaMailSender.send(helper.getMimeMessage());
     }
     public void sendEmail(String subject, Exception error) {
         String body = getStackTraceAsString(error);
@@ -42,10 +42,10 @@ public class EmailUtil {
             helper.setTo(mailUsername);
             helper.setSubject(subject);
             helper.setText(body, true);
+            javaMailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        javaMailSender.send(helper.getMimeMessage());
     }
         // 辅助方法：将异常堆栈信息转换为字符串
     private String getStackTraceAsString(Exception e) {

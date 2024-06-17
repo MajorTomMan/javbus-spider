@@ -80,7 +80,12 @@
             #{names} 
         </foreach>
     </select>
-
+    <select id="queryActressesByNames" resultType="com.javbus.spider.spider.entity.base.Actress"> 
+        SELECT * FROM actress WHERE name IN 
+        <foreach collection="list" item="names" open="(" separator="," close=")"> 
+            #{names} 
+        </foreach>
+    </select>
     <!-- 查询单个 Actress 的 ID -->
     <select id="queryActressIdByName" parameterType="java.lang.Integer"> 
         SELECT id FROM actress WHERE name=#{name} 

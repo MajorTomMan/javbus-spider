@@ -9,13 +9,13 @@ import com.javbus.spider.spider.entity.relation.MovieMagnetRelation;
 @Mapper
 public interface MovieMagnetDao {
 
-    void saveRelation(MovieMagnetRelation relation);
+    void addMovieMagnetRelation(MovieMagnetRelation relation);
 
-    void saveRelations(List<MovieMagnetRelation> relations);
+    void addMovieMagnetRelations(List<MovieMagnetRelation> relations);
 
-    void updateRelation(MovieMagnetRelation relation);
+    void updateMovieMagnetRelation(MovieMagnetRelation relation);
 
-    void updateRelations(List<MovieMagnetRelation> relation);
+    void updateMovieMagnetRelations(List<MovieMagnetRelation> relation);
 
     List<MovieMagnetRelation> queryRelationsByMovieId(Integer movieId);
 

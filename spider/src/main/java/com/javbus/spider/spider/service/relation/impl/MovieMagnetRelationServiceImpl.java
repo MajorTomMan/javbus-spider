@@ -1,6 +1,5 @@
 package com.javbus.spider.spider.service.relation.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,35 +30,46 @@ public class MovieMagnetRelationServiceImpl implements MovieMagnetRelationServic
         // 保存或更新电影信息
         Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
         if (movie == null) {
-            movieDao.saveMovie(movie);
+            movieDao.saveMovie(dto.getMovie());
         } else {
-            movieDao.updateMovie(movie);
+            movieDao.updateMovie(dto.getMovie());
         }
-
-        List<Magnet> newMagnets = new ArrayList<>();
-        for (Magnet magnet : dto.getMagnets()) {
-            if (magnetDao.queryMagnetByLink(magnet.getLink()) == null) {
-                newMagnets.add(magnet);
-            } else {
-                magnetDao.updateMagnet(magnet);
-            }
-        }
-        magnetDao.saveMagnets(newMagnets);
-        List<String> links = dto.getMagnets().stream().map(m -> m.getLink()).collect(Collectors.toList());
-        // 获取保存后的磁力链接列表
-        List<Magnet> savedMagnets = magnetDao.queryMagnets(links);
-        // 保存电影与磁力链接关系
-        List<MovieMagnetRelation> relation = movieMagnetDao.queryRelationsByMovieId(movie.getId());
-        if (relation == null || relation.isEmpty()) {
-            List<MovieMagnetRelation> relations = savedMagnets.stream().map(m -> {
-                MovieMagnetRelation r = new MovieMagnetRelation();
-                r.setMovieId(movie.getId());
-                r.setMagnetId(m.getId());
-                return r;
-            }).collect(Collectors.toList());
-            movieMagnetDao.saveRelations(relations);
+        movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        // -----------------Magnet------------------------------
+        List<Magnet> magnets = magnetDao
+                .queryMagnets(dto.getMagnets().stream().map(magnet -> magnet.getLink()).toList());
+        if (magnets.isEmpty()) {
+            magnetDao.saveMagnets(magnets);
+        } else if (magnets.size() < dto.getMagnets().size()) {
+            List<Magnet> finalMagnets = magnets;
+            List<Magnet> newMagnetList = dto.getMagnets().stream()
+                    .filter(magnet -> {
+                        return finalMagnets.stream().noneMatch(m -> m.getLink().equals(magnet.getLink()));
+                    }).toList();
+            magnetDao.saveMagnets(newMagnetList);
         } else {
-            movieMagnetDao.updateRelations(relation);
+            magnetDao.updateMagnets(dto.getMagnets());
+        }
+        // ----------------------Relations------------------------------
+        List<MovieMagnetRelation> movieMagnetRelations = movieMagnetDao.queryRelationsByMovieId(movie.getId());
+        Movie finalMovie = movie;
+        List<MovieMagnetRelation> relations = dto.getMagnets().stream().map(magnet -> {
+            MovieMagnetRelation r = new MovieMagnetRelation();
+            r.setMovieId(finalMovie.getId());
+            r.setMagnetId(magnet.getId());
+            return r;
+        }).collect(Collectors.toList());
+        if (movieMagnetRelations.isEmpty()) {
+            movieMagnetDao.addMovieMagnetRelations(relations);
+        } else if (movieMagnetRelations.size() < relations.size()) {
+            List<MovieMagnetRelation> newRelation = relations.stream().filter(relation -> {
+                return movieMagnetRelations.stream().noneMatch(r -> {
+                    return relation.getMagnetId() == r.getMagnetId() && relation.getMovieId() == r.getMovieId();
+                });
+            }).toList();
+            movieMagnetDao.addMovieMagnetRelations(newRelation);
+        } else {
+            movieMagnetDao.updateMovieMagnetRelations(relations);
         }
     }
 

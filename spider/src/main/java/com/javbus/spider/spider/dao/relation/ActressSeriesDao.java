@@ -20,5 +20,5 @@ public interface ActressSeriesDao {
 
     List<ActressSeriesRelation> queryActressSeriesRelationsByActressId(Integer actressId);
 
-    void updateActressSeriesRelation(List<ActressSeriesRelation> relations);
+    void updateActressSeriesRelations(List<ActressSeriesRelation> relations);
 }

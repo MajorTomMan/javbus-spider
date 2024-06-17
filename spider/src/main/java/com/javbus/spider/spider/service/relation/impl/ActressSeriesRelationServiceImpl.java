@@ -28,19 +28,26 @@ public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationSe
     @Override
     public void saveRelation(ActressSeriesDTO dto) {
         // TODO Auto-generated method stub
-        List<String> names = dto.getActress().stream().map((Actress) -> {
+        // -------------------------Actresses--------------------------
+        List<String> actressNames = dto.getActress().stream().map((Actress) -> {
             return Actress.getName();
         }).collect(Collectors.toList());
-        List<Integer> actressIds = actressDao.queryActressIdsByNames(names);
-        if (actressIds.isEmpty() || actressIds.size() != dto.getActress().size()) {
+        List<Actress> actresses = actressDao.queryActressesByNames(actressNames);
+        if (actresses.isEmpty()) {
             actressDao.saveActresses(dto.getActress());
-            actressIds = actressDao.queryActressIdsByNames(names);
+        } else if (actresses.size() < actressNames.size()) {
+            List<Actress> finalActresses = actresses;
+            List<Actress> newActressList = dto.getActress().stream()
+                    .filter(actress -> {
+                        return finalActresses.stream().noneMatch(a -> a.getName().equals(actress.getName()));
+                    }).toList();
+            actressDao.saveActresses(newActressList);
         } else {
-            for (int i = 0; i < actressIds.size(); i++) {
-                dto.getActress().get(i).setId(actressIds.get(i));
-            }
             actressDao.updateActresses(dto.getActress());
         }
+        actresses = actressDao.queryActressesByNames(actressNames);
+        List<Integer> actressIds = actresses.stream().map(actress -> actress.getId()).collect(Collectors.toList());
+        // ------------------------Series------------------------------------
         Series series = seriesDao.querySeriesByName(dto.getSeries().getName());
         if (series == null) {
             seriesDao.save(dto.getSeries());
@@ -48,17 +55,28 @@ public class ActressSeriesRelationServiceImpl implements ActressSeriesRelationSe
         } else {
             seriesDao.updateSeries(dto.getSeries());
         }
+        // --------------------------Relation------------------------------
         List<ActressSeriesRelation> actressSeriesRelations = actressSeriesDao.queryActressSeriesRelations(actressIds,
                 series.getId());
+        final Series final_series = series;
+        List<ActressSeriesRelation> relations = actressIds.stream().map((id) -> {
+            ActressSeriesRelation relation = new ActressSeriesRelation();
+            relation.setSeriesId(final_series.getId());
+            relation.setActressId(id);
+            return relation;
+        }).collect(Collectors.toList());
         if (actressSeriesRelations.isEmpty()) {
-            final Series final_series = series;
-            List<ActressSeriesRelation> relations = actressIds.stream().map((id) -> {
-                ActressSeriesRelation relation = new ActressSeriesRelation();
-                relation.setSeriesId(final_series.getId());
-                relation.setActressId(id);
-                return relation;
-            }).collect(Collectors.toList());
             actressSeriesDao.addActressSeriesRelations(relations);
+        } else if (actressSeriesRelations.size() < relations.size()) {
+            // 处理新增的关系
+            List<ActressSeriesRelation> newRelation = relations.stream().filter(relation -> {
+                return actressSeriesRelations.stream().noneMatch(r -> {
+                    return relation.getActressId() == r.getActressId() && relation.getSeriesId() == r.getSeriesId();
+                });
+            }).toList();
+            actressSeriesDao.addActressSeriesRelations(newRelation);
+        } else {
+            actressSeriesDao.updateActressSeriesRelations(relations);
         }
 
     }
