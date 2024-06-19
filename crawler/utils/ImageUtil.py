@@ -116,7 +116,7 @@ class ImageUtil:
                 "image " + response.url + " download failure",
                 log_file_path=self.logFilePath,
             )
-        path = "/bigimage/save/bigimage"
+        path = "/bigimage/save"
         image.actresses=actresses
         image.code=code
         image.names=nameList

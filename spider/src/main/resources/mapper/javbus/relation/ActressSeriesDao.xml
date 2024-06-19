@@ -31,10 +31,11 @@
     </insert>
     
     <update id="updateActressSeriesRelations" parameterType="com.javbus.spider.spider.entity.relation.ActressSeriesRelation">
-        <!-- 更新单个关系 -->
-        UPDATE actress_series_relation 
-        SET actress_id = #{actressId}, series_id = #{seriesId} 
-        WHERE id = #{id}
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE actress_series_relation
+            SET actress_id = #{relation.actressId}, series_id = #{relation.seriesId}
+            WHERE id = #{relation.id} 
+        </foreach>
     </update>
     
     <select id="queryActressSeriesRelation" resultMap="actressSeriesRelationResultMap">

@@ -1,5 +1,5 @@
 beautifulsoup4==4.12.3
+DrissionPage==4.0.4.25
 fake_useragent==1.4.0
-Requests==2.31.0
-selenium==4.18.1
-undetected_chromedriver==3.5.5
+Requests==2.32.3
+winproxy==0.3.0a1

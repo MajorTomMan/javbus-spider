@@ -2,17 +2,9 @@ import time
 import os
 from urllib.parse import urlparse, urlunparse
 import threading
-import warnings
 from bs4 import BeautifulSoup
-from undetected_chromedriver import Chrome, ChromeOptions
-from selenium.common.exceptions import (
-    TimeoutException,
-    WebDriverException,
-    NoSuchElementException,
-    NoSuchWindowException,
-)
+from DrissionPage import ChromiumOptions, ChromiumPage
 from utils.LogUtil import LogUtil
-from urllib3.exceptions import MaxRetryError
 from winproxy import ProxySetting
 
 proxy = ProxySetting()
@@ -21,7 +13,7 @@ proxy = ProxySetting()
 class WebUtil:
     _instance = None
     _lock = threading.Lock()
-
+    page = None
     options = None
     logUtil = LogUtil()
     baseUrls = [
@@ -49,30 +41,17 @@ class WebUtil:
         return cls._instance
 
     def __init_once(self):
-        self.local = threading.local()
         self.lock = threading.Lock()
+        self.page = self.initialize_driver()
 
-    def initialize_driver(self, isNormal=False):
-        options = ChromeOptions()
-        warnings.simplefilter("ignore", ResourceWarning)
-        options.add_argument("--disable-images")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--ignore-certificate-errors")
-        if isNormal:
-            options.page_load_strategy = "normal"
-        else:
-            options.page_load_strategy = "eager"
-        self.local.options = options
-        self.logUtil.log("driver initial")
-        self.local.driver = Chrome(
-            # driver_executable_path="C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe",
-            browser_executable_path="C:\\Users\\master\\Desktop\\Soft\\Chrome\\chrome.exe",
-            options=self.local.options,
-            version_main=125,
-            use_subprocess=True,
-        )
-        self.local.driver.set_page_load_timeout(3600)
-        self.local.driver.set_script_timeout(3600)
+    def initialize_driver(self):
+        options = ChromiumOptions()
+        options.auto_port()
+        options.ignore_certificate_errors()
+        options.no_imgs(True).mute(True)
+        options.headless()
+        options.set_argument("--no-sandbox")  # 无沙盒模式
+        return ChromiumPage(options)
 
     def getWebSite(self, link, isNormal=False):
         parsed_url = urlparse(link)
@@ -93,48 +72,25 @@ class WebUtil:
                 if self.checkIsBeDetected(source):
                     return None
                 return source
-            except TimeoutException as e:
-                self.logUtil.log("request timeout reason:" + e.msg)
-                self.logUtil.log("request to " + new_url + " timeout in 2.5 minutes")
-                self.logUtil.log("waiting 5 seconds to request backup link")
-                time.sleep(5)
-                if self.local.driver:
-                    self.local.driver.quit()
-                continue
-            except WebDriverException as e:
+            except Exception as e:
                 self.logUtil.log(e)
-                if self.local.driver:
-                    self.local.driver.quit()
-                continue
-            except MaxRetryError as e:
-                self.logUtil.log("MaxRetry Link->")
-                self.logUtil.log(e.reason)
-                continue
-            except ConnectionResetError:
-                self.logUtil.log("Connection reset skipping")
-            except NoSuchElementException:
-                self.logUtil.log("torrent not found origin:" + new_url + " skipping")
-            except NoSuchWindowException as e:
-                self.logUtil.log(e.msg)
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
 
     def send(self, new_url, isNormal):
-        self.initialize_driver(isNormal)
         self.logUtil.log(
             "starting request to " + new_url + " ...........",
             log_file_path=self.logFilePath,
         )
         self.logUtil.log("waiting for request finished...........")
         start_time = time.time()
-        if isNormal:
-            self.local.driver.implicitly_wait(500)
-        self.local.driver.get(new_url)
+        tag = self.page.new_tab()
+        tag.get(new_url)
         end_time = time.time()
+        source = tag.html
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
         self.logUtil.log("request spend time was " + str(end_time - start_time))
-        source = self.local.driver.page_source
-        self.local.driver.quit()
+        tag.close()
         return source
 
     def checkIsBeDetected(self, source):

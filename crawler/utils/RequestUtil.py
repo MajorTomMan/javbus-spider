@@ -1,4 +1,3 @@
-
 import requests
 
 from utils.LogUtil import LogUtil
@@ -66,8 +65,6 @@ class RequestUtil:
         response = self.postImage(data=data, path=path)
         if not response:
             self.logUtil.log("error request to " + path, "./errorRequestServer.log")
-            self.logUtil.log("error data is ", "./errorRequestServer.log")
-            self.logUtil.log(data, "./errorRequestServer.log")
             self.logUtil.log(
                 "request not response pls check server is open or has expection "
             )
