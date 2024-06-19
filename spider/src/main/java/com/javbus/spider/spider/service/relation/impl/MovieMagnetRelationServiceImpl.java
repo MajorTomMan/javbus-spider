@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-05-13 20:52:17
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-06-18 01:18:24
+ * @LastEditTime: 2024-06-19 23:49:57
  * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieMagnetRelationServiceImpl.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
@@ -59,10 +59,12 @@ public class MovieMagnetRelationServiceImpl implements MovieMagnetRelationServic
         } else {
             magnetDao.updateMagnets(dto.getMagnets());
         }
+        magnets = magnetDao
+                .queryMagnets(dto.getMagnets().stream().map(magnet -> magnet.getLink()).toList());
         // ----------------------Relations------------------------------
         List<MovieMagnetRelation> movieMagnetRelations = movieMagnetDao.queryRelationsByMovieId(movie.getId());
         Movie finalMovie = movie;
-        List<MovieMagnetRelation> relations = dto.getMagnets().stream().map(magnet -> {
+        List<MovieMagnetRelation> relations = magnets.stream().map(magnet -> {
             MovieMagnetRelation r = new MovieMagnetRelation();
             r.setMovieId(finalMovie.getId());
             r.setMagnetId(magnet.getId());

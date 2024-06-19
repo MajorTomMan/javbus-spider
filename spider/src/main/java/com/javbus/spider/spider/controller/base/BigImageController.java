@@ -1,3 +1,10 @@
+/*
+ * @Date: 2024-04-24 20:38:18
+ * @LastEditors: MajorTomMan 765719516@qq.com
+ * @LastEditTime: 2024-06-19 22:46:54
+ * @FilePath: \spider\src\main\java\com\javbus\spider\spider\controller\base\BigImageController.java
+ * @Description: MajorTomMan @版权声明 保留文件所有权利
+ */
 
 package com.javbus.spider.spider.controller.base;
 
@@ -39,7 +46,7 @@ public class BigImageController {
         return R.ok().put("bigImage", image);
     }
 
-    @PostMapping("save/bigimage")
+    @PostMapping("save/local")
     public R saveImage(@RequestBody ActressesImageDTO dto) {
         if (dto == null || dto.getActresses() == null || dto.getActresses().isEmpty() || dto.getImages() == null
                 || dto.getImages().isEmpty()
@@ -47,7 +54,7 @@ public class BigImageController {
                 || dto.getCode().isEmpty()) {
             return R.error();
         }
-        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(),dto.getNames(),true);
+        imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(), dto.getNames(), true);
         return R.ok();
     }
 }

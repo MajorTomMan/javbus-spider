@@ -81,7 +81,7 @@ CREATE TABLE sample_image (
 CREATE TABLE magnet (
     id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'ID',
     name VARCHAR(255),
-    link VARCHAR(255) COMMENT '链接',
+    link TEXT COMMENT '链接',
     size VARCHAR(255),
     share_date VARCHAR(255)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '磁力链接表';
