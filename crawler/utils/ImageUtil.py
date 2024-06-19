@@ -5,7 +5,9 @@ import requests
 
 from utils.RequestUtil import RequestUtil
 from utils.LogUtil import LogUtil
+from utils.WebUtil import WebUtil
 from utils.attrs.Image import Image
+
 
 class ImageUtil:
     ua = None
@@ -13,17 +15,18 @@ class ImageUtil:
     logUtil = LogUtil()
     requestUtil = RequestUtil()
     logFilePath = "./image.log"
+    webUtil = WebUtil()
 
     def __init__(self) -> None:
         self.ua = UserAgent()
 
     def downloadSampleImages(self, links, actresses, code):
         if actresses == None or len(actresses) < 1:
-            actresses = "未知演员"
+            actresses = ["未知演员"]
         headers = {"User-Agent": self.ua.random}
         imageList = []
-        nameList=[]
-        image=Image()
+        nameList = []
+        image = Image()
         for link in links:
             filename = link.split("/")[-1]
             # if self.__checkFileIsExists(
@@ -57,27 +60,29 @@ class ImageUtil:
                 imageList.append(base64.b64encode(response.content).decode("utf-8"))
                 nameList.append(filename)
             else:
+                # 可能会有下载失败的情况
                 self.logUtil.log(
-                    "image " + response.url + " download failure",
+                    "sampleimage " + response.url + " download failure",
                     log_file_path=self.logFilePath,
                 )
-        image.actresses=actresses
-        image.code=code
-        image.names=nameList
-        image.images=imageList
-        path = "/sampleimage/save/sample"
-        self.requestUtil.sendImage(
-            image.toDict(),
-            path=path,
-        )
+        if imageList and len(imageList) >= 1:
+            image.actresses = actresses
+            image.code = code
+            image.names = nameList
+            image.images = imageList
+            path = "/sampleimage/save/sample"
+            self.requestUtil.sendImage(
+                image.toDict(),
+                path=path,
+            )
 
     def downloadBigImage(self, link, actresses, code):
         if actresses == None or len(actresses) < 1:
-            actresses = "未知演员"
+            actresses = ["未知演员"]
         filename = link.split("/")[-1]
         imageList = []
-        nameList=[]
-        image=Image()
+        nameList = []
+        image = Image()
         # if self.__checkFileIsExists(
         #    actresses=actresses, code=code, filename=filename, isBigImage=True
         # ):
@@ -113,18 +118,19 @@ class ImageUtil:
             nameList.append(filename)
         else:
             self.logUtil.log(
-                "image " + response.url + " download failure",
+                "bigimage " + response.url + " download failure",
                 log_file_path=self.logFilePath,
             )
-        path = "/bigimage/save"
-        image.actresses=actresses
-        image.code=code
-        image.names=nameList
-        image.images=imageList
-        self.requestUtil.sendImage(
-            image.toDict(),
-            path=path,
-        )
+        if imageList and len(imageList) >= 1:
+            path = "/bigimage/save/local"
+            image.actresses = actresses
+            image.code = code
+            image.names = nameList
+            image.images = imageList
+            self.requestUtil.sendImage(
+                image.toDict(),
+                path=path,
+            )
 
     def __save2Local(self, response, actresses, code, filename, isBigImage):
         if not isBigImage:

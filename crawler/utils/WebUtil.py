@@ -100,10 +100,5 @@ class WebUtil:
                 return True
         return False
 
-    def cleanChromeDriver(self):
-        try:
-            os.system("taskkill /F /im chromedriver.exe")
-            os.system("taskkill /F /im undetected_chromedriver.exe")
-            os.system("taskkill /F /im chrome.exe")
-        except TypeError:
-            pass
+    def close(self):
+        self.page.quit()

@@ -54,9 +54,10 @@ class PageUtil:
                 code = page.movie.get("code")
                 # 样品图像的连接集合
                 links = []
-                for sample in page.sampleimage:
-                    for link in sample:
-                        links.append(sample[link])
+                if page.sampleimage and len(page.sampleimage)>=1:
+                    for sample in page.sampleimage:
+                        for link in sample:
+                            links.append(sample[link])
                 # 女优名字的集合
                 names = []
                 if actresses:
