@@ -50,7 +50,8 @@ class WebUtil:
         options.ignore_certificate_errors()
         options.no_imgs(True).mute(True)
         options.headless()
-        options.set_argument("--no-sandbox")  # 无沙盒模式
+        options.set_argument("--no-sandbox")
+        options.set_browser_path("C:\\Users\\master\\Desktop\\Soft\\Chrome\\chrome.exe").save()
         return ChromiumPage(options)
 
     def getWebSite(self, link, isNormal=False):
