@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-04-24 20:38:18
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-06-19 22:46:54
+ * @LastEditTime: 2024-06-20 08:09:38
  * @FilePath: \spider\src\main\java\com\javbus\spider\spider\controller\base\BigImageController.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
@@ -54,6 +54,7 @@ public class BigImageController {
                 || dto.getCode().isEmpty()) {
             return R.error();
         }
+
         imageUtil.saveImages(dto.getImages(), dto.getActresses(), dto.getCode(), dto.getNames(), true);
         return R.ok();
     }

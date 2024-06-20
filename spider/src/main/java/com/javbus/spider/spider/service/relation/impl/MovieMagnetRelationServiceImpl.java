@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-05-13 20:52:17
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-06-19 23:49:57
+ * @LastEditTime: 2024-06-20 23:51:47
  * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieMagnetRelationServiceImpl.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  */
@@ -37,13 +37,13 @@ public class MovieMagnetRelationServiceImpl implements MovieMagnetRelationServic
     public void saveRelation(MovieMagnetDTO dto) {
         // TODO Auto-generated method stub
         // 保存或更新电影信息
-        Movie movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         if (movie == null) {
             movieDao.saveMovie(dto.getMovie());
         } else {
             movieDao.updateMovie(dto.getMovie());
         }
-        movie = movieDao.queryMovieByCode(dto.getMovie().getCode());
+        movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         // -----------------Magnet------------------------------
         List<Magnet> magnets = magnetDao
                 .queryMagnets(dto.getMagnets().stream().map(magnet -> magnet.getLink()).toList());

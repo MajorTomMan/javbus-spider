@@ -34,7 +34,7 @@ public class MovieController {
         return R.ok().put("movie", movie);
     }
     @GetMapping("query/code/{code}")
-    public R queryMovieById(@PathVariable String code) {
+    public R queryMovieByCode(@PathVariable String code) {
         Movie movie=movieService.queryMovieByCode(code);
         return R.ok().put("movie", movie);
     }

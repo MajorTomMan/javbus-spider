@@ -15,11 +15,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void saveMovie(Movie movie) {
         // TODO Auto-generated method stub
-        Movie m = movieDao.queryMovieByCode(movie.getCode());
+        Movie m = movieDao.queryMovieByLink(movie.getLink());
         if (m == null) {
             movieDao.saveMovie(movie);
         } else {
-            movieDao.updateMovieByCode(movie);
+            movieDao.updateMovie(movie);
         }
     }
 

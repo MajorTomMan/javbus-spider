@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-04-24 20:38:18
  * @LastEditors: MajorTomMan 765719516@qq.com
- * @LastEditTime: 2024-06-18 00:25:22
+ * @LastEditTime: 2024-06-20 23:52:34
  * @FilePath: \spider\src\main\java\com\javbus\spider\spider\service\relation\impl\MovieStudioRelationServiceImpl.java
  * @Description: MajorTomMan @版权声明 保留文件所有权利
  * 
@@ -38,11 +38,11 @@ public class MovieStudioRelationServiceImpl implements MovieStudioRelationServic
         Movie movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         if (movie == null) {
             movieDao.saveMovie(dto.getMovie());
-            movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         } else {
             dto.getMovie().setId(movie.getId());
             movieDao.updateMovie(dto.getMovie());
         }
+        movie = movieDao.queryMovieByLink(dto.getMovie().getLink());
         Studio studio = studioDao.queryStudioByName(dto.getStudio().getName());
         if (studio == null) {
             studioDao.save(dto.getStudio());
