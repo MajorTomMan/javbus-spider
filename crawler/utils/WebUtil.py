@@ -47,9 +47,9 @@ class WebUtil:
     def initialize_driver(self):
         options = ChromiumOptions()
         options.auto_port()
+        options.headless(False)
         options.ignore_certificate_errors()
         options.no_imgs(True).mute(True)
-        options.headless()
         options.set_argument("--no-sandbox")
         options.set_browser_path("C:\\Users\\master\\Desktop\\Soft\\Chrome\\chrome.exe").save()
         return ChromiumPage(options)
@@ -77,7 +77,16 @@ class WebUtil:
                 self.logUtil.log(e)
         self.logUtil.log("All backup URLs tried, none successful.")
         return None
-
+    def getWebSiteByOther(self, link, isNormal=False):
+        try:
+            source = self.send(link, isNormal)
+            if self.checkIsBeDetected(source):
+                return None
+            return source
+        except Exception as e:
+            self.logUtil.log(e)
+        self.logUtil.log("All backup URLs tried, none successful.")
+        return None
     def send(self, new_url, isNormal):
         self.logUtil.log(
             "starting request to " + new_url + " ...........",
@@ -87,6 +96,7 @@ class WebUtil:
         start_time = time.time()
         tag = self.page.new_tab()
         tag.get(new_url)
+        time.sleep(20)
         end_time = time.time()
         source = tag.html
         self.logUtil.log("request finished....", log_file_path=self.logFilePath)
