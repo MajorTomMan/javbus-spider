@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jav.server.dao.relation.ActressStudioDao">
+    
+    <!-- ActressStudioRelation resultMap -->
+    <resultMap id="actressStudioRelationResultMap" type="com.jav.server.entity.relation.ActressStudioRelation">
+        <id property="id" column="id" />
+        <result property="actressId" column="actress_id" />
+        <result property="studioId" column="studio_id" />
+    </resultMap>
+    
+    <insert id="addActressStudioRelation" parameterType="com.jav.server.entity.relation.ActressStudioRelation">
+        INSERT INTO actress_studio_relation (actress_id, studio_id) 
+        VALUES (#{actressId}, #{studioId})
+    </insert>
+
+    <delete id="deleteActressStudioRelation">
+        DELETE FROM actress_studio_relation 
+        WHERE actress_id = #{actressId} AND studio_id = #{studioId}
+    </delete>
+    
+    <!-- 批量添加明星与工作室关系 -->
+    <insert id="addActressStudioRelations" parameterType="java.util.List">
+        INSERT INTO actress_studio_relation (actress_id, studio_id) VALUES
+        <foreach collection="list" item="relation" separator=",">
+            (#{relation.actressId}, #{relation.studioId})
+        </foreach>
+    </insert>
+    
+    <update id="updateActressStudioRelations" parameterType="java.util.List">
+        <foreach collection="relations" item="relation" separator=";">
+            UPDATE actress_studio_relation 
+            SET actress_id = #{relation.actressId}, studio_id = #{relation.studioId} 
+            WHERE id = #{relation.id}
+        </foreach>
+    </update>
+    
+    
+    <select id="queryActressStudioRelation" resultMap="actressStudioRelationResultMap">
+        SELECT * FROM actress_studio_relation 
+        WHERE actress_id = #{actressId} AND studio_id = #{studioId}
+    </select>
+
+    <select id="queryActressStudioRelations" resultMap="actressStudioRelationResultMap">
+        SELECT * FROM actress_studio_relation 
+        WHERE actress_id IN 
+        <foreach collection="actressIds" item="actressId" open="(" separator="," close=")">
+            #{actressId}
+        </foreach> 
+        AND studio_id = #{studioId}
+    </select>
+
+    <!-- 查询某女优所有工作室关系 -->
+    <select id="queryActressStudioRelationByActressId" resultMap="actressStudioRelationResultMap">
+        SELECT * FROM actress_studio_relation 
+        WHERE actress_id = #{actressId}
+    </select>
+    
+</mapper>

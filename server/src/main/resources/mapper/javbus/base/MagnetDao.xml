@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jav.server.dao.base.MagnetDao">
+<!-- 保存 Magnet 记录 -->
+    <insert id="saveMagnet" parameterType="com.jav.server.entity.base.Magnet">
+        INSERT INTO magnet (name,link, size, share_date)
+        VALUES (#{name}, #{link}, #{size}, #{shareDate})
+    </insert>
+    <insert id="saveMagnets" parameterType="java.util.List">
+        <!-- 使用 foreach 循环遍历磁力链接列表 -->
+        <foreach collection="list" item="magnet" separator=";">
+            INSERT INTO magnet (name,link, size, share_date)
+            VALUES (#{magnet.name}, #{magnet.link}, #{magnet.size}, #{magnet.shareDate})
+        </foreach>
+    </insert>
+    
+
+<!-- 删除 Magnet 记录 -->
+    <delete id="deleteMagnet" parameterType="int">
+        DELETE FROM magnet WHERE id = #{id}
+    </delete>
+
+<!-- 更新 Magnet 记录 -->
+    <update id="updateMagnet" parameterType="com.jav.server.entity.base.Magnet">
+        UPDATE magnet SET name=#{name}, link = #{link}, size = #{size}, share_date = #{shareDate}
+        WHERE id = #{id}
+    </update>
+
+<!-- 根据 ID 查询 Magnet 记录 -->
+    <select id="queryMagnetById" parameterType="int" resultType="com.jav.server.entity.base.Magnet">
+        SELECT * FROM magnet WHERE id = #{id}
+    </select>
+
+<!-- 根据链接查询 Magnet 记录 -->
+    <select id="queryMagnetByLink" parameterType="string" resultType="com.jav.server.entity.base.Magnet">
+        SELECT * FROM magnet WHERE link = #{link}
+    </select>
+
+<!-- 根据链接列表查询 Magnets 记录 -->
+    <select id="queryMagnets" parameterType="list" resultType="com.jav.server.entity.base.Magnet">
+        SELECT * FROM magnet WHERE link IN
+        <foreach collection="list" item="link" open="(" close=")" separator=",">
+            #{link}
+        </foreach>
+    </select>
+
+<!-- 根据链接列表查询 Magnet IDs -->
+    <select id="queryMagnetIdsByLinks" parameterType="list" resultType="int">
+        SELECT id FROM magnet WHERE link IN
+        <foreach collection="list" item="link" open="(" close=")" separator=",">
+            #{link}
+        </foreach>
+    </select>
+
+    <!-- updateMagnets --> 
+
+<!-- 批量更新 Magnet 对象的 MyBatis XML 映射文件配置 -->
+<update id="updateMagnets" parameterType="java.util.List">
+    <foreach collection="magnets" item="magnet" separator=";">
+        <![CDATA[
+        UPDATE magnet
+        SET 
+                name = #{magnet.name},
+                link = #{magnet.link},
+                size = #{magnet.size},
+               share_date = #{magnet.shareDate}
+        WHERE id = #{magnet.id}
+         ]]>
+     </foreach>
+    </update>
+</mapper>
