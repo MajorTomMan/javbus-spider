@@ -1,5 +1,5 @@
 import datetime
-from utils.MailUtil import MailUtil
+from utils.mail_util import MailUtil
 import threading
 import traceback
 

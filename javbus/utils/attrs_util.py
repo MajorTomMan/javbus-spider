@@ -1,6 +1,6 @@
-from utils.LogUtil import LogUtil
-from utils.attrs.BanList import Ban
-from utils.WebUtil import WebUtil
+from utils.log_util import LogUtil
+from utils.attrs.ban_list import Ban
+from utils.web_util import WebUtil
 
 
 class AttrsUtil:

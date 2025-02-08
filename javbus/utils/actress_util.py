@@ -1,12 +1,12 @@
 import threading
 import time
 from bs4 import BeautifulSoup
-from utils.AttrsUtil import AttrsUtil
-from utils.LogUtil import LogUtil
-from utils.WebUtil import WebUtil
-from utils.attrs.CompanyLinks import CompanyLinks
+from utils.attrs_util import AttrsUtil
+from utils.log_util import LogUtil
+from utils.web_util import WebUtil
+from utils.attrs.company_links import CompanyLinks
 
-from utils.attrs.Actress import Actress
+from items import ActressItem
 
 
 class ActressUtil:
@@ -19,7 +19,7 @@ class ActressUtil:
     def getActressDetails(self, link):
         self.logUtil.log("sleeping in 10 seconds")
         time.sleep(10)
-        source = self.webUtil.getWebSite(link)
+        source = self.webUtil.get(link)
         if source:
             bs = BeautifulSoup(source, "html.parser")
             if bs:
@@ -45,7 +45,7 @@ class ActressUtil:
     def getInfo(self, bs):
         box = bs.find("div", {"class": "avatar-box"})
         if box:
-            actress = Actress()
+            actress = ActressItem()
             frame = box.find("div", {"class": "photo-frame"})
             info = box.find("div", {"class": "photo-info"})
             if frame:

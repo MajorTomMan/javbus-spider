@@ -1,6 +1,6 @@
 import requests
 
-from utils.LogUtil import LogUtil
+from utils.log_util import LogUtil
 
 requests.packages.urllib3.disable_warnings()
 

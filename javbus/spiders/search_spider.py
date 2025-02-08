@@ -1,24 +1,16 @@
-"""
-Date: 2025-02-07 22:00:48
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-08 00:00:09
-FilePath: \JavBus\spider\javbus\Search.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-"""
-
 import scrapy
 from bs4 import BeautifulSoup
-from jav_scraper.items import MovieItem  # 假设你有一个 MovieItem 类来存储数据
-from utils.LogUtil import LogUtil
-from utils.PageUtil import PageUtil
-from utils.AttrsUtil import AttrsUtil
-from utils.WebUtil import WebUtil
-from utils.TimeoutUtil import TimeoutUtil
+from items import MovieItem
+from utils.log_util import LogUtil
+from utils.page_util import PageUtil
+from utils.attrs_util import AttrsUtil
+from utils.web_util import WebUtil
+from utils.timeout_util import TimeoutUtil
 
 
 class SearchSpider(scrapy.Spider):
     name = "search"
-    allowed_domains = ["seedmm.shop"]
+    allowed_domains = ["javbus.com"]
 
     webUtil = WebUtil()
     pageUtil = None
@@ -39,26 +31,35 @@ class SearchSpider(scrapy.Spider):
         self.timeoutUtil = TimeoutUtil(self.pageUtil)
 
     def start_requests(self):
-        # 起始请求页面
-        url = f"{self.base_url}searchstar/{self.tag}/{self.page_num}"
-        yield scrapy.Request(url, callback=self.parse)
+        """
+        Starts the requests by fetching the first page.
+        """
+        yield scrapy.Request(self.base_url, callback=self.parse)
 
     def parse(self, response):
-        # 处理每一页的结果
+        """
+        Parse the response for each page and check if there is a next page.
+        """
         if response.status == 200:
-            self.logUtil.log(f"now page num is {self.page_num}")
-            self.bfs(response)
+            self.log(f"Now parsing page {self.page_num}")
+
+            # 处理当前页面内容
+            self.parse_movies(response)
 
             # 查找是否有下一页，若有则抓取
             next_page = self.get_next_page(response)
             if next_page:
+                self.page_num += 1
                 yield scrapy.Request(next_page, callback=self.parse)
             else:
-                self.logUtil.log("final page is reached")
+                self.log("Final page reached.")
         else:
-            self.logUtil.log(f"Request failed with status {response.status}")
+            self.log(f"Request failed with status {response.status}")
 
-    def bfs(self, response):
+    def parse_movies(self, response):
+        """
+        Parse the movies on the current page.
+        """
         bs = BeautifulSoup(response.text, "html.parser")
         bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
 
@@ -67,7 +68,7 @@ class SearchSpider(scrapy.Spider):
                 is_censored = self.attrsUtil.getIsCensored(brick)
                 link = self.attrsUtil.getLink(brick)
                 if link:
-                    self.logUtil.log(f"now visit website link is {link}")
+                    self.log(f"Now visiting website link: {link}")
                     is_final_page = False
                     page_num = 0
                     while not is_final_page:
@@ -76,10 +77,13 @@ class SearchSpider(scrapy.Spider):
                             link + "/" + str(page_num), is_censored
                         )
         else:
-            self.logUtil.log("bricks not found")
+            self.log("Bricks not found, saving HTML locally.")
             self.pageUtil.save2local(response.text, self.tag, ".html")
 
     def get_next_page(self, response):
+        """
+        Check if there is a next page available and return its URL.
+        """
         bs = BeautifulSoup(response.text, "html.parser")
         next_button = bs.find("a", {"class": "next"})
         if next_button:
@@ -87,4 +91,7 @@ class SearchSpider(scrapy.Spider):
         return None
 
     def log(self, message):
+        """
+        Log the messages using the utility.
+        """
         self.logUtil.log(message)
