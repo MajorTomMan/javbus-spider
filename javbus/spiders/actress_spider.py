@@ -1,3 +1,10 @@
+'''
+Date: 2025-02-08 19:33:55
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-08 20:58:56
+FilePath: \spider\javbus\spiders\actress_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 import scrapy
 from bs4 import BeautifulSoup
 from items import ActressItem

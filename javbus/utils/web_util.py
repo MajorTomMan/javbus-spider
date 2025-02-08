@@ -11,8 +11,7 @@ class WebUtil:
     _lock = threading.Lock()
     page = None
     logUtil = LogUtil()
-    baseUrls = [
-    ]
+    baseUrls = ["https://www.javbus.com/"]
     logFilePath = "./driver.log"
 
     def __new__(cls, *args, **kwargs):
@@ -35,7 +34,7 @@ class WebUtil:
         options.ignore_certificate_errors()
         options.no_imgs(True).mute(True)
         options.set_argument("--no-sandbox")
-        options.set_browser_path("C:\\Users\\master\\Desktop\\Soft\\Chrome\\chrome.exe").save()
+        options.set_browser_path("C:\\Users\\master\\Desktop\\Soft\\Chrome\\chrome.exe")
         return ChromiumPage(options)
 
     def get(self, link):
@@ -52,7 +51,6 @@ class WebUtil:
                 self.logUtil.log(f"Error with URL {new_url}: {e}", log_file_path=self.logFilePath)
         self.logUtil.log("All backup URLs tried, none successful.", log_file_path=self.logFilePath)
         return None
-
 
     def send(self, new_url):
         """发送请求并返回响应内容"""

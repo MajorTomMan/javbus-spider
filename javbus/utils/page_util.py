@@ -11,7 +11,17 @@ from utils.request_util import RequestUtil
 from utils.timeout_util import TimeoutUtil
 from utils.web_util import WebUtil
 from utils.attrs.company_links import CompanyLinks
-from items import DirectorItem, MovieItem, PageItem, SampleImageItem, StudioItem, SeriesItem, LabelItem, MagnetItem, BigImageItem
+from items import (
+    DirectorItem,
+    MovieItem,
+    PageItem,
+    SampleImageItem,
+    StudioItem,
+    SeriesItem,
+    LabelItem,
+    MagnetItem,
+    BigImageItem,
+)
 
 
 class PageUtil:

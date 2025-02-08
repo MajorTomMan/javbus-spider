@@ -7,7 +7,9 @@ class IndexSpider(scrapy.Spider):
     name = "index"
     allowed_domains = ["javbus.com"]
 
-    def __init__(self, url, is_censored, *args, **kwargs):
+    def __init__(
+        self, url="https://www.javbus.com/", is_censored=True, *args, **kwargs
+    ):
         super(IndexSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.is_censored = is_censored
@@ -19,7 +21,8 @@ class IndexSpider(scrapy.Spider):
 
     def parse(self, response):
         if response.status == 200:
-            bs = BeautifulSoup(response.text, "html.parser")
+
+            bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
 
             # Process the bricks (movie links) on this page
@@ -61,7 +64,9 @@ class IndexSpider(scrapy.Spider):
         Extract the movie details from the page.
         """
         movie_item = MovieItem()
-        movie_item["title"] = bs.find("h1", {"class": "movie-title"}).get_text(strip=True)
+        movie_item["title"] = bs.find("h1", {"class": "movie-title"}).get_text(
+            strip=True
+        )
         # Additional fields can be added as needed
         return movie_item
 
