@@ -2,13 +2,13 @@ import scrapy
 import hashlib
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from items import CategoryItem
+from javbus.items import CategoryItem
+from scrapy_redis.spiders import RedisSpider
 
-
-class GenreSpider(scrapy.Spider):
+class GenreSpider(RedisSpider):
     name = "genre"
     base_url = ""
-    
+
     def __init__(self, url, is_censored=True, *args, **kwargs):
         super(GenreSpider, self).__init__(*args, **kwargs)
         self.base_url = url
@@ -17,14 +17,14 @@ class GenreSpider(scrapy.Spider):
     def parse(self, response):
         source = response.text
         bs = BeautifulSoup(source, "html.parser")
-        
+
         # 提取所有的 genres 和 boxs
         genres = self.extract_genres(bs)
         boxs = self.extract_boxes(bs)
-        
+
         # 定义一个数组来保存所有的 vos
         all_vos = []
-        
+
         if genres and boxs:
             # 遍历并提取每个 box 相关的数据
             for index, box in enumerate(boxs):
@@ -36,12 +36,11 @@ class GenreSpider(scrapy.Spider):
         else:
             # 如果没有数据，可以选择保存原始页面内容或进行其他处理
             self.save_to_local(source, response.url)
-        
+
         # 在所有数据处理完之后统一 yield
         if all_vos:
             for vo in all_vos:
                 yield vo
-
 
     def extract_genres(self, bs):
         """提取所有的 genres（如果有）"""
@@ -49,7 +48,7 @@ class GenreSpider(scrapy.Spider):
         titles = bs.find_all("h4", {"class": "modal-title"})
         for title in titles:
             title.extract()  # 移除标题内容
-        
+
         # 找到所有 h4 标签并提取
         h4s = bs.find_all("h4")
         for h4 in h4s:
@@ -82,9 +81,8 @@ class GenreSpider(scrapy.Spider):
                 ]
             }
             return vos
-        
-        return None
 
+        return None
 
     def save_to_local(self, content, link):
         """保存内容到本地文件"""

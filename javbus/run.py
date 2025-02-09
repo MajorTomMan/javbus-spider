@@ -1,17 +1,20 @@
 '''
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-08 20:02:26
-FilePath: \javbus\javbus.py
+LastEditTime: 2025-02-09 00:33:06
+FilePath: \spider\javbus\run.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 import scrapy
 from scrapy.crawler import CrawlerProcess
-from spiders.genre_spider import GenreSpider
-from spiders.search_spider import SearchSpider
-from spiders.index_spider import IndexSpider
-from spiders.actress_spider import ActressSpider
+from javbus.spiders.genre_spider import GenreSpider
+from javbus.spiders.search_spider import SearchSpider
+from javbus.spiders.index_spider import IndexSpider
+from javbus.spiders.actress_spider import ActressSpider
 
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def main():
     """

@@ -3,7 +3,7 @@ import threading
 from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 from DrissionPage import ChromiumOptions, ChromiumPage
-from utils.log_util import LogUtil
+from javbus.utils.log_util import LogUtil
 
 
 class WebUtil:

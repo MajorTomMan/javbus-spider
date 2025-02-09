@@ -8,7 +8,7 @@ from scrapy.http import Response
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
-from utils.web_util import WebUtil
+from javbus.utils.web_util import WebUtil
 
 
 class JavbusSpiderMiddleware:

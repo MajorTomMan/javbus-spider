@@ -7,15 +7,15 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 import scrapy
 from bs4 import BeautifulSoup
-from items import MovieItem
-from utils.log_util import LogUtil
-from utils.page_util import PageUtil
-from utils.attrs_util import AttrsUtil
-from utils.web_util import WebUtil
-from utils.timeout_util import TimeoutUtil
+from javbus.items import MovieItem
+from javbus.utils.log_util import LogUtil
+from javbus.utils.page_util import PageUtil
+from javbus.utils.attrs_util import AttrsUtil
+from javbus.utils.web_util import WebUtil
+from javbus.utils.timeout_util import TimeoutUtil
+from scrapy_redis.spiders import RedisSpider
 
-
-class SearchSpider(scrapy.Spider):
+class SearchSpider(RedisSpider):
     name = "search"
     allowed_domains = ["javbus.com"]
 

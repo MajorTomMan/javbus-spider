@@ -6,8 +6,8 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-from items import MovieItem, ActressItem, BigImageItem, CategoryItem, DirectorItem, LabelItem, MagnetItem
-from utils.request_util import RequestUtil
+from javbus.items import MovieItem, ActressItem, BigImageItem, CategoryItem, DirectorItem, LabelItem, MagnetItem
+from javbus.utils.request_util import RequestUtil
 
 class JavbusPipeline:
     def __init__(self) -> None:

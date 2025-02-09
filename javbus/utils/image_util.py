@@ -3,10 +3,10 @@ import os
 from fake_useragent import UserAgent
 import requests
 
-from utils.request_util import RequestUtil
-from utils.log_util import LogUtil
-from utils.web_util import WebUtil
-from items import ImageItem
+from javbus.utils.request_util import RequestUtil
+from javbus.utils.log_util import LogUtil
+from javbus.utils.web_util import WebUtil
+from javbus.items import ImageItem
 
 
 class ImageUtil:

@@ -1,8 +1,8 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-08 20:57:23
-FilePath: \spider\javbus\settings.py
+LastEditTime: 2025-02-09 12:02:11
+FilePath: \JavBus\spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 # Scrapy settings for javbus project
@@ -52,13 +52,13 @@ DOWNLOAD_DELAY = 3
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
-    "middlewares.JavbusSpiderMiddleware": 543,
+    "javbus.middlewares.JavbusSpiderMiddleware": 543,
 }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    "middlewares.JavbusDownloaderMiddleware": 543,
+    "javbus.middlewares.JavbusDownloaderMiddleware": 543,
     "scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware": None,
     "scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware": None,
 }
@@ -72,7 +72,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "pipelines.JavbusPipeline": 300,
+    "javbus.pipelines.JavbusPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -99,3 +99,21 @@ ITEM_PIPELINES = {
 # Set settings whose default value is deprecated to a future-proof value
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# 启用 scrapy-redis 的调度器
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+
+# 启用 scrapy-redis 的去重机制
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# 配置请求队列使用 Redis 来存储待抓取链接
+SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.PriorityQueue"
+# 持久化爬取队列（爬虫结束后，保留队列）
+SCHEDULER_PERSIST = True
+
+# Redis 服务器地址（默认 127.0.0.1:6379）
+REDIS_HOST = "192.168.253.131"
+REDIS_PORT = 6379
+REDIS_PARAMS = {
+    "db": 0,
+    "password": "root",
+}

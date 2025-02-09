@@ -1,6 +1,6 @@
 
 import datetime
-from utils.mail_util import MailUtil
+from javbus.utils.mail_util import MailUtil
 import threading
 import traceback
 

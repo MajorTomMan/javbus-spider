@@ -1,6 +1,6 @@
 import requests
 
-from utils.log_util import LogUtil
+from javbus.utils.log_util import LogUtil
 
 
 class IpUtil:

@@ -1,6 +1,6 @@
 
-from utils.log_util import LogUtil
-from utils.web_util import WebUtil
+from javbus.utils.log_util import LogUtil
+from javbus.utils.web_util import WebUtil
 
 
 class TimeoutUtil:

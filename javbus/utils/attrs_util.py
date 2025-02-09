@@ -1,6 +1,6 @@
-from utils.log_util import LogUtil
-from utils.attrs.ban_list import Ban
-from utils.web_util import WebUtil
+from javbus.utils.log_util import LogUtil
+from javbus.utils.attrs.ban_list import Ban
+from javbus.utils.web_util import WebUtil
 
 
 class AttrsUtil:

@@ -1,23 +1,30 @@
 '''
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-08 20:58:56
+LastEditTime: 2025-02-08 22:42:40
+FilePath: \spider\javbus\spiders\actress_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
+'''
+Date: 2025-02-08 19:33:55
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-08 22:41:54
 FilePath: \spider\javbus\spiders\actress_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 import scrapy
 from bs4 import BeautifulSoup
-from items import ActressItem
-from utils.log_util import LogUtil
-from utils.page_util import PageUtil
-from utils.request_util import RequestUtil
-from utils.attrs_util import AttrsUtil
-from utils.actress_util import ActressUtil
-from utils.web_util import WebUtil
+from javbus.items import ActressItem
+from javbus.utils.log_util import LogUtil
+from javbus.utils.page_util import PageUtil
+from javbus.utils.request_util import RequestUtil
+from javbus.utils.attrs_util import AttrsUtil
+from javbus.utils.actress_util import ActressUtil
+from javbus.utils.web_util import WebUtil
+from scrapy_redis.spiders import RedisSpider
 
-# 女友爬虫
-
-class ActressSpider(scrapy.Spider):
+# 女优列表爬虫
+class ActressListSpider(RedisSpider):
     name = "actress"
     allowed_domains = ["javbus.com"]
     webUtil = WebUtil()
@@ -38,7 +45,7 @@ class ActressSpider(scrapy.Spider):
         Start the first request to fetch the actress listing page.
         """
         yield scrapy.Request(self.base_url, callback=self.parse)
-        
+
     # 用于解析reponse的方法
     def parse(self, response):
         """
@@ -83,7 +90,7 @@ class ActressSpider(scrapy.Spider):
                         actress.is_censored = self.is_censored
                         actress_list.append(actress.toDict())
 
-                        #直接复制所有属性给 ActressItem
+                        # 直接复制所有属性给 ActressItem
                         yield ActressItem(**actress.__dict__)
         else:
             self.log("Bricks not found on this page.")

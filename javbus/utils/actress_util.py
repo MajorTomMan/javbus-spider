@@ -1,12 +1,12 @@
 import threading
 import time
 from bs4 import BeautifulSoup
-from utils.attrs_util import AttrsUtil
-from utils.log_util import LogUtil
-from utils.web_util import WebUtil
-from utils.attrs.company_links import CompanyLinks
+from javbus.utils.attrs_util import AttrsUtil
+from javbus.utils.log_util import LogUtil
+from javbus.utils.web_util import WebUtil
+from javbus.utils.attrs.company_links import CompanyLinks
 
-from items import ActressItem
+from javbus.items import ActressItem
 
 
 class ActressUtil:
