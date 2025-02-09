@@ -1,25 +1,25 @@
-'''
+"""
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-09 11:31:55
+LastEditTime: 2025-02-09 18:04:20
 FilePath: \spider\javbus\spiders\index_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-'''
-import scrapy
+"""
 
+import scrapy
+import json
 from javbus.spiders.movie_spider import MovieSpider
 from bs4 import BeautifulSoup
 from javbus.items import MovieItem
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 
+
 class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = ["javbus.com"]
-    redis_key="index:links"
-    def __init__(
-        self, url="https://www.javbus.com/page/", is_censored=True, *args, **kwargs
-    ):
+
+    def __init__(self, url="https://www.javbus.com/page/", is_censored=True, *args, **kwargs):
         super(IndexSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.is_censored = is_censored
@@ -38,7 +38,20 @@ class IndexSpider(RedisSpider):
                 for brick in bricks:
                     link = self.get_link(brick)
                     if link:
-                        self.server.lpush("movie:links", link)  # 推送到 `movie` 队列
+                        movie_request_data = {
+                            "url": link
+                        }
+                        self.server.rpush(
+                            "movie:start_urls", json.dumps(movie_request_data)
+                        )
+                        movie_request_data = {
+                            "url": link,
+                            "is_censored": self.is_censored,
+                        }
+                        self.server.rpush(
+                            "movie:censored_link", json.dumps(movie_request_data)
+                        )
+
             else:
                 self.log("No bricks found on this page.")
 

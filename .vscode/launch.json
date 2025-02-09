@@ -1,0 +1,16 @@
+{
+    "version": "0.1.0",
+    "configurations": [
+        {
+            "name": "Scrapy",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "scrapy",
+            "args": [
+                "runspider",
+                "${file}"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}

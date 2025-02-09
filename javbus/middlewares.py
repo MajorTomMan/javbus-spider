@@ -7,7 +7,7 @@ from scrapy import signals
 from scrapy.http import Response
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
-
+from scrapy_redis.spiders import RedisSpider
 from javbus.utils.web_util import WebUtil
 
 
@@ -52,6 +52,7 @@ class JavbusSpiderMiddleware:
 
         # Must return only requests (not items).
         for r in start_requests:
+            r.callback=spider.parse
             yield r
 
     def spider_opened(self, spider):
@@ -62,11 +63,10 @@ class JavbusDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
-    
+
     def __init__(self):
         self.web_util = WebUtil()
-    
-    
+
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -78,7 +78,6 @@ class JavbusDownloaderMiddleware:
         """拦截请求，使用 WebUtil 代替 Scrapy 自带下载器"""
         url = request.url
         spider.logger.info(f"Using WebUtil to fetch: {url}")
-
         try:
             response_content = self.web_util.get(url)  # 调用 WebUtil 的 get 方法
             if response_content is None:
