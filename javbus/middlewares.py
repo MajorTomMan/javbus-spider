@@ -10,7 +10,6 @@ from itemadapter import is_item, ItemAdapter
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.web_util import WebUtil
 
-
 class JavbusSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -52,7 +51,6 @@ class JavbusSpiderMiddleware:
 
         # Must return only requests (not items).
         for r in start_requests:
-            r.callback=spider.parse
             yield r
 
     def spider_opened(self, spider):
@@ -75,33 +73,34 @@ class JavbusDownloaderMiddleware:
         return s
 
     def process_request(self, request, spider):
-        """拦截请求，使用 WebUtil 代替 Scrapy 自带下载器"""
-        url = request.url
-        spider.logger.info(f"Using WebUtil to fetch: {url}")
-        try:
-            response_content = self.web_util.get(url)  # 调用 WebUtil 的 get 方法
-            if response_content is None:
-                spider.logger.warning(f"WebUtil failed to fetch {url}, returning 404")
-                return Response(url=url, status=404, body=b"", request=request)
-
-            return Response(
-                url=url,
-                status=200,
-                body=response_content.encode("utf-8"),
-                request=request,
-                headers={"Content-Type": "text/html; charset=utf-8"},
-            )
-        except Exception as e:
-            spider.logger.error(f"Error fetching {url} using WebUtil: {str(e)}")
-            return Response(url=url, status=500, body=b"", request=request)
+        # 在请求发出之前添加请求头
+        spider.logger.info(f"Updating request headers for {request.url}")
+        request.headers.update(
+            {
+                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "accept-language": "zh-CN,zh;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "priority": "u=0, i",
+                "sec-ch-ua": '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"Windows"',
+                "sec-fetch-dest": "document",
+                "sec-fetch-mode": "navigate",
+                "sec-fetch-site": "none",
+                "sec-fetch-user": "?1",
+                "upgrade-insecure-requests": "1",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+            }
+        )
+        return None
 
     def process_response(self, request, response, spider):
-        # Called with the response returned from the downloader.
-
-        # Must either;
-        # - return a Response object
-        # - return a Request object
-        # - or raise IgnoreRequest
+        # 处理响应，记录响应状态码并检查是否有异常
+        spider.logger.info(
+            f"Received response from {request.url} with status {response.status}"
+        )
         return response
 
     def process_exception(self, request, exception, spider):

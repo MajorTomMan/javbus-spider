@@ -33,28 +33,31 @@ class IndexSpider(RedisSpider):
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
-            bricks = bs.find_all("div", attrs={"class": "item masonry-brick"})
-            if bricks:
-                for brick in bricks:
-                    link = self.get_link(brick)
-                    if link:
-                        movie_request_data = {
-                            "url": link
-                        }
-                        self.server.rpush(
-                            "movie:start_urls", json.dumps(movie_request_data)
-                        )
-                        movie_request_data = {
-                            "url": link,
-                            "is_censored": self.is_censored,
-                        }
-                        self.server.rpush(
-                            "movie:censored_link", json.dumps(movie_request_data)
-                        )
+            waterfall=bs.find(id="waterfall")
+            if waterfall:
+                bricks = bs.find_all("a", attrs={"class": "movie-box"})
+                if bricks:
+                    for brick in bricks:
+                        link = self.get_link(brick)
+                        if link:
+                            movie_request_data = {
+                                "url": link
+                            }
+                            self.server.lpush(
+                                "movie:start_urls", json.dumps(movie_request_data)
+                            )
+                            movie_request_data = {
+                                "url": link,
+                                "is_censored": self.is_censored,
+                            }
+                            self.server.lpush(
+                                "movie:censored_link", json.dumps(movie_request_data)
+                            )
 
+                else:
+                    self.log("No bricks found on this page.")
             else:
-                self.log("No bricks found on this page.")
-
+                self.log("No waterfall found on this page.")
             # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
@@ -67,8 +70,7 @@ class IndexSpider(RedisSpider):
             self.log("Request failed with status code: {}".format(response.status))
 
     def get_link(self, brick):
-        link = brick.find("a", href=True)
-        return link["href"] if link else None
+        return brick["href"] if brick["href"] else None
 
     def get_next_page(self, bs):
         return PageUtil().hasNextPage(bs)

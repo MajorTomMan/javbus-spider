@@ -100,7 +100,7 @@ class AttrsUtil:
             self.logUtil.log("label not found")
             return None
 
-    def getGenres(self, bs):
+    def getCategories(self, bs):
         genres = {}
         genresList = bs.find_all("span", {"class": "genre"})
         if genresList:
@@ -118,32 +118,36 @@ class AttrsUtil:
             self.logUtil.log("genres not found")
             return None
 
-    def getCategories(self, bs):
-        categories = {}
+    def getCategories(self, bs, is_censored):
+        categories = []
         ass = bs.find_all("a")
         if ass:
             for a in ass:
+                temp = {}
                 tag = a.text.strip()
-                if tag in self.ban.tags:
-                    self.logUtil.log("found ban tag skipping")
-                    continue
+                temp["name"] = tag
                 href = a["href"]
-                categories[tag] = href
+                temp["link"] = href
+                temp["is_censored"] = is_censored
+                categories.append(temp)
             return categories
         else:
             self.logUtil.log("categories not found")
             return None
 
     def getActresses(self, bs):
-        names = {}
+        names = []
         spans = bs.find_all("span", {"class": "genre"})
         if spans:
             for span in spans:
                 a = span.find("a")
                 if a:
+                    temp = {}
                     link = a["href"]
                     name = a.text
-                    names[name] = link
+                    temp["name"] = name
+                    temp["link"] = link
+                    names.append(temp)
             return names
         else:
             self.logUtil.log("actresses not found")
@@ -247,9 +251,9 @@ class AttrsUtil:
 
     def getMagnets(self, bs):
         magnets = []
-        table = bs.find("table",id="magnet-table")
+        table = bs.find("table", id="magnet-table")
         if table:
-            tbody=table.find("tbody")
+            tbody = table.find("tbody")
             if tbody:
                 trs = table.find_all("tr", attrs={"height": "35px"})
                 if trs:

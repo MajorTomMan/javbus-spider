@@ -21,6 +21,7 @@ from javbus.items import (
     LabelItem,
     MagnetItem,
     BigImageItem,
+    CategoryItem,
 )
 
 
@@ -35,25 +36,12 @@ class PageUtil:
     requestUtil = RequestUtil()
     timeoutUtil = None
 
-    def __init__(self) -> None:
-        pass
-
-    def parseDetailPage(self, link, is_censored):
+    def parseDetailPage(self, link, source, is_censored):
         """解析电影详情页"""
-        self.logUtil.log("sleeping in 10 seconds")
-        time.sleep(10)
-        source = self.webUtil.get(link, True)
         if source:
-            bs = BeautifulSoup(source, "html.parser")
-            page = self.getPage(bs, is_censored)
+            page = self.getPage(source, is_censored)
             if page != -1:
-                page.movie["link"] = link
-                actresses = page.actresses
-                code = page.movie.get("code")
-                # 女演员名字的集合
-                names = (
-                    [actress.get("name") for actress in actresses] if actresses else []
-                )
+                page["movie"]["link"] = link
                 return page
             else:
                 return -1
@@ -79,40 +67,40 @@ class PageUtil:
         series = SeriesItem()
         studio = StudioItem()
         label = LabelItem()
+        categories = CategoryItem()
         actressesList = []
         samples = []
         magnets = []
 
-        # 解析电影标题
-        title = self.attrsUtil.getTitle(bs)
-        if title:
-            movie.title = title
-
         # 获取大图链接
-        bigimage.link = self.getBigImageLink(bs)
+        # bigimage["link"] = self.getBigImageLink(bs)
 
         # 获取样品图像链接
-        self.getSampleImages(bs, samples)
+        # self.getSampleImages(bs, samples)
 
         # 获取电影信息（如代码、发行日期、导演等）
         self.getMovieInfo(bs, movie, director, studio, label, series)
 
         # 获取女演员信息
         actressesList = self.getActresses(bs, is_censored)
-
+        if actressesList:
+            categories = self.getCategories(bs, True, is_censored)
+        else:
+            categories = self.getCategories(bs, False, is_censored)
         # 获取种子链接
         magnets = self.getMagnets(bs)
 
         # 填充 PageItem 对象
         page = self.fillPageData(
             page,
-            bigimage,
             movie,
             director,
             series,
             studio,
             label,
             actressesList,
+            categories,
+            bigimage,
             samples,
             magnets,
         )
@@ -155,6 +143,9 @@ class PageUtil:
 
     def getMovieInfo(self, bs, movie, director, studio, label, series):
         """获取电影信息"""
+        title = self.attrsUtil.getTitle(bs)
+        if title:
+            movie["title"] = title
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -162,38 +153,54 @@ class PageUtil:
                 header = p.find("span", {"class": "header"})
                 if header:
                     if "識別碼:" in header:
-                        movie.code = self.attrsUtil.getCode(p)
+                        code = self.attrsUtil.getCode(p)
+                        movie["code"] = code
                     if "發行日期:" in header:
-                        movie.release_date = self.attrsUtil.getReleaseDate(header)
+                        date = self.attrsUtil.getReleaseDate(header)
+                        movie["release_date"] = date
                     if "長度:" in header:
-                        movie.length = self.attrsUtil.getLength(header)
+                        length = self.attrsUtil.getLength(header)
+                        movie["length"] = length
                     if "導演:" in header:
-                        director.name, director.link = list(
-                            self.attrsUtil.getDirector(p).items()
-                        )[0]
+                        d = self.attrsUtil.getDirector(p)
+                        director["name"] = list(d.keys())[0]
+                        director["link"] = d.get(director["name"])
                     if "製作商:" in header:
-                        studio.name, studio.link = list(
-                            self.attrsUtil.getStudio(p).items()
-                        )[0]
+                        s = self.attrsUtil.getStudio(p)
+                        studio["name"] = list(s.keys())[0]
+                        studio["link"] = s.get(studio["name"])
                     if "發行商:" in header:
-                        label.name, label.link = list(
-                            self.attrsUtil.getLabel(p).items()
-                        )[0]
+                        l = self.attrsUtil.getLabel(p)
+                        label["name"] = list(l.keys())[0]
+                        label["link"] = l.get(label["name"])
                     if "系列:" in header:
-                        series.name, series.link = (
-                            list(self.attrsUtil.getSeries(p).items())[0]
-                            if self.attrsUtil.getSeries(p)
-                            else ("", "")
-                        )
+                        s = self.attrsUtil.getSeries(p)
+                        if s:
+                            series["name"] = list(s.keys())[0]
+                            series["link"] = s.get(series["name"])
+                        else:
+                            self.logUtil.log("series not found")
 
     def getActresses(self, bs, is_censored):
         """获取所有的女演员信息"""
+        actresses=[]
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
             actresses = self.attrsUtil.getActresses(ps[-1])
             return actresses
-        return None 
+        return None
+
+    def getCategories(self, bs, has_actresses, is_censored):
+        temp=[]
+        info = bs.find("div", {"class": "col-md-3 info"})
+        if info:
+            ps = info.find_all("p")
+            if has_actresses:
+                temp = self.attrsUtil.getCategories(ps[-3], is_censored)
+            else:
+                temp = self.attrsUtil.getCategories(ps[-2], is_censored)
+        return temp
 
     def getMagnets(self, bs):
         """获取种子链接"""
@@ -221,25 +228,27 @@ class PageUtil:
     def fillPageData(
         self,
         page,
-        bigimage,
         movie,
         director,
         series,
         studio,
         label,
         actressesList,
+        categories,
+        bigimage,
         samples,
         magnets,
     ):
-        page.bigimage = bigimage
-        page.movie = movie
-        page.director = director
-        page.series = series
-        page.studio = studio
-        page.label = label
-        page.actresses = actressesList
-        page.sampleimage = samples
-        page.magnets = magnets
+        page["movie"] = movie
+        page["director"] = director
+        page["series"] = series
+        page["studio"] = studio
+        page["label"] = label
+        page["actresses"] = actressesList
+        page["categories"]=categories
+        page["bigimage"] = bigimage
+        page["sampleimage"] = samples
+        page["magnets"] = magnets
         return page
 
     def hasNextPage(self, bs):

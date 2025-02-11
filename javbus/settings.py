@@ -1,8 +1,8 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-09 12:02:11
-FilePath: \JavBus\spider\javbus\settings.py
+LastEditTime: 2025-02-11 23:02:56
+FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 # Scrapy settings for javbus project
@@ -117,3 +117,15 @@ REDIS_PARAMS = {
     "db": 0,
     "password": "root",
 }
+# 设置请求之间的延迟时间（单位：秒）
+DOWNLOAD_DELAY = 5  # 每个请求之间的延迟为 2 秒
+
+# 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
+RANDOMIZE_DOWNLOAD_DELAY = True
+
+# 设置最大并发请求数，避免过度并发
+CONCURRENT_REQUESTS = 2
+
+# 设置每个连接的最大并发请求数
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+CONCURRENT_REQUESTS_PER_IP = 2
