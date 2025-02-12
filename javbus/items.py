@@ -14,12 +14,6 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 import scrapy
 
 
-class JavbusItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
-
-
 class MovieItem(scrapy.Item):
     title = scrapy.Field()
     code = scrapy.Field()
@@ -126,3 +120,86 @@ class GenreItem(scrapy.Item):
 class StudioItem(scrapy.Item):
     name = scrapy.Field()
     link = scrapy.Field()
+
+# Actress 与 Category 的关系
+class ActressCategoryItem(scrapy.Item):
+    actress = scrapy.Field()
+    category = scrapy.Field()
+
+
+# Actress 与 Director 的关系
+class ActressDirectorItem(scrapy.Item):
+    actress = scrapy.Field()
+    director = scrapy.Field()
+
+
+# Actresses 与 Image 的关系
+class ActressesImageItem(scrapy.Item):
+    actress = scrapy.Field()
+    image = scrapy.Field()
+
+
+# Actress 与 Series 的关系
+class ActressSeriesItem(scrapy.Item):
+    actress = scrapy.Field()
+    series = scrapy.Field()
+
+
+# Actress 与 Studio 的关系
+class ActressStudioItem(scrapy.Item):
+    actress = scrapy.Field()
+    studio = scrapy.Field()
+
+
+
+# Genre 与 Category 的关系
+class GenreCategoryItem(scrapy.Item):
+    genre = scrapy.Field()
+    categories = scrapy.Field()
+
+
+
+# Movie 与 Actress 的关系
+class MovieActressItem(scrapy.Item):
+    movie = scrapy.Field()
+    actress = scrapy.Field()
+
+
+
+
+# Movie 与 Category 的关系
+class MovieCategoryItem(scrapy.Item):
+    movie = scrapy.Field()
+    categories = scrapy.Field()
+
+
+# Movie 与 Director 的关系
+class MovieDirectorItem(scrapy.Item):
+    movie = scrapy.Field()
+    director = scrapy.Field()
+
+
+# Movie 与 Label 的关系
+class MovieLabelItem(scrapy.Item):
+    movie = scrapy.Field()
+    label = scrapy.Field()
+
+
+# Movie 与 Magnet 的关系
+class MovieMagnetItem(scrapy.Item):
+    movie = scrapy.Field()
+    magnets = scrapy.Field()
+
+
+
+# Movie 与 Series 的关系
+class MovieSeriesItem(scrapy.Item):
+    movie = scrapy.Field()
+    series = scrapy.Field()
+
+
+# Movie 与 Studio 的关系
+class MovieStudioItem(scrapy.Item):
+    movie = scrapy.Field()
+    studio = scrapy.Field()
+
