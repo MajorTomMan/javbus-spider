@@ -10,7 +10,6 @@ import scrapy
 import json
 from javbus.spiders.movie_spider import MovieSpider
 from bs4 import BeautifulSoup
-from javbus.items import MovieItem
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 
@@ -19,8 +18,7 @@ class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = ["javbus.com"]
 
-    def __init__(self, url="https://www.javbus.com/page/", is_censored=True, *args, **kwargs):
-        super(IndexSpider, self).__init__(*args, **kwargs)
+    def __init__(self, url="https://www.javbus.com/page/", is_censored=True):
         self.base_url = url
         self.is_censored = is_censored
         self.page_num = 1
@@ -33,16 +31,14 @@ class IndexSpider(RedisSpider):
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
-            waterfall=bs.find(id="waterfall")
+            waterfall = bs.find(id="waterfall")
             if waterfall:
                 bricks = bs.find_all("a", attrs={"class": "movie-box"})
                 if bricks:
                     for brick in bricks:
                         link = self.get_link(brick)
                         if link:
-                            movie_request_data = {
-                                "url": link
-                            }
+                            movie_request_data = {"url": link}
                             self.server.lpush(
                                 "movie:start_urls", json.dumps(movie_request_data)
                             )

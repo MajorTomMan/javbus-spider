@@ -29,6 +29,10 @@ class MovieItem(scrapy.Item):
     is_censored = scrapy.Field()
 
 
+class ActressesItem(scrapy.Item):
+    actresses = scrapy.Field()
+
+
 class ActressItem(scrapy.Item):
     name = scrapy.Field()
     actress_link = scrapy.Field()

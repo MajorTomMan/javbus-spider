@@ -252,7 +252,6 @@ class PageUtil:
         return page
 
     def hasNextPage(self, bs):
-        bs = BeautifulSoup(response.text, "html.parser")
         next_button = bs.find("a", id="next")
         if next_button:
             return True

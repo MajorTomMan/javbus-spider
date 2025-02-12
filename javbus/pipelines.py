@@ -8,30 +8,37 @@
 from itemadapter import ItemAdapter
 from javbus.items import (
     MovieItem,
-    ActressItem,
+    ActressesItem,
     BigImageItem,
     CategoryItem,
     DirectorItem,
     LabelItem,
     MagnetItem,
     GenresItem,
+    StudioItem,
+    SeriesItem,
+    SampleImageItem
 )
 from javbus.utils.request_util import RequestUtil
 
 
 class JavbusPipeline:
+
     def __init__(self) -> None:
         self.request_util = RequestUtil()
         # 定义类型和接口的映射字典
         self.path_map = {
             GenresItem: "/genre/relation/category/save",
-            ActressItem: "/actress/save",
+            ActressesItem: "/actress/save",
             MovieItem: "/movie/save",
             BigImageItem: "/movie/relation/bigimage/save",
             CategoryItem: "/movie/relation/category/save",
             DirectorItem: "/movie/relation/director/save",
             LabelItem: "/movie/relation/label/save",
             MagnetItem: "/movie/relation/magnet/save",
+            StudioItem: "/movie/relation/studio/save",
+            SeriesItem: "/movie/relation/series/save",
+            SampleImageItem: "/movie/relation/sampleimage/save",
         }
 
     def process_item(self, item, spider):
