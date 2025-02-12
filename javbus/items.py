@@ -1,10 +1,11 @@
-'''
+"""
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-07 22:17:06
-FilePath: \JavBus\spider\javbus\items.py
+LastEditTime: 2025-02-12 21:17:26
+FilePath: \spider\javbus\items.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+"""
+
 # Define here the models for your scraped items
 #
 # See documentation in:
@@ -60,10 +61,10 @@ class DirectorItem(scrapy.Item):
 
 
 class ImageItem(scrapy.Item):
-    actresses = scrapy.Field() 
-    images = scrapy.Field()  
-    names = scrapy.Field()  
-    code = scrapy.Field()  
+    actresses = scrapy.Field()
+    images = scrapy.Field()
+    names = scrapy.Field()
+    code = scrapy.Field()
 
 
 class LabelItem(scrapy.Item):
@@ -72,41 +73,51 @@ class LabelItem(scrapy.Item):
 
 
 class MagnetItem(scrapy.Item):
-    name = scrapy.Field()  
-    link = scrapy.Field()  
-    size = scrapy.Field()  
-    share_date = scrapy.Field() 
+    name = scrapy.Field()
+    link = scrapy.Field()
+    size = scrapy.Field()
+    share_date = scrapy.Field()
+
 
 class MovieItem(scrapy.Item):
-    title = scrapy.Field()  
-    code = scrapy.Field()  
-    link = scrapy.Field()  
-    release_date = scrapy.Field() 
-    length = scrapy.Field() 
-    is_censored = scrapy.Field() 
+    title = scrapy.Field()
+    code = scrapy.Field()
+    link = scrapy.Field()
+    release_date = scrapy.Field()
+    length = scrapy.Field()
+    is_censored = scrapy.Field()
+
 
 class PageItem(scrapy.Item):
-    movie = scrapy.Field()  
-    label = scrapy.Field()  
-    director = scrapy.Field()  
-    studio = scrapy.Field()  
-    series = scrapy.Field()  
-    actresses = scrapy.Field() 
-    bigimage = scrapy.Field()  
-    categories = scrapy.Field()  
-    sampleimage = scrapy.Field()  
-    magnets = scrapy.Field() 
+    movie = scrapy.Field()
+    label = scrapy.Field()
+    director = scrapy.Field()
+    studio = scrapy.Field()
+    series = scrapy.Field()
+    actresses = scrapy.Field()
+    bigimage = scrapy.Field()
+    categories = scrapy.Field()
+    sampleimage = scrapy.Field()
+    magnets = scrapy.Field()
+
 
 class SampleImageItem(scrapy.Item):
     link = scrapy.Field()
 
-class SeriesItem(scrapy.Item):
-    name = scrapy.Field()
-    link = scrapy.Field()
 
 class SeriesItem(scrapy.Item):
     name = scrapy.Field()
     link = scrapy.Field()
+
+
+class GenresItem(scrapy.Item):
+    genre = scrapy.Field()
+    categories = scrapy.Field()
+
+
+class GenreItem(scrapy.Item):
+    name = scrapy.Field()
+
 
 class StudioItem(scrapy.Item):
     name = scrapy.Field()

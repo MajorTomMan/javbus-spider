@@ -1,5 +1,4 @@
-beautifulsoup4==4.12.3
-DrissionPage==4.0.4.25
-fake_useragent==1.4.0
-Requests==2.32.3
-winproxy==0.3.0a1
+beautifulsoup4
+DrissionPage
+fake_useragent
+Requests

@@ -62,9 +62,6 @@ class JavbusDownloaderMiddleware:
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
 
-    def __init__(self):
-        self.web_util = WebUtil()
-
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.

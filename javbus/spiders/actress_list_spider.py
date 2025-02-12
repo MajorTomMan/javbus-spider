@@ -29,7 +29,7 @@ class ActressListSpider(RedisSpider):
     allowed_domains = ["javbus.com"]
 
     def __init__(self, url, is_censored, *args, **kwargs):
-        super(ActressSpider, self).__init__(*args, **kwargs)
+        super(ActressListSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.is_censored = is_censored
 

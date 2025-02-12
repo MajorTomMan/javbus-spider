@@ -20,29 +20,16 @@ import redis
 class ActressDetailSpider(RedisSpider):
     name = "actress_detail"
     allowed_domains = ["javbus.com"]
-
-    def make_request_from_data(self, data):
-        data_dict = json.loads(data)
-        self.is_censored = self.str_to_bool(data_dict["is_censored"])
-        return Request(
-            url=data_dict["url"],
-            callback=self.parse,
-        )
+    censored_key = "actress_detail:censored_link"
 
     def parse(self, response):
+        censored_dict = self.server.lpop(self.censored_key)
+        censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
-            actressDetail = ActressUtil().getActressDetails()
-            actressDetail.is_censored = self.is_censored
-            if actressDetail:
-                yield actressDetail
+            actress_detail = ActressUtil().getActressDetails()
+            actress_detail.is_censored = censored["is_censored"]
+            if actress_detail:
+                yield actress_detail
         else:
             self.log("Request failed with status code: {}".format(response.status))
-
-    def str_to_bool(self,value: str) -> bool:
-        if value.lower() in ["true", "1", "t", "y", "yes"]:
-            return True
-        elif value.lower() in ["false", "0", "f", "n", "no"]:
-            return False
-        else:
-            raise ValueError(f"Cannot convert '{value}' to a boolean")

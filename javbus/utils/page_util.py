@@ -252,15 +252,8 @@ class PageUtil:
         return page
 
     def hasNextPage(self, bs):
-        underline = bs.find("div", {"class": "text-center hidden-xs"})
-        if underline:
-            ul = underline.find("ul", {"class": "pagination pagination-lg"})
-            if ul:
-                li = ul.find_all("li")
-                if li:
-                    for l in li:
-                        a = l.find("a", id="next")
-                        if a:
-                            return True
-        self.logUtil.log("this page dont have next page element")
+        bs = BeautifulSoup(response.text, "html.parser")
+        next_button = bs.find("a", id="next")
+        if next_button:
+            return True
         return False

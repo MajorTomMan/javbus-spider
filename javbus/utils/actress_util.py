@@ -16,10 +16,7 @@ class ActressUtil:
     companys = CompanyLinks()
     lock = threading.Lock()
 
-    def getActressDetails(self, link):
-        self.logUtil.log("sleeping in 10 seconds")
-        time.sleep(10)
-        source = self.webUtil.get(link)
+    def getActressDetails(self, source):
         if source:
             bs = BeautifulSoup(source, "html.parser")
             if bs:
@@ -32,7 +29,7 @@ class ActressUtil:
                 self.logUtil.log("actress detail page not found")
                 return None
         else:
-            self.logUtil.log("actress request " + link + " timeout")
+            self.logUtil.log("get actress details failed")
             return None
 
     def matchLinkIsCompanyLink(self, link):
