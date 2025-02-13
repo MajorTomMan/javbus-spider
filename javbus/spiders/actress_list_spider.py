@@ -66,7 +66,7 @@ class ActressListSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                base_url = self.base_url + "/" + str(self.page_num)
+                base_url = self.base_url + "/" + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )

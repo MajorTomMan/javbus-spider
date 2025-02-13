@@ -156,7 +156,7 @@ class SearchSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                next_url = self.get_next_url(str(self.page_num))
+                next_url = self.get_next_url(str(next_page_num))
                 yield scrapy.Request(
                     url,
                     callback=self.parse,

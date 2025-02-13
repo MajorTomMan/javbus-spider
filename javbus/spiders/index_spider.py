@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 22:54:32
+LastEditTime: 2025-02-13 23:25:14
 FilePath: \spider\javbus\spiders\index_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -60,7 +60,7 @@ class IndexSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                base_url = self.base_url + str(self.page_num)
+                base_url = self.base_url + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )
