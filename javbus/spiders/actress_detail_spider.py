@@ -1,3 +1,10 @@
+'''
+Date: 2025-02-13 19:14:01
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-13 22:39:30
+FilePath: \spider\javbus\spiders\actress_detail_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 """
 Date: 2025-02-08 22:42:20
 LastEditors: MajorTomMan 765719516@qq.com
@@ -26,6 +33,9 @@ class ActressDetailSpider(RedisSpider):
 
     def parse(self, response):
         censored_dict = self.server.lpop(self.censored_key)
+        if censored_dict is None:
+            self.log("censored_dict is None")
+            return
         censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")

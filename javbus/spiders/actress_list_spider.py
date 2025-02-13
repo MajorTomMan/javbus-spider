@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
@@ -28,10 +27,13 @@ class ActressListSpider(RedisSpider):
 
     def start_requests(self):
         url = self.base_url + str(self.page_num)
-        yield scrapy.Request(self.base_url, callback=self.parse)
+        yield scrapy.Request(
+            self.base_url, callback=self.parse, meta={"page_num": self.page_num}
+        )
 
     # 用于解析reponse的方法
     def parse(self, response):
+        page_num = response.meta['page_num'] 
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
@@ -63,9 +65,11 @@ class ActressListSpider(RedisSpider):
             # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
-                self.page_num += 1
+                next_page_num = page_num + 1
                 base_url = self.base_url + "/" + str(self.page_num)
-                yield scrapy.Request(base_url, callback=self.parse)
+                yield scrapy.Request(
+                    base_url, callback=self.parse, meta={"page_num": next_page_num}
+                )
             else:
                 self.log("No next page, stopping crawl.")
 

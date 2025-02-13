@@ -12,8 +12,12 @@ class ActressMovieSpider(RedisSpider):
     censored_key = "actress_movie:censored_link"
 
     def parse(self, response):
+        page_num = response.meta['page_num']  # 获取传递的页码
         if response.status == 200:
             censored_dict = self.server.lpop(self.censored_key)
+            if censored_dict is None:
+                self.log("censored_dict is None")
+                return
             censored = json.loads(censored_dict.decode("utf-8"))
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
@@ -43,9 +47,11 @@ class ActressMovieSpider(RedisSpider):
                 # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
-                self.page_num += 1
+                next_page_num = page_num + 1
                 base_url = censored["url"] + "/" + str(self.page_num)
-                yield scrapy.Request(base_url, callback=self.parse)
+                yield scrapy.Request(
+                    base_url, callback=self.parse, meta={"page_num": next_page_num }
+                )
             else:
                 self.log("No next page, stopping crawl.")
 

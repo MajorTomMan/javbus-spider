@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 22:30:16
+LastEditTime: 2025-02-13 22:46:48
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -103,10 +103,11 @@ FEED_EXPORT_ENCODING = "utf-8"
 # 启用 scrapy-redis 的调度器
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
-# 禁用请求去重（使用 Scrapy 默认去重类）
-DUPEFILTER_CLASS = "scrapy.dupefilters.BaseDupeFilter"
-# 配置请求队列使用 Redis 来存储待抓取链接
-SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.PriorityQueue"
+# 使用 FIFO 队列
+SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.FifoQueue"
+
+# 保证去重数据保存在 Redis 中，支持分布式
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # 持久化爬取队列（爬虫结束后，保留队列）
 SCHEDULER_PERSIST = True
 

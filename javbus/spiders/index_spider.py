@@ -1,4 +1,10 @@
-
+'''
+Date: 2025-02-13 19:14:01
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-13 22:54:32
+FilePath: \spider\javbus\spiders\index_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 import scrapy
 import json
 from bs4 import BeautifulSoup
@@ -16,10 +22,14 @@ class IndexSpider(RedisSpider):
         self.page_num = 1
 
     def start_requests(self):
+
         base_url = self.base_url + str(self.page_num)
-        yield scrapy.Request(base_url, callback=self.parse)
+        yield scrapy.Request(
+            base_url, callback=self.parse, meta={"page_num": self.page_num}
+        )
 
     def parse(self, response):
+        page_num = response.meta['page_num']  # 获取传递的页码
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
@@ -49,9 +59,11 @@ class IndexSpider(RedisSpider):
             # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
-                self.page_num += 1
+                next_page_num = page_num + 1
                 base_url = self.base_url + str(self.page_num)
-                yield scrapy.Request(base_url, callback=self.parse)
+                yield scrapy.Request(
+                    base_url, callback=self.parse, meta={"page_num": next_page_num}
+                )
             else:
                 self.log("No next page, stopping crawl.")
         else:

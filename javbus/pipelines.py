@@ -64,7 +64,7 @@ class JavbusPipeline:
         categories = page.get("categories")
         magnets = page.get("magnets")
         actresses = page.get("actresses")
-        if moive:
+        if movie:
             if actresses:
                 movie_actress_item = MovieActressItem(movie=movie, actress=actresses)
                 self.request_util.send(

@@ -48,38 +48,61 @@ class SearchSpider(RedisSpider):
         url = ""
         if self.actress:
             url = self.base_url + "searchstar/" + self.actress
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
         # Code search
         if self.code:
             url = self.base_url + "search/" + self.code + "&type=1"
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
         # Director search
         if self.director:
             url = self.base_url + "search/" + self.director + "&type=2"
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
         # Studio search
         if self.studio:
             url = self.base_url + "search/" + self.studio + "&type=3"
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
         # Label search
         if self.label:
             url = self.base_url + "search/" + self.label + "&type=4"
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
         # Series search
         if self.series:
             url = self.base_url + "search/" + self.series + "&type=5"
-            yield scrapy.Request(url, callback=self.parse)
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                meta={"page_num": self.page_num},
+            )
 
     def parse(self, response):
-        """
-        Parse the response for each page and check if there is a next page.
-        """
+        page_num = response.meta['page_num']
         if response.status == 200:
+
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {self.page_num}")
             waterfall = bs.find(id="waterfall")
@@ -132,9 +155,13 @@ class SearchSpider(RedisSpider):
             # 查找是否有下一页，若有则抓取
             next_page = self.get_next_page(bs)
             if next_page:
-                self.page_num += 1
+                next_page_num = page_num + 1
                 next_url = self.get_next_url(str(self.page_num))
-                yield scrapy.Request(next_url, callback=self.parse)
+                yield scrapy.Request(
+                    url,
+                    callback=self.parse,
+                    meta={"page_num": self.page_num},
+                )
             else:
                 self.log("Final page reached.")
                 return
