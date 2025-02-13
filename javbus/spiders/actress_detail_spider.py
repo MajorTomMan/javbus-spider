@@ -31,6 +31,7 @@ class ActressDetailSpider(RedisSpider):
             bs = BeautifulSoup(response.body, "html.parser")
             actress_detail = ActressUtil().getActressDetails(bs)
             actress_detail["is_censored"] = censored["is_censored"]
+            actress_detail["actress_link"] = censored["url"]
             if actress_detail:
                 actresses = ActressesItem()
                 actresses["actresses"] = [actress_detail]

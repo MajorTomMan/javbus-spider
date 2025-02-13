@@ -28,11 +28,6 @@ class JavbusPipeline:
         # 定义类型和接口的映射字典
         self.path_map = {
             ActressesItem: "/actress/save",
-            ActressCategoryItem: "/actress/relation/category/save",
-            ActressDirectorItem: "/actress/relation/director/save",
-            ActressesImageItem: "/actress/relation/image/save",
-            ActressSeriesItem: "/actress/relation/series/save",
-            ActressStudioItem: "/actress/relation/studio/save",
             GenreCategoryItem: "/genre/relation/category/save",
             MovieActressItem: "/movie/relation/actress/save",
             MovieCategoryItem: "/movie/relation/category/save",

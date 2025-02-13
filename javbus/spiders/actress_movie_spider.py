@@ -25,6 +25,9 @@ class ActressMovieSpider(RedisSpider):
                         link = self.get_link(brick)
                         if link:
                             movie_request_data = {"url": link}
+                            self.server.lpush(
+                                "movie:start_urls", json.dumps(movie_request_data)
+                            )
                             movie_request_data = {
                                 "url": link,
                                 "is_censored": censored["is_censored"],

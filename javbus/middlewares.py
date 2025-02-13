@@ -5,10 +5,12 @@
 
 from scrapy import signals
 from scrapy.http.response import Response
+
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.web_util import WebUtil
+
 
 class JavbusSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,

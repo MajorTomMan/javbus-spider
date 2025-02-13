@@ -10,6 +10,7 @@ import json
 import scrapy
 from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
+from javbus.utils.page_util import PageUtil
 
 
 class SearchSpider(RedisSpider):
@@ -20,9 +21,9 @@ class SearchSpider(RedisSpider):
     def __init__(
         self,
         url="https://www.javbus.com/",
-        actress="",
+        actress="北野未奈",
         code="",
-        director="麒麟",
+        director="",
         studio="",
         label="",
         series="",
@@ -83,35 +84,60 @@ class SearchSpider(RedisSpider):
             self.log(f"Now parsing page {self.page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
-                bricks = bs.find_all("a", attrs={"class": "movie-box"})
-                if bricks:
-                    for brick in bricks:
-                        link = self.get_link(brick)
-                        if link:
-                            movie_request_data = {"url": link}
+                if self.actress:
+                    avatar_boxs = bs.find_all(
+                        "a", attrs={"class": "avatar-box text-center"}
+                    )
+                    if avatar_boxs:
+                        for box in avatar_boxs:
+                            link = self.get_link(box)
+                            actress_detail_request_data = {
+                                "url": link,
+                            }
                             self.server.lpush(
-                                "movie:start_urls", json.dumps(movie_request_data)
+                                "actress_detail:start_urls",
+                                json.dumps(actress_detail_request_data),
                             )
-                            movie_request_data = {
+                            actress_detail_request_data = {
                                 "url": link,
                                 "is_censored": self.is_censored,
                             }
                             self.server.lpush(
-                                "movie:censored_link", json.dumps(movie_request_data)
+                                "actress_detail:censored_link",
+                                json.dumps(actress_detail_request_data),
                             )
-
                 else:
-                    self.log("No bricks found on this page.")
+                    bricks = bs.find_all("a", attrs={"class": "movie-box"})
+                    if bricks:
+                        for brick in bricks:
+                            link = self.get_link(brick)
+                            if link:
+                                movie_request_data = {"url": link}
+                                self.server.lpush(
+                                    "movie:start_urls", json.dumps(movie_request_data)
+                                )
+                                movie_request_data = {
+                                    "url": link,
+                                    "is_censored": self.is_censored,
+                                }
+                                self.server.lpush(
+                                    "movie:censored_link",
+                                    json.dumps(movie_request_data),
+                                )
+
+                    else:
+                        self.log("No bricks found on this page.")
             else:
                 self.log("No waterfall found on this page.")
             # 查找是否有下一页，若有则抓取
-            next_page = self.get_next_page(response)
+            next_page = self.get_next_page(bs)
             if next_page:
                 self.page_num += 1
                 next_url = self.get_next_url(str(self.page_num))
                 yield scrapy.Request(next_url, callback=self.parse)
             else:
                 self.log("Final page reached.")
+                return
         elif response.status == 404:
             self.log(f"Key Word Not Exist")
         else:
@@ -141,7 +167,7 @@ class SearchSpider(RedisSpider):
     def get_link(self, brick):
         return brick["href"] if brick["href"] else None
 
-    def get_next_page(self, response):
+    def get_next_page(self, bs):
         return PageUtil().hasNextPage(bs)
 
     def log(self, message):

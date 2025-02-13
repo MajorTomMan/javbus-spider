@@ -75,7 +75,7 @@ class PageUtil:
 
         # 获取电影信息（如代码、发行日期、导演等）
         self.getMovieInfo(bs, movie, director, studio, label, series)
-
+        movie["is_censored"] = is_censored
         # 获取女演员信息
         actressesList = self.getActresses(bs)
 

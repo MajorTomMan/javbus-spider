@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 19:19:12
+LastEditTime: 2025-02-13 22:30:16
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -103,8 +103,8 @@ FEED_EXPORT_ENCODING = "utf-8"
 # 启用 scrapy-redis 的调度器
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
-# 启用 scrapy-redis 的去重机制
-DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+# 禁用请求去重（使用 Scrapy 默认去重类）
+DUPEFILTER_CLASS = "scrapy.dupefilters.BaseDupeFilter"
 # 配置请求队列使用 Redis 来存储待抓取链接
 SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.PriorityQueue"
 # 持久化爬取队列（爬虫结束后，保留队列）
@@ -118,14 +118,15 @@ REDIS_PARAMS = {
     "password": "root",
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 10  # 每个请求之间的延迟为 2 秒
+DOWNLOAD_DELAY = 6  # 每个请求之间的延迟为 5 秒
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 # 设置最大并发请求数，避免过度并发
-CONCURRENT_REQUESTS = 2
+CONCURRENT_REQUESTS = 1
 
 # 设置每个连接的最大并发请求数
-CONCURRENT_REQUESTS_PER_DOMAIN = 2
-CONCURRENT_REQUESTS_PER_IP = 2
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+CONCURRENT_REQUESTS_PER_IP = 1
+DUPEFILTER_DEBUG = True
