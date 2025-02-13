@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 22:38:39
+LastEditTime: 2025-02-13 23:14:50
 FilePath: \spider\javbus\spiders\movie_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -50,7 +50,7 @@ class MovieSpider(RedisSpider):
                             "is_censored": censored["is_censored"],
                         }
                         self.server.lpush(
-                            "actress_detail:censored",
+                            "actress_detail:censored_link",
                             json.dumps(actress_detail_request_data),
                         )
             else:
