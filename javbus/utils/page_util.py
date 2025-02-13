@@ -18,6 +18,7 @@ from javbus.items import (
     MagnetItem,
     BigImageItem,
     CategoryItem,
+    ActressItem
 )
 
 
@@ -77,7 +78,7 @@ class PageUtil:
 
         # 获取女演员信息
         actressesList = self.getActresses(bs)
-        
+
         if actressesList:
             categories = self.getCategories(bs, True, is_censored)
         else:
@@ -157,7 +158,13 @@ class PageUtil:
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
-            actresses = self.attrsUtil.getActresses(ps[-1])
+            actressList = self.attrsUtil.getActresses(ps[-1])
+            if actressList:
+                for actress in actressList:
+                    temp = ActressItem()
+                    temp["actress_link"] = actress["link"]
+                    temp["name"] = actress["name"]
+                    actresses.append(temp)
             return actresses
         return None
 
@@ -186,7 +193,7 @@ class PageUtil:
                 items = self.build_magnet_items(links)
                 return items
             return None 
-        
+
     def build_magnet_items(self,links):
         magnets = []
         if links:
@@ -198,9 +205,9 @@ class PageUtil:
                 magnet["share_date"] = link["share_date"]
                 magnets.append(magnet)
         return magnets
-    
+
     def get_magnet_parameters(self,scripts):
-            # 初始化参数
+        # 初始化参数
         gid, uc, img = None, None, None
         # 从 <script> 标签中提取参数
         for script in scripts:
@@ -222,7 +229,7 @@ class PageUtil:
             print("gid:{} uc:{} img:{} ",gid,uc,img)
             return False
         return True
-    
+
     def matchLinkIsCompanyLink(self, link):
         """检查链接是否属于公司"""
         for company in self.companys.values:

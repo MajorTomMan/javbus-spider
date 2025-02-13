@@ -1,5 +1,3 @@
-
-
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
@@ -9,11 +7,7 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from javbus.items import (
-    ActressCategoryItem,
-    ActressDirectorItem,
-    ActressesImageItem,
-    ActressSeriesItem,
-    ActressStudioItem,
+    ActressesItem,
     GenreCategoryItem,
     MovieActressItem,
     MovieCategoryItem,
@@ -33,6 +27,7 @@ class JavbusPipeline:
         self.request_util = RequestUtil()
         # 定义类型和接口的映射字典
         self.path_map = {
+            ActressesItem: "/actress/save",
             ActressCategoryItem: "/actress/relation/category/save",
             ActressDirectorItem: "/actress/relation/director/save",
             ActressesImageItem: "/actress/relation/image/save",
@@ -51,7 +46,7 @@ class JavbusPipeline:
     def process_item(self, item, spider):
         item_type = type(item)
         if item_type is PageItem:
-            trans_page(item)
+            self.trans_page(item)
         elif item_type in self.path_map:
             # 获取接口 URL
             endpoint = self.path_map[item_type]
@@ -65,74 +60,57 @@ class JavbusPipeline:
         # 返回处理后的 item
         return item
 
-def trans_page(page):
+    def trans_page(self, page):
         movie = page.get("movie")
         label = page.get("label")
         director = page.get("director")
         studio = page.get("studio")
         series = page.get("series")
-        actresses = page.get("actresses")
-        bigimage = page.get("bigimage")
         categories = page.get("categories")
-        sampleimage = page.get("sampleimage")
         magnets = page.get("magnets")
-        # 关系 item 填充
-        actress_category_item = ActressCategoryItem()
-        actress_category_item["actress"] = actresses
-        actress_category_item["category"] = categories
-        yield actress_category_item
-
-        actress_director_item = ActressDirectorItem()
-        actress_director_item["actress"] = actresses
-        actress_director_item["director"] = director
-        yield actress_director_item
-
-        actresses_image_item = ActressesImageItem()
-        actresses_image_item["actress"] = actresses
-        actresses_image_item["image"] = bigimage
-        yield actresses_image_item
-
-        actress_series_item = ActressSeriesItem()
-        actress_series_item["actress"] = actresses
-        actress_series_item["series"] = series
-        yield actress_series_item
-
-        actress_studio_item = ActressStudioItem()
-        actress_studio_item["actress"] = actresses
-        actress_studio_item["studio"] = studio
-        yield actress_studio_item
-
-        movie_actress_item = MovieActressItem()
-        movie_actress_item["movie"] = movie
-        movie_actress_item["actress"] = actresses
-        yield movie_actress_item
-
-        movie_category_item = MovieCategoryItem()
-        movie_category_item["movie"] = movie
-        movie_category_item["categories"] = categories
-        yield movie_category_item
-
-        movie_director_item = MovieDirectorItem()
-        movie_director_item["movie"] = movie
-        movie_director_item["director"] = director
-        yield movie_director_item
-
-        movie_label_item = MovieLabelItem()
-        movie_label_item["movie"] = movie
-        movie_label_item["label"] = label
-        yield movie_label_item
-
-        movie_magnet_item = MovieMagnetItem()
-        movie_magnet_item["movie"] = movie
-        movie_magnet_item["magnets"] = magnets
-        yield movie_magnet_item
-
-        movie_series_item = MovieSeriesItem()
-        movie_series_item["movie"] = movie
-        movie_series_item["series"] = series
-        yield movie_series_item
-
-        movie_studio_item = MovieStudioItem()
-        movie_studio_item["movie"] = movie
-        movie_studio_item["studio"] = studio
-        yield movie_studio_item
+        actresses = page.get("actresses")
+        if moive:
+            if actresses:
+                movie_actress_item = MovieActressItem(movie=movie, actress=actresses)
+                self.request_util.send(
+                    ItemAdapter(movie_actress_item).asdict(),
+                    self.path_map[MovieActressItem],
+                )
+            if categories:
+                movie_category_item = MovieCategoryItem(
+                    movie=movie, categories=categories
+                )
+                self.request_util.send(
+                    ItemAdapter(movie_category_item).asdict(),
+                    self.path_map[MovieCategoryItem],
+                )
+            if director:
+                movie_director_item = MovieDirectorItem(movie=movie, director=director)
+                self.request_util.send(
+                    ItemAdapter(movie_director_item).asdict(),
+                    self.path_map[MovieDirectorItem],
+                )
+            if label:
+                movie_label_item = MovieLabelItem(movie=movie, label=label)
+                self.request_util.send(
+                    ItemAdapter(movie_label_item).asdict(),
+                    self.path_map[MovieLabelItem],
+                )
+            if magnets:
+                movie_magnet_item = MovieMagnetItem(movie=movie, magnets=magnets)
+                self.request_util.send(
+                    ItemAdapter(movie_magnet_item).asdict(),
+                    self.path_map[MovieMagnetItem],
+                )
+            if series:
+                movie_series_item = MovieSeriesItem(movie=movie, series=series)
+                self.request_util.send(
+                    ItemAdapter(movie_series_item).asdict(),
+                    self.path_map[MovieSeriesItem],
+                )
+            if studio:
+                movie_studio_item = MovieStudioItem(movie=movie, studio=studio)
+                self.request_util.send(
+                    ItemAdapter(movie_studio_item).asdict(),
+                    self.path_map[MovieStudioItem],
+                )

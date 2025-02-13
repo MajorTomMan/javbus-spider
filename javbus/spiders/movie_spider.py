@@ -1,3 +1,10 @@
+'''
+Date: 2025-02-13 19:14:01
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-13 20:59:03
+FilePath: \spider\javbus\spiders\movie_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 
 
 import json
@@ -27,20 +34,21 @@ class MovieSpider(RedisSpider):
             # 启动女优详情页爬虫
             if actresses:
                 for actress in actresses:
-                    link = actress["link"]
+                    link = actress["actress_link"]
                     if link:
                         actress_detail_request_data = {
                             "url": link,
                         }
                         self.server.lpush(
-                            "actress_detail:start_urls", actress_detail_request_data
+                            "actress_detail:start_urls", json.dumps(actress_detail_request_data)
                         )
                         actress_detail_request_data = {
                             "url": link,
                             "is_censored": censored["is_censored"],
                         }
                         self.server.lpush(
-                            "actress_detail:censored", actress_detail_request_data
+                            "actress_detail:censored",
+                            json.dumps(actress_detail_request_data),
                         )
             else:
                 self.log("get actresses failed")

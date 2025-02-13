@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-11 23:02:56
+LastEditTime: 2025-02-13 19:19:12
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -111,7 +111,7 @@ SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.PriorityQueue"
 SCHEDULER_PERSIST = True
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
-REDIS_HOST = "localhost"
+REDIS_HOST = "192.168.253.131"
 REDIS_PORT = 6379
 REDIS_PARAMS = {
     "db": 0,
