@@ -1,14 +1,6 @@
-"""
-Date: 2025-02-08 19:33:55
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-09 18:04:20
-FilePath: \spider\javbus\spiders\index_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-"""
 
 import scrapy
 import json
-from javbus.spiders.movie_spider import MovieSpider
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider

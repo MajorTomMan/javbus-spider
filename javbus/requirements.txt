@@ -1,4 +1,0 @@
-beautifulsoup4
-DrissionPage
-fake_useragent
-Requests

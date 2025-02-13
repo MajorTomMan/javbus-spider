@@ -111,14 +111,14 @@ SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.PriorityQueue"
 SCHEDULER_PERSIST = True
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
-REDIS_HOST = "192.168.253.131"
+REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_PARAMS = {
     "db": 0,
     "password": "root",
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 5  # 每个请求之间的延迟为 2 秒
+DOWNLOAD_DELAY = 10  # 每个请求之间的延迟为 2 秒
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True

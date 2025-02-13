@@ -1,13 +1,13 @@
-from javbus.utils.log_util import LogUtil
+import logging
 from javbus.utils.attrs.ban_list import Ban
-from javbus.utils.web_util import WebUtil
-
 
 class AttrsUtil:
     ban = Ban()
-    logUtil = LogUtil()
-    webUtil = WebUtil()
+    logger = logging.getLogger(__name__)  # 使用 Scrapy 的日志系统
 
+    def __init__(self):
+        self.logger.setLevel(logging.INFO)  # 设置日志级别
+        
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})
         if a:
@@ -17,7 +17,7 @@ class AttrsUtil:
         if a:
             link = a["href"]
             return link
-        self.logUtil.log("singer movie link not found,skip")
+        self.logger.warning("singer movie link not found, skip")
         return None
 
     def getTitle(self, bs):
@@ -26,7 +26,7 @@ class AttrsUtil:
             title = h3.text
             return title
         else:
-            self.logUtil.log("title not found")
+            self.logger.warning("title not found")
             return None
 
     def getBigImage(self, bs):
@@ -35,7 +35,7 @@ class AttrsUtil:
             img = imgs["src"]
             return img
         else:
-            self.logUtil.log("img not found")
+            self.logger.warning("img not found")
             return None
 
     def getSampleImages(self, bs):
@@ -47,7 +47,7 @@ class AttrsUtil:
                 sampleImgs.append(href)
             return sampleImgs
         else:
-            self.logUtil.log("sampleImage not found")
+            self.logger.warning("sampleImage not found")
 
     def getCode(self, bs):
         span = bs.find("span", {"style": "color:#CC0000;"})
@@ -55,7 +55,7 @@ class AttrsUtil:
             code = span.text.strip()
             return code
         else:
-            self.logUtil.log("code not found")
+            self.logger.warning("code not found")
             return None
 
     def getReleaseDate(self, bs):
@@ -73,7 +73,7 @@ class AttrsUtil:
             director[name] = href
             return director
         else:
-            self.logUtil.log("director not found")
+            self.logger.warning("director not found")
             return None
 
     def getStudio(self, bs):
@@ -85,7 +85,7 @@ class AttrsUtil:
             studio[name] = href
             return studio
         else:
-            self.logUtil.log("studio not found")
+            self.logger.warning("studio not found")
             return None
 
     def getLabel(self, bs):
@@ -97,25 +97,35 @@ class AttrsUtil:
             labels[name] = href
             return labels
         else:
-            self.logUtil.log("label not found")
+            self.logger.warning("label not found")
             return None
 
-    def getCategories(self, bs):
-        genres = {}
-        genresList = bs.find_all("span", {"class": "genre"})
-        if genresList:
-            for genre in genresList:
+    def getGenres(self, bs,is_censored):
+        genres = []
+        genreList = bs.find_all("span", {"class": "genre"})
+        if genreList:
+            # 查找目标影片是否含有禁止的分类
+            for genre in genreList:
                 a = genre.find("a")
                 if a:
-                    href = a["href"]
                     tag = a.text.strip()
                     if tag in self.ban.tags:
-                        self.logUtil.log("found ban tag in movie")
+                        self.logger.warning("found ban tag in movie")
                         return -1
-                    genres[tag] = href
+            for genre in genreList:
+                temp={}
+                a = genre.find("a")
+                if a:
+                    temp = {}
+                    tag = a.text.strip()
+                    temp["name"] = tag
+                    href = a["href"]
+                    temp["link"] = href
+                    temp["is_censored"] = is_censored
+                    genres.append(temp)
             return genres
         else:
-            self.logUtil.log("genres not found")
+            self.logger.warning("genres not found")
             return None
 
     def getCategories(self, bs, is_censored):
@@ -132,7 +142,7 @@ class AttrsUtil:
                 categories.append(temp)
             return categories
         else:
-            self.logUtil.log("categories not found")
+            self.logger.warning("categories not found")
             return None
 
     def getActresses(self, bs):
@@ -150,7 +160,7 @@ class AttrsUtil:
                     names.append(temp)
             return names
         else:
-            self.logUtil.log("actresses not found")
+            self.logger.warning("actresses not found")
             return None
 
     def getSeries(self, bs):
@@ -162,7 +172,7 @@ class AttrsUtil:
             series[serie] = href
             return series
         else:
-            self.logUtil.log("series not found")
+            self.logger.warning("series not found")
             return None
 
     def getPhotoLink(self, bs):
@@ -222,7 +232,7 @@ class AttrsUtil:
             name = span.text
             return name.strip()
         else:
-            self.logUtil.log("name not found")
+            self.logger.warning("name not found")
             return None
 
     def getSingleActressLink(self, bs):
@@ -238,7 +248,7 @@ class AttrsUtil:
                     "actress_link": box["href"],
                 }
         else:
-            self.logUtil.log("page actresses not found")
+            self.logger.warning("page actresses not found")
             return None
 
     def getIsCensored(self, bs):
@@ -251,31 +261,23 @@ class AttrsUtil:
 
     def getMagnets(self, bs):
         magnets = []
-        table = bs.find("table", id="magnet-table")
-        if table:
-            tbody = table.find("tbody")
-            if tbody:
-                trs = table.find_all("tr", attrs={"height": "35px"})
-                if trs:
-                    for tr in trs:
-                        magnet = {}
-                        tds = tr.find_all("td")
-                        if tds:
-                            a = tds[0].find("a")
-                            if a:
-                                magnet["name"] = a.text.strip()
-                                magnet["link"] = a["href"]
-                            a = tds[1].find("a")
-                            if a:
-                                magnet["size"] = a.text.strip()
-                            a = tds[2].find("a")
-                            if a:
-                                magnet["share_date"] = a.text.strip()
-                            magnets.append(magnet)
-                        else:
-                            return None
-                    return magnets
-            else:
-                return None
+        trs = bs.find_all("tr")
+        if trs:
+            for tr in trs:
+                temp = {}
+                tds = tr.find_all("td")
+                if tds:
+                    a = tds[0].find("a")
+                    if a:
+                        temp["name"] = a.text.strip()
+                        temp["link"] = a["href"]
+                        a = tds[1].find("a")
+                        if a:
+                            temp["size"] = a.text.strip()
+                        a = tds[2].find("a")
+                        if a:
+                            temp["share_date"] = a.text.strip()
+                        magnets.append(temp)
+            return magnets
         else:
-            return None
+                return None

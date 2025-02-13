@@ -1,8 +1,5 @@
 import threading
-import time
-from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.utils.log_util import LogUtil
 from javbus.utils.web_util import WebUtil
 from javbus.utils.attrs.company_links import CompanyLinks
 
@@ -12,7 +9,6 @@ from javbus.items import ActressItem
 class ActressUtil:
     webUtil = WebUtil()
     attrsUtil = AttrsUtil()
-    logUtil = LogUtil()
     companys = CompanyLinks()
     lock = threading.Lock()
 

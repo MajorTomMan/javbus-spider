@@ -1,18 +1,8 @@
-"""
-Date: 2025-02-08 22:06:25
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-09 19:20:11
-FilePath: \spider\javbus\spiders\movie_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-"""
+
 
 import json
-import scrapy
 from javbus.utils.page_util import PageUtil
-from javbus.spiders.actress_detail_spider import ActressDetailSpider
 from scrapy_redis.spiders import RedisSpider
-from scrapy.http import Request
-from scrapy.linkextractors import LinkExtractor
 from bs4 import BeautifulSoup
 
 
@@ -27,9 +17,12 @@ class MovieSpider(RedisSpider):
         censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
-            page = PageUtil().parseDetailPage(
+            page = PageUtil().parsePage(
                 link=response.url, source=bs, is_censored=censored["is_censored"]
             )
+            if page== -1:
+                self.log("in "+censored["url"]+" found ban tag skipping crawl")
+                return
             actresses = page["actresses"]
             # 启动女优详情页爬虫
             if actresses:

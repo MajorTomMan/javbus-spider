@@ -1,14 +1,10 @@
-import hashlib
-import threading
-import time
-from urllib.parse import urlparse
+import re
+import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.image_util import ImageUtil
-from javbus.utils.log_util import LogUtil
 from javbus.utils.actress_util import ActressUtil
 from javbus.utils.request_util import RequestUtil
-from javbus.utils.timeout_util import TimeoutUtil
 from javbus.utils.web_util import WebUtil
 from javbus.utils.attrs.company_links import CompanyLinks
 from javbus.items import (
@@ -30,23 +26,21 @@ class PageUtil:
     imageUtil = ImageUtil()
     attrsUtil = AttrsUtil()
     actressUtil = ActressUtil()
-    logUtil = LogUtil()
     companys = CompanyLinks()
-    lock = threading.Lock()
     requestUtil = RequestUtil()
     timeoutUtil = None
 
-    def parseDetailPage(self, link, source, is_censored):
+    def parsePage(self, link, source, is_censored):
         """解析电影详情页"""
         if source:
-            page = self.getPage(source, is_censored)
+            page = self.getPage(source, link,is_censored)
             if page != -1:
                 page["movie"]["link"] = link
                 return page
             else:
                 return -1
         else:
-            self.logUtil.log("request " + link + " timeout")
+            scrapy.logger.error("Request {} timed out".format(link))
             return None
 
     def getSampleImageLinks(self, page):
@@ -58,7 +52,7 @@ class PageUtil:
                     links.append(sample[link])
         return links
 
-    def getPage(self, bs, is_censored):
+    def getPage(self, bs, link ,is_censored):
         """从 BeautifulSoup 中获取页面数据"""
         page = PageItem()
         bigimage = BigImageItem()
@@ -82,13 +76,17 @@ class PageUtil:
         self.getMovieInfo(bs, movie, director, studio, label, series)
 
         # 获取女演员信息
-        actressesList = self.getActresses(bs, is_censored)
+        actressesList = self.getActresses(bs)
+        
         if actressesList:
             categories = self.getCategories(bs, True, is_censored)
         else:
             categories = self.getCategories(bs, False, is_censored)
+        # 发现禁止的tag,该网页放弃爬取
+        if categories == -1:
+            return -1
         # 获取种子链接
-        magnets = self.getMagnets(bs)
+        magnets = self.getMagnets(bs,link)
 
         # 填充 PageItem 对象
         page = self.fillPageData(
@@ -107,40 +105,6 @@ class PageUtil:
 
         return page
 
-    '''
-    def getBigImageLink(self, bs):
-        """获取大图链接"""
-        # 查找类名为 "bigImage" 的 <a> 标签
-        a = bs.find("a", {"class": "bigImage"})
-
-        if a:
-            # 从该 <a> 标签获取大图链接
-            bigImageLink = self.attrsUtil.getBigImage(a)
-
-            # 检查大图链接是否为公司链接
-            is_company_link = self.matchLinkIsCompanyLink(bigImageLink)
-
-            if is_company_link:
-                return bigImageLink
-            else:
-                # 拼接基础 URL 和大图链接
-                return self.baseUrl + bigImageLink
-
-        # 如果没有找到符合条件的 <a> 标签，返回空字符串
-        return ""
-
-    def getSampleImages(self, bs, samples):
-        """ 获取样品图像 """
-        waterfall = bs.find("div", {"id": "sample-waterfall"})
-        if waterfall:
-            imgs = self.attrsUtil.getSampleImages(waterfall)
-            if imgs:
-                for img in imgs:
-                    sample = SampleImageItem()
-                    sample.link = self.matchLinkIsCompanyLink(img) and img or self.baseUrl + img
-                    samples.append(sample.toDict())
-    '''
-
     def getMovieInfo(self, bs, movie, director, studio, label, series):
         """获取电影信息"""
         title = self.attrsUtil.getTitle(bs)
@@ -154,36 +118,42 @@ class PageUtil:
                 if header:
                     if "識別碼:" in header:
                         code = self.attrsUtil.getCode(p)
-                        movie["code"] = code
+                        if code:
+                            movie["code"] = code
                     if "發行日期:" in header:
                         date = self.attrsUtil.getReleaseDate(header)
-                        movie["release_date"] = date
+                        if date:
+                            movie["release_date"] = date
                     if "長度:" in header:
                         length = self.attrsUtil.getLength(header)
-                        movie["length"] = length
+                        if length:
+                            movie["length"] = length
                     if "導演:" in header:
                         d = self.attrsUtil.getDirector(p)
-                        director["name"] = list(d.keys())[0]
-                        director["link"] = d.get(director["name"])
+                        if d:
+                            director["name"] = list(d.keys())[0]
+                            director["link"] = d.get(director["name"])
                     if "製作商:" in header:
                         s = self.attrsUtil.getStudio(p)
-                        studio["name"] = list(s.keys())[0]
-                        studio["link"] = s.get(studio["name"])
+                        if s:
+                            studio["name"] = list(s.keys())[0]
+                            studio["link"] = s.get(studio["name"])
                     if "發行商:" in header:
                         l = self.attrsUtil.getLabel(p)
-                        label["name"] = list(l.keys())[0]
-                        label["link"] = l.get(label["name"])
+                        if l:
+                            label["name"] = list(l.keys())[0]
+                            label["link"] = l.get(label["name"])
                     if "系列:" in header:
                         s = self.attrsUtil.getSeries(p)
                         if s:
                             series["name"] = list(s.keys())[0]
                             series["link"] = s.get(series["name"])
                         else:
-                            self.logUtil.log("series not found")
+                            scrapy.logger.warning("Series not found")
 
-    def getActresses(self, bs, is_censored):
+    def getActresses(self, bs):
         """获取所有的女演员信息"""
-        actresses=[]
+        actresses = []
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
@@ -192,32 +162,67 @@ class PageUtil:
         return None
 
     def getCategories(self, bs, has_actresses, is_censored):
-        temp=[]
+        temp = []
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
             if has_actresses:
-                temp = self.attrsUtil.getCategories(ps[-3], is_censored)
+                temp = self.attrsUtil.getGenres(ps[-3], is_censored)
             else:
-                temp = self.attrsUtil.getCategories(ps[-2], is_censored)
+                temp = self.attrsUtil.getGenres(ps[-2], is_censored)
         return temp
 
-    def getMagnets(self, bs):
-        """获取种子链接"""
-        magnetLinks = self.attrsUtil.getMagnets(bs)
+    def getMagnets(self,bs,link):
+        # 找到所有 <script> 标签
+        scripts = bs.find_all('script')
+        gid, uc, img = self.get_magnet_parameters(scripts)
+        if self.check_parameters(gid,uc,img):
+            magnet_reponse=self.requestUtil.sendMangets(gid,img,uc,link)
+            if magnet_reponse:
+                # 解析 JavaScript 返回的 HTML 内容
+                magnet_link = BeautifulSoup(magnet_reponse.content, "html.parser")
+                # 获取磁力链接
+                links = self.attrsUtil.getMagnets(magnet_link)
+                items = self.build_magnet_items(links)
+                return items
+            return None 
+        
+    def build_magnet_items(self,links):
         magnets = []
-        if magnetLinks:
-            for link in magnetLinks:
-                m = MagnetItem()
-                m.name, m.link, m.size, m.share_date = (
-                    link["name"],
-                    link["link"],
-                    link["size"],
-                    link["share_date"],
-                )
-                magnets.append(m.toDict())
+        if links:
+            for link in links:
+                magnet = MagnetItem()
+                magnet["name"] = link["name"]
+                magnet["link"] = link["link"]
+                magnet["size"] = link["size"]
+                magnet["share_date"] = link["share_date"]
+                magnets.append(magnet)
         return magnets
+    
+    def get_magnet_parameters(self,scripts):
+            # 初始化参数
+        gid, uc, img = None, None, None
+        # 从 <script> 标签中提取参数
+        for script in scripts:
+            if script.string:
+                match_gid = re.search(r"var gid = (\d+);",script.string);
+                match_uc = re.search(r"var uc = (\d+);",script.string);
+                match_img =re.search( r"var img = '(.*?)';",script.string);
+                if match_gid:
+                    gid = match_gid.group(1)
+                if match_uc:
+                    uc = match_uc.group(1)
+                if match_img:
+                    img = match_img.group(1)
+        return   gid, uc, img
 
+    def check_parameters(self,gid, uc, img):
+        if gid is None or uc is None or img is None:
+            print("some parameters is none ")
+            print("gid:{} uc:{} img:{} ",gid,uc,img)
+            return False
+        return True
+    
     def matchLinkIsCompanyLink(self, link):
         """检查链接是否属于公司"""
         for company in self.companys.values:
@@ -245,7 +250,7 @@ class PageUtil:
         page["studio"] = studio
         page["label"] = label
         page["actresses"] = actressesList
-        page["categories"]=categories
+        page["categories"] = categories
         page["bigimage"] = bigimage
         page["sampleimage"] = samples
         page["magnets"] = magnets

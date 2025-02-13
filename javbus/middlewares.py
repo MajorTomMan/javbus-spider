@@ -4,7 +4,7 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-from scrapy.http import Response
+from scrapy.http.response import Response
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 from scrapy_redis.spiders import RedisSpider

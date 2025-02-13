@@ -4,7 +4,6 @@ from fake_useragent import UserAgent
 import requests
 
 from javbus.utils.request_util import RequestUtil
-from javbus.utils.log_util import LogUtil
 from javbus.utils.web_util import WebUtil
 from javbus.items import ImageItem
 
@@ -12,7 +11,6 @@ from javbus.items import ImageItem
 class ImageUtil:
     ua = None
     basePath = ""
-    logUtil = LogUtil()
     requestUtil = RequestUtil()
     logFilePath = "./image.log"
     webUtil = WebUtil()
@@ -100,7 +98,7 @@ class ImageUtil:
             return True
         return False
 
-    def __save(self, response, path):
+    def save(self, response, path):
         try:
             with open(path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=32):
@@ -109,7 +107,7 @@ class ImageUtil:
         except Exception as e:
             self.logUtil.log(f"Error saving image to {path}: {e}", log_file_path=self.logFilePath)
 
-    def __checkFileIsExists(self, actresses, code, filename, isBigImage):
+    def checkFileIsExists(self, actresses, code, filename, isBigImage):
         folder = "bigImage" if isBigImage else "sample"
         path = os.path.join(self.basePath, actresses, code, folder, filename)
         return os.path.exists(path)

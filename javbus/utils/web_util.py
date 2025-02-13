@@ -3,14 +3,12 @@ import threading
 from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 from DrissionPage import ChromiumOptions, ChromiumPage
-from javbus.utils.log_util import LogUtil
-
+import logging  # 使用 Scrapy 自带的日志
 
 class WebUtil:
     _instance = None
     _lock = threading.Lock()
     page = None  # 浏览器驱动
-    logUtil = LogUtil()
     baseUrls = ["https://www.javbus.com/"]
     logFilePath = "./driver.log"
 
@@ -25,6 +23,7 @@ class WebUtil:
     def __init_once(self):
         """初始化WebUtil单例，不初始化浏览器"""
         self.lock = threading.Lock()
+        self.logger = logging.getLogger(__name__)  # 初始化 Scrapy 的日志记录器
 
     def initialize_driver(self):
         """初始化浏览器驱动配置"""
@@ -51,27 +50,18 @@ class WebUtil:
                     return None
                 return source
             except Exception as e:
-                self.logUtil.log(
-                    f"Error with URL {new_url}: {e}", log_file_path=self.logFilePath
-                )
-        self.logUtil.log(
-            "All backup URLs tried, none successful.", log_file_path=self.logFilePath
-        )
+                self.logger.error(f"Error with URL {new_url}: {e}")
+        self.logger.error("All backup URLs tried, none successful.")
         return None
 
     def send(self, new_url):
         """发送请求并返回响应内容"""
-        self.logUtil.log(
-            f"Starting request to {new_url} ...........", log_file_path=self.logFilePath
-        )
+        self.logger.info(f"Starting request to {new_url} ...........")
         start_time = time.time()
 
         self.initialize_driver()  # 确保在请求时浏览器已经初始化
         if self.page is None:  # 如果浏览器初始化失败，直接返回
-            self.logUtil.log(
-                f"Browser initialization failed for {new_url}.",
-                log_file_path=self.logFilePath,
-            )
+            self.logger.error(f"Browser initialization failed for {new_url}.")
             return None
 
         tag = self.page.new_tab()  # 创建新标签页
@@ -79,10 +69,7 @@ class WebUtil:
         time.sleep(20)  # 可以根据需要调整等待时间
         end_time = time.time()
         source = tag.html
-        self.logUtil.log(
-            f"Request finished. Time spent: {end_time - start_time:.2f} seconds.",
-            log_file_path=self.logFilePath,
-        )
+        self.logger.info(f"Request finished. Time spent: {end_time - start_time:.2f} seconds.")
         tag.close()
         return source
 

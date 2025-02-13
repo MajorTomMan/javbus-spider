@@ -77,15 +77,6 @@ class MagnetItem(scrapy.Item):
     share_date = scrapy.Field()
 
 
-class MovieItem(scrapy.Item):
-    title = scrapy.Field()
-    code = scrapy.Field()
-    link = scrapy.Field()
-    release_date = scrapy.Field()
-    length = scrapy.Field()
-    is_censored = scrapy.Field()
-
-
 class PageItem(scrapy.Item):
     movie = scrapy.Field()
     label = scrapy.Field()
