@@ -4,7 +4,6 @@ from fake_useragent import UserAgent
 import requests
 
 from javbus.utils.request_util import RequestUtil
-from javbus.utils.web_util import WebUtil
 from javbus.items import ImageItem
 
 
@@ -13,7 +12,6 @@ class ImageUtil:
     basePath = ""
     requestUtil = RequestUtil()
     logFilePath = "./image.log"
-    webUtil = WebUtil()
 
     def __init__(self) -> None:
         self.ua = UserAgent()

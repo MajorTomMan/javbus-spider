@@ -33,10 +33,12 @@ class ActressListSpider(RedisSpider):
 
     # 用于解析reponse的方法
     def parse(self, response):
-        page_num = response.meta['page_num'] 
+        page_num = response.meta['page_num']
+        if page_num is None:
+            page_num = self.page_num
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
-            self.log(f"Now parsing page {self.page_num}")
+            self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
                 boxs = bs.find_all("a", attrs={"class": "avatar-box text-center"})

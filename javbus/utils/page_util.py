@@ -5,7 +5,6 @@ from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.image_util import ImageUtil
 from javbus.utils.actress_util import ActressUtil
 from javbus.utils.request_util import RequestUtil
-from javbus.utils.web_util import WebUtil
 from javbus.utils.attrs.company_links import CompanyLinks
 from javbus.items import (
     DirectorItem,
@@ -23,7 +22,6 @@ from javbus.items import (
 
 
 class PageUtil:
-    webUtil = WebUtil()
     imageUtil = ImageUtil()
     attrsUtil = AttrsUtil()
     actressUtil = ActressUtil()

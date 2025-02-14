@@ -32,7 +32,6 @@ ROBOTSTXT_OBEY = False
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
@@ -44,10 +43,23 @@ DOWNLOAD_DELAY = 3
 # TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-# DEFAULT_REQUEST_HEADERS = {
-#    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-#    "Accept-Language": "en",
-# }
+DEFAULT_REQUEST_HEADERS = {
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "accept-encoding": "gzip, deflate, br, zstd",
+    "accept-language": "zh-CN,zh;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
+    "cache-control": "no-cache",
+    "pragma": "no-cache",
+    "priority": "u=0, i",
+    "sec-ch-ua": '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    "sec-fetch-dest": "document",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-site": "none",
+    "sec-fetch-user": "?1",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+ }
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -59,15 +71,14 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     "javbus.middlewares.JavbusDownloaderMiddleware": 543,
-    "scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware": None,
-    "scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware": None,
+    "javbus.middlewares.JavbusProxyMiddleware":542,
 }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-# }
+#EXTENSIONS = {
+#    'scrapy_prometheus.prometheus.PrometheusExporter': 500,
+#}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
@@ -106,13 +117,14 @@ SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 # 使用 FIFO 队列
 SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.FifoQueue"
 
+
 # 保证去重数据保存在 Redis 中，支持分布式
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # 持久化爬取队列（爬虫结束后，保留队列）
 SCHEDULER_PERSIST = True
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
-REDIS_HOST = "192.168.253.131"
+REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_PARAMS = {
     "db": 0,
@@ -131,3 +143,8 @@ CONCURRENT_REQUESTS = 1
 CONCURRENT_REQUESTS_PER_DOMAIN = 1
 CONCURRENT_REQUESTS_PER_IP = 1
 DUPEFILTER_DEBUG = True
+
+# Prometheus Exporter 配置
+PROMETHEUS_EXPORTER_ENABLED = True
+PROMETHEUS_EXPORTER_PORT = 9090  # 你可以自定义端口
+PROMETHEUS_EXPORTER_PATH = '/metrics'  # Prometheus 默认暴露的路径

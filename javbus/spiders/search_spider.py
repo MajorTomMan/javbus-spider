@@ -101,10 +101,12 @@ class SearchSpider(RedisSpider):
 
     def parse(self, response):
         page_num = response.meta['page_num']
+        if page_num is None:
+            page_num = self.page_num
         if response.status == 200:
 
             bs = BeautifulSoup(response.body, "html.parser")
-            self.log(f"Now parsing page {self.page_num}")
+            self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
                 if self.actress:

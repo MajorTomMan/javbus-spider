@@ -13,6 +13,8 @@ class ActressMovieSpider(RedisSpider):
 
     def parse(self, response):
         page_num = response.meta['page_num']  # 获取传递的页码
+        if page_num is None:
+            page_num = self.page_num
         if response.status == 200:
             censored_dict = self.server.lpop(self.censored_key)
             if censored_dict is None:
@@ -20,7 +22,7 @@ class ActressMovieSpider(RedisSpider):
                 return
             censored = json.loads(censored_dict.decode("utf-8"))
             bs = BeautifulSoup(response.body, "html.parser")
-            self.log(f"Now parsing page {self.page_num}")
+            self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
                 bricks = bs.find_all("a", attrs={"class": "movie-box"})

@@ -9,7 +9,6 @@ class WebUtil:
     _instance = None
     _lock = threading.Lock()
     page = None  # 浏览器驱动
-    baseUrls = ["https://www.javbus.com/"]
     logFilePath = "./driver.log"
 
     def __new__(cls, *args, **kwargs):
