@@ -17,7 +17,7 @@ from javbus.items import (
     MagnetItem,
     BigImageItem,
     CategoryItem,
-    ActressItem
+    ActressItem,
 )
 
 
@@ -28,11 +28,12 @@ class PageUtil:
     companys = CompanyLinks()
     requestUtil = RequestUtil()
     timeoutUtil = None
+    base_url = "https://www.javbus.com"
 
     def parsePage(self, link, source, is_censored):
         """解析电影详情页"""
         if source:
-            page = self.getPage(source, link,is_censored)
+            page = self.getPage(source, link, is_censored)
             if page != -1:
                 page["movie"]["link"] = link
                 return page
@@ -51,7 +52,7 @@ class PageUtil:
                     links.append(sample[link])
         return links
 
-    def getPage(self, bs, link ,is_censored):
+    def getPage(self, bs, link, is_censored):
         """从 BeautifulSoup 中获取页面数据"""
         page = PageItem()
         bigimage = BigImageItem()
@@ -62,14 +63,13 @@ class PageUtil:
         label = LabelItem()
         categories = CategoryItem()
         actressesList = []
-        samples = []
         magnets = []
 
         # 获取大图链接
-        # bigimage["link"] = self.getBigImageLink(bs)
+        bigimage["link"] = self.getBigImageLink(bs)
 
         # 获取样品图像链接
-        # self.getSampleImages(bs, samples)
+        sampleimages = self.getSampleImages(bs)
 
         # 获取电影信息（如代码、发行日期、导演等）
         self.getMovieInfo(bs, movie, director, studio, label, series)
@@ -85,7 +85,7 @@ class PageUtil:
         if categories == -1:
             return -1
         # 获取种子链接
-        magnets = self.getMagnets(bs,link)
+        magnets = self.getMagnets(bs, link)
 
         # 填充 PageItem 对象
         page = self.fillPageData(
@@ -98,7 +98,7 @@ class PageUtil:
             actressesList,
             categories,
             bigimage,
-            samples,
+            sampleimages,
             magnets,
         )
 
@@ -177,12 +177,12 @@ class PageUtil:
                 temp = self.attrsUtil.getGenres(ps[-2], is_censored)
         return temp
 
-    def getMagnets(self,bs,link):
+    def getMagnets(self, bs, link):
         # 找到所有 <script> 标签
-        scripts = bs.find_all('script')
+        scripts = bs.find_all("script")
         gid, uc, img = self.get_magnet_parameters(scripts)
-        if self.check_parameters(gid,uc,img):
-            magnet_reponse=self.requestUtil.sendMangets(gid,img,uc,link)
+        if self.check_parameters(gid, uc, img):
+            magnet_reponse = self.requestUtil.sendMangets(gid, img, uc, link)
             if magnet_reponse:
                 # 解析 JavaScript 返回的 HTML 内容
                 magnet_link = BeautifulSoup(magnet_reponse.content, "html.parser")
@@ -190,9 +190,9 @@ class PageUtil:
                 links = self.attrsUtil.getMagnets(magnet_link)
                 items = self.build_magnet_items(links)
                 return items
-            return None 
+            return None
 
-    def build_magnet_items(self,links):
+    def build_magnet_items(self, links):
         magnets = []
         if links:
             for link in links:
@@ -204,27 +204,27 @@ class PageUtil:
                 magnets.append(magnet)
         return magnets
 
-    def get_magnet_parameters(self,scripts):
+    def get_magnet_parameters(self, scripts):
         # 初始化参数
         gid, uc, img = None, None, None
         # 从 <script> 标签中提取参数
         for script in scripts:
             if script.string:
-                match_gid = re.search(r"var gid = (\d+);",script.string);
-                match_uc = re.search(r"var uc = (\d+);",script.string);
-                match_img =re.search( r"var img = '(.*?)';",script.string);
+                match_gid = re.search(r"var gid = (\d+);", script.string)
+                match_uc = re.search(r"var uc = (\d+);", script.string)
+                match_img = re.search(r"var img = '(.*?)';", script.string)
                 if match_gid:
                     gid = match_gid.group(1)
                 if match_uc:
                     uc = match_uc.group(1)
                 if match_img:
                     img = match_img.group(1)
-        return   gid, uc, img
+        return gid, uc, img
 
-    def check_parameters(self,gid, uc, img):
+    def check_parameters(self, gid, uc, img):
         if gid is None or uc is None or img is None:
             print("some parameters is none ")
-            print("gid:{} uc:{} img:{} ",gid,uc,img)
+            print("gid:{} uc:{} img:{} ", gid, uc, img)
             return False
         return True
 
@@ -234,6 +234,34 @@ class PageUtil:
             if company in link:
                 return True
         return False
+
+    def getBigImageLink(self, bs):
+        """获取大图链接"""
+        a = bs.find("a", {"class": "bigImage"})
+
+        if a:
+            link = self.attrsUtil.getBigImage(a)
+            is_company_link = self.matchLinkIsCompanyLink(link)
+            if is_company_link:
+                return bigImageLink
+            else:
+                return self.base_url + link
+
+        return ""
+
+    def getSampleImages(self, bs):
+        samples = []
+        waterfall = bs.find("div", {"id": "sample-waterfall"})
+        if waterfall:
+            imgs = self.attrsUtil.getSampleImages(waterfall)
+            if imgs:
+                for img in imgs:
+                    sample = SampleImageItem()
+                    sample["link"] = (
+                        self.matchLinkIsCompanyLink(img) and img or self.base_url + img
+                    )
+                    samples.append(sample)
+        return samples
 
     def fillPageData(
         self,
@@ -246,7 +274,7 @@ class PageUtil:
         actressesList,
         categories,
         bigimage,
-        samples,
+        sampleimages,
         magnets,
     ):
         page["movie"] = movie
@@ -257,7 +285,7 @@ class PageUtil:
         page["actresses"] = actressesList
         page["categories"] = categories
         page["bigimage"] = bigimage
-        page["sampleimage"] = samples
+        page["sampleimages"] = sampleimages
         page["magnets"] = magnets
         return page
 

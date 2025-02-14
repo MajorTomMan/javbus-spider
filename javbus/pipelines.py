@@ -16,6 +16,8 @@ from javbus.items import (
     MovieMagnetItem,
     MovieSeriesItem,
     MovieStudioItem,
+    MovieBigImageItem,
+    MovieSampleItem,
     PageItem,
 )
 from javbus.utils.request_util import RequestUtil
@@ -36,6 +38,8 @@ class JavbusPipeline:
             MovieMagnetItem: "/movie/relation/magnet/save",
             MovieSeriesItem: "/movie/relation/series/save",
             MovieStudioItem: "/movie/relation/studio/save",
+            MovieBigImageItem: "/movie/relation/bigimage/save",
+            MovieSampleItem: "/movie/relation/sampleimage/save",
         }
 
     def process_item(self, item, spider):
@@ -64,6 +68,8 @@ class JavbusPipeline:
         categories = page.get("categories")
         magnets = page.get("magnets")
         actresses = page.get("actresses")
+        bigimage = page.get("bigimage")
+        sampleimages = page.get("sampleimages")
         if movie:
             if actresses:
                 movie_actress_item = MovieActressItem(movie=movie, actress=actresses)
@@ -108,4 +114,18 @@ class JavbusPipeline:
                 self.request_util.send(
                     ItemAdapter(movie_studio_item).asdict(),
                     self.path_map[MovieStudioItem],
+                )
+            if bigimage:
+                movie_bigimage_item = MovieBigImageItem(movie=movie, big_image=bigimage)
+                self.request_util.send(
+                    ItemAdapter(movie_bigimage_item).asdict(),
+                    self.path_map[MovieBigImageItem],
+                )
+            if sampleimages:
+                movie_sampleimages_item = MovieSampleItem(
+                    movie=movie, sample_images=sampleimages
+                )
+                self.request_util.send(
+                    ItemAdapter(movie_sampleimages_item).asdict(),
+                    self.path_map[MovieSampleItem],
                 )
