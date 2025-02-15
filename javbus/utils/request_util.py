@@ -47,8 +47,7 @@ class RequestUtil:
         except Exception as e:
             self.logger.error(f"Unexpected error in POST request: {str(e)}")
 
-    def get(self, path):
-        url = self.baseUrl + path
+    def get(self, url):
         try:
             response = self.session.get(url)
             response.raise_for_status()

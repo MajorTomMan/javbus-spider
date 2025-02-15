@@ -2,7 +2,6 @@ import re
 import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.utils.image_util import ImageUtil
 from javbus.utils.actress_util import ActressUtil
 from javbus.utils.request_util import RequestUtil
 from javbus.utils.attrs.company_links import CompanyLinks
@@ -22,14 +21,13 @@ from javbus.items import (
 
 
 class PageUtil:
-    imageUtil = ImageUtil()
     attrsUtil = AttrsUtil()
     actressUtil = ActressUtil()
     companys = CompanyLinks()
     requestUtil = RequestUtil()
     timeoutUtil = None
     base_url = "https://www.javbus.com"
-
+    big_image_url = "https://pics.dmm.co.jp/mono/movie/adult/"
     def parsePage(self, link, source, is_censored):
         """解析电影详情页"""
         if source:
@@ -65,12 +63,6 @@ class PageUtil:
         actressesList = []
         magnets = []
 
-        # 获取大图链接
-        bigimage["link"] = self.getBigImageLink(bs)
-
-        # 获取样品图像链接
-        sampleimages = self.getSampleImages(bs)
-
         # 获取电影信息（如代码、发行日期、导演等）
         self.getMovieInfo(bs, movie, director, studio, label, series)
         movie["is_censored"] = is_censored
@@ -86,7 +78,11 @@ class PageUtil:
             return -1
         # 获取种子链接
         magnets = self.getMagnets(bs, link)
+        # 获取大图链接
+        bigimage["link"] = self.getBigImageLink(bs,movie["code"])
 
+        # 获取样品图像链接
+        sampleimages = self.getSampleImages(bs)
         # 填充 PageItem 对象
         page = self.fillPageData(
             page,
@@ -235,18 +231,21 @@ class PageUtil:
                 return True
         return False
 
-    def getBigImageLink(self, bs):
-        """获取大图链接"""
-        a = bs.find("a", {"class": "bigImage"})
-
-        if a:
-            link = self.attrsUtil.getBigImage(a)
-            is_company_link = self.matchLinkIsCompanyLink(link)
-            if is_company_link:
-                return bigImageLink
-            else:
-                return self.base_url + link
-
+    def getBigImageLink(self, bs,code):
+        if code:
+            url = self.big_image_url+code+"/"+code+"pl.jpg"
+            response = self.requestUtil.get(url)
+            if response.status_code == 200:
+                return url
+            else: 
+                a = bs.find("a", {"class": "bigImage"})
+                if a:
+                    link = self.attrsUtil.getBigImage(a)
+                    is_company_link = self.matchLinkIsCompanyLink(link)
+                    if is_company_link:
+                        return bigImageLink
+                    else:
+                        return self.base_url + link
         return ""
 
     def getSampleImages(self, bs):
@@ -294,3 +293,22 @@ class PageUtil:
         if next_button:
             return True
         return False
+
+    def get_backup_links(self, bs):
+        backup_links = []
+        alert = bs.find(
+            "div", {"class": "alert alert-info alert-dismissable alert-common"}
+        )
+        if alert:
+            rows = alert.find_all("a")[1:]
+            if rows:
+                print("found back links")
+                for row in rows:
+                    link = row["href"]
+                    backup_links.append(link)
+                return backup_links
+            else:
+                print("couldnt found back links")
+                return None
+        else:
+            return None

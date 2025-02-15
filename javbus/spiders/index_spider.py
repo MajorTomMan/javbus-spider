@@ -1,10 +1,11 @@
-'''
+"""
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 23:25:14
+LastEditTime: 2025-02-15 20:33:54
 FilePath: \spider\javbus\spiders\index_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+"""
+
 import scrapy
 import json
 from bs4 import BeautifulSoup
@@ -22,18 +23,22 @@ class IndexSpider(RedisSpider):
         self.page_num = 1
 
     def start_requests(self):
-
         base_url = self.base_url + str(self.page_num)
         yield scrapy.Request(
             base_url, callback=self.parse, meta={"page_num": self.page_num}
         )
 
     def parse(self, response):
-        page_num = response.meta['page_num']
+        page_num = response.meta["page_num"]
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
+            links = PageUtil().get_backup_links(bs)
+            if links:
+                for link in links:
+                    back_link={"url":link}
+                    self.server.lpush("javbus:back_links", json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:

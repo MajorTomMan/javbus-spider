@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-14 23:11:43
+LastEditTime: 2025-02-15 21:54:45
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -131,7 +131,7 @@ REDIS_PARAMS = {
     "password": "root",
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 6  # 每个请求之间的延迟为 5 秒
+DOWNLOAD_DELAY = 13  # 每个请求之间的延迟为 13 秒
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
@@ -140,11 +140,6 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 CONCURRENT_REQUESTS = 1
 
 # 设置每个连接的最大并发请求数
-CONCURRENT_REQUESTS_PER_DOMAIN = 1
-CONCURRENT_REQUESTS_PER_IP = 1
+CONCURRENT_REQUESTS_PER_DOMAIN = 2
+CONCURRENT_REQUESTS_PER_IP = 2
 DUPEFILTER_DEBUG = True
-
-# Prometheus Exporter 配置
-PROMETHEUS_EXPORTER_ENABLED = True
-PROMETHEUS_EXPORTER_PORT = 9090  # 你可以自定义端口
-PROMETHEUS_EXPORTER_PATH = '/metrics'  # Prometheus 默认暴露的路径
