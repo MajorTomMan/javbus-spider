@@ -1,6 +1,9 @@
 import random
 import requests
-import scrapy
+import logging
+
+# 创建日志记录器
+logger = logging.getLogger(__name__)
 
 
 class RequestUtil:
@@ -33,47 +36,44 @@ class RequestUtil:
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
-            scrapy.logger.error(f"Error in GET request to {url}: {str(e)}")
+            logger.error(f"Error in GET request to {url}: {str(e)}")
         except Exception as e:
-            scrapy.logger.error(f"Unexpected error in GET request: {str(e)}")
+            logger.error(f"Unexpected error in GET request: {str(e)}")
 
     def post(self, data, path, is_image=False):
         url = self.baseUrl + path
         headers = self.image_headers if is_image else self.headers
-
         try:
             response = self.session.post(url, json=data, headers=headers)
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:
-            scrapy.scrapy.logger.error(f"Error in POST request to {url}: {str(e)}")
+            logger.error(f"Error in POST request to {url}: {str(e)}")
         except Exception as e:
-            scrapy.logger.error(f"Unexpected error in POST request: {str(e)}")
+            logger.error(f"Unexpected error in POST request: {str(e)}")
 
         try:
             response = self.session.get(url)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
-            scrapy.logger.error(f"Error in GET request to {url}: {str(e)}")
+            logger.error(f"Error in GET request to {url}: {str(e)}")
         except Exception as e:
-            scrapy.logger.error(f"Unexpected error in GET request: {str(e)}")
+            logger.error(f"Unexpected error in GET request: {str(e)}")
 
     def send(self, data, path, is_image=False):
         response = self.post(data=data, path=path, is_image=is_image)
         if not response:
-            scrapy.logger.error(
-                f"Error sending data to {path}. Check server status or logs."
-            )
-            scrapy.logger.error(f"Data: {data}")
+            logger.error(f"Error sending data to {path}. Check server status or logs.")
+            logger.error(f"Data: {data}")
         elif response.status_code == 200:
-            scrapy.logger.info(f"Successfully sent data to {path}")
+            logger.info(f"Successfully sent data to {path}")
         else:
-            scrapy.logger.warning(f"Failed to send data to {path}")
-            scrapy.logger.warning(
+            logger.warning(f"Failed to send data to {path}")
+            logger.warning(
                 f"Status Code: {response.status_code}, Reason: {response.reason}"
             )
-            scrapy.logger.warning(f"Response Body: {response.text}")
+            logger.warning(f"Response Body: {response.text}")
 
     def sendImage(self, data, path):
         self.send(data, path, is_image=True)
@@ -86,12 +86,9 @@ class RequestUtil:
         if referer:
             self.magnet_headers["referer"] = referer
         try:
-            response = requests.get(
-                url=url,
-                headers=self.magnet_headers,
-            )
+            response = requests.get(url=url, headers=self.magnet_headers)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as error:
-            scrapy.logger.error(f"请求失败: {error}")
+            logger.error(f"request failed with: {error}")
             return None
