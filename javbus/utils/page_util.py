@@ -299,7 +299,7 @@ class PageUtil:
         page["actresses"] = actressesList
         page["categories"] = categories
         page["bigimage"] = bigimage
-        page["sampleimage"] = sampleimages
+        page["sampleimages"] = sampleimages
         page["magnets"] = magnets
         return page
 
