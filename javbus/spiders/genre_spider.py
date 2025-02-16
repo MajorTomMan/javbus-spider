@@ -1,3 +1,4 @@
+
 """
 Date: 2025-02-14 20:07:34
 LastEditors: MajorTomMan 765719516@qq.com
@@ -28,9 +29,6 @@ class GenreSpider(RedisSpider):
             url = self.base_url + "genre"
         else:
             url = self.base_url + "uncensored" + "/genre"
-        self.logger.info(
-            "self.base_url:" + url + " type(self.is_censored):" + str(type(self.is_censored))
-        )
         yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):
