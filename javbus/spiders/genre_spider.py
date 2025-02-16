@@ -21,9 +21,9 @@ class GenreSpider(RedisSpider):
 
     def start_requests(self):
         if self.is_censored is False:
-            self.base_url = self.base_url + "/uncensored" + "/genre"
+            self.base_url = self.base_url + "uncensored" + "/genre"
         else:
-            self.base_url = self.base_url + "/genre"
+            self.base_url = self.base_url + "genre"
         yield scrapy.Request(self.base_url, callback=self.parse)
 
     def parse(self, response):
