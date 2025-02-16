@@ -17,7 +17,7 @@ class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = ["javbus.com"]
 
-    def __init__(self, url="https://www.javbus.com/", is_censored=True):
+    def __init__(self, url="https://www.busdmm.help/", is_censored=True):
 
         self.base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)

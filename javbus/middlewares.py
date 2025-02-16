@@ -54,20 +54,19 @@ class JavbusSpiderMiddleware:
 
 
 class JavbusDownloaderMiddleware:
-    # Not all methods need to be defined. If a method is not defined,
-    # scrapy acts as if the downloader middleware does not modify the
-    # passed objects.
 
     def process_request(self, request, spider):
+        spider.logger.info(f"Sending request: {request.url}")
         return None
 
     def process_response(self, request, response, spider):
-        # 处理响应，记录响应状态码并检查是否有异常
-        # 检查状态码
+        spider.logger.info(f"Received response: {response.url} with status: {response.status}")
         return response
 
     def process_exception(self, request, exception, spider):
-        pass
+        spider.logger.error(f"Exception occurred for request {request.url}: {exception}")
+        return None
+
 
 
 
