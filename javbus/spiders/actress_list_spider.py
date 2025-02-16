@@ -16,7 +16,7 @@ from javbus.utils.attrs_util import AttrsUtil
 # 女优列表爬虫
 class ActressListSpider(RedisSpider):
     name = "actresses_list"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
     page_num = 1
 
     def __init__(self, url="https://www.javbus.com/", is_censored=False):

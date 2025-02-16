@@ -15,7 +15,7 @@ from javbus.utils.attrs_util import AttrsUtil
 
 class IndexSpider(RedisSpider):
     name = "index"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
 
     def __init__(self, url="https://www.busdmm.help/", is_censored=True):
 

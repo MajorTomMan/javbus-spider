@@ -15,7 +15,7 @@ from javbus.utils.attrs_util import AttrsUtil
 
 class SearchSpider(RedisSpider):
     name = "search"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
     search_type = 1
 
     def __init__(

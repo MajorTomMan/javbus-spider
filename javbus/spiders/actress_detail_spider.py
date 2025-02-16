@@ -20,7 +20,7 @@ import redis
 # 女优详情页爬虫
 class ActressDetailSpider(RedisSpider):
     name = "actress_detail"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
     censored_key = "actress_detail:censored_link"
     page_num = 1
 

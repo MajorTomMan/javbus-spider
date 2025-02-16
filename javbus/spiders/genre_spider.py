@@ -18,7 +18,7 @@ from javbus.utils.attrs_util import AttrsUtil
 
 class GenreSpider(RedisSpider):
     name = "genre"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
 
     def __init__(self, url="https://www.javbus.com/", is_censored=True):
         self.base_url = url

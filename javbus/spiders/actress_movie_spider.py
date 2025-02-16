@@ -14,7 +14,7 @@ from javbus.utils.page_util import PageUtil
 
 class ActressMovieSpider(RedisSpider):
     name = "actress_movie"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
     page_num = 1
     censored_key = "actress_movie:censored_link"
     is_first_time = True

@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 
 class MovieSpider(RedisSpider):
     name = "movie"
-    allowed_domains = ["javbus.com"]
+    allowed_domains = None
     is_censored = True
     censored_key = "movie:censored_link"
 
