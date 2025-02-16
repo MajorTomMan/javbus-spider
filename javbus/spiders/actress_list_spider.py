@@ -20,6 +20,7 @@ class ActressListSpider(RedisSpider):
     page_num = 1
 
     def __init__(self, url="https://www.javbus.com/", is_censored=False):
+        super(ActressListSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.is_censored = is_censored
 

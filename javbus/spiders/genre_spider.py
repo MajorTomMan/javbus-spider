@@ -1,3 +1,11 @@
+"""
+Date: 2025-02-14 20:07:34
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-16 20:17:45
+FilePath: \spider\javbus\spiders\genre_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+"""
+
 import scrapy
 import hashlib
 from urllib.parse import urlparse
@@ -11,20 +19,19 @@ class GenreSpider(RedisSpider):
     name = "genre"
     allowed_domains = ["javbus.com"]
 
-    def __init__(
-        self,
-        url="https://www.javbus.com/",
-        is_censored=True,
-    ):
+    def __init__(self, url="https://www.javbus.com/", is_censored=True):
         self.base_url = url
-        self.is_censored = is_censored
+        self.is_censored = AttrsUtil().str_to_bool(is_censored)
 
     def start_requests(self):
-        if self.is_censored is False:
-            self.base_url = self.base_url + "uncensored" + "/genre"
+        if self.is_censored:
+            url = self.base_url + "genre"
         else:
-            self.base_url = self.base_url + "genre"
-        yield scrapy.Request(self.base_url, callback=self.parse)
+            url = self.base_url + "uncensored" + "/genre"
+        self.logger.info(
+            "self.base_url:" + url + " type(self.is_censored):" + str(type(self.is_censored))
+        )
+        yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):
         if response.status == 200:

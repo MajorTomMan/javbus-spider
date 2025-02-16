@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 18:41:59
+LastEditTime: 2025-02-16 20:16:03
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -18,18 +18,6 @@ BOT_NAME = "javbus"
 
 SPIDER_MODULES = ["javbus.spiders"]
 NEWSPIDER_MODULE = "javbus.spiders"
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "loggers": {
-        "scrapy_redis": {
-            "level": "ERROR",  # 只显示错误级别的日志
-            "handlers": ["console"],
-            "propagate": False,
-        },
-    },
-}
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 

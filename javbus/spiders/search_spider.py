@@ -11,7 +11,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.page_util import PageUtil
-
+from javbus.utils.attrs_util import AttrsUtil
 
 class SearchSpider(RedisSpider):
     name = "search"
@@ -29,6 +29,7 @@ class SearchSpider(RedisSpider):
         series="",
         is_censored=False,
     ):
+        super(SearchSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.page_num = 1
         self.actress = actress

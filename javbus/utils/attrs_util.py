@@ -7,7 +7,7 @@ class AttrsUtil:
 
     def __init__(self):
         self.logger.setLevel(logging.INFO)  # 设置日志级别
-        
+
     def getLink(self, bs):
         a = bs.find("a", {"class": "movie-box"})
         if a:
@@ -280,4 +280,11 @@ class AttrsUtil:
                         magnets.append(temp)
             return magnets
         else:
-                return None
+            return None
+
+
+    def str_to_bool(self, value):
+        """
+        将字符串转换为布尔值（'True'/'False' 转换为 True/False）
+        """
+        return value.lower() == "true"

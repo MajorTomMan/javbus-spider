@@ -11,15 +11,16 @@ import json
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
-
+from javbus.utils.attrs_util import AttrsUtil
 
 class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = ["javbus.com"]
 
     def __init__(self, url="https://www.javbus.com/", is_censored=False):
+        super(IndexSpider, self).__init__(*args, **kwargs)
         self.base_url = url
-        self.is_censored = is_censored
+        self.is_censored = AttrsUtil().str_to_bool(is_censored)
         self.page_num = 1
 
     def start_requests(self):

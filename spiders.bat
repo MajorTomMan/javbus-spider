@@ -4,8 +4,8 @@ start cmd /K "title Actress Detail && scrapy crawl actress_detail"
 start cmd /K "title Actress Movie && scrapy crawl actress_movie"
 
 :: 启动首页爬虫
-start cmd /K "title Index - Censored && scrapy crawl index -a url=https://www.javbus.com/page/ -a is_censored=True"
-start cmd /K "title Index - Uncensored && scrapy crawl index -a url=https://www.javbus.com/uncensored/page/ -a is_censored=False"
+start cmd /K "title Index - Censored && scrapy crawl index -a is_censored=True"
+start cmd /K "title Index - Uncensored && scrapy crawl index -a is_censored=False"
 
 :: 启动女优列表页爬虫
 start cmd /K "title Actresses List - Censored && scrapy crawl actresses_list -a is_censored=True"
