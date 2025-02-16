@@ -27,6 +27,16 @@ class RequestUtil:
     def __init__(self):
         self.session = requests.Session()  # 使用 Session 复用连接，提高效率
 
+    def get(self, url):
+        try:
+            response = self.session.get(url)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as e:
+            scrapy.logger.error(f"Error in GET request to {url}: {str(e)}")
+        except Exception as e:
+            scrapy.logger.error(f"Unexpected error in GET request: {str(e)}")
+
     def post(self, data, path, is_image=False):
         url = self.baseUrl + path
         headers = self.image_headers if is_image else self.headers
