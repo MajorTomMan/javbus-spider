@@ -56,7 +56,10 @@ class SearchSpider(RedisSpider):
 
         # Code search
         if self.code:
-            url = self.base_url + "search/" + self.code + "&type=1"
+            if self.is_censored:
+                url = self.base_url + "search/" + self.code + "&type=1"
+            else:
+                url = self.base_url + "search/" + self.code + "&type=0"
             yield scrapy.Request(
                 url,
                 callback=self.parse,

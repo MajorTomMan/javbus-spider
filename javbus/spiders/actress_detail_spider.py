@@ -1,10 +1,3 @@
-'''
-Date: 2025-02-13 19:14:01
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-13 23:15:17
-FilePath: \spider\javbus\spiders\actress_detail_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-'''
 """
 Date: 2025-02-08 22:42:20
 LastEditors: MajorTomMan 765719516@qq.com
