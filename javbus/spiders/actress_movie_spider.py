@@ -10,9 +10,12 @@ class ActressMovieSpider(RedisSpider):
     allowed_domains = ["javbus.com"]
     page_num = 1
     censored_key = "actress_movie:censored_link"
-
+    is_first_time = True
     def parse(self, response):
-        page_num = response.meta['page_num']  # 获取传递的页码
+        if self.is_first_time == False:
+            page_num = response.meta.get("page_num", self.page_num)
+        else:
+            self.is_first_time = False
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:
