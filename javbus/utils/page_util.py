@@ -30,6 +30,8 @@ class PageUtil:
     base_url = base_url
     big_image_url = "https://pics.dmm.co.jp/mono/movie/adult/"
     logger = logging.getLogger(__name__)
+    def __init__(self):
+        self.logger.setLevel(logging.INFO)  # 设置日志级别
 
     def parsePage(self, link, source, is_censored):
         """解析电影详情页"""
@@ -39,10 +41,10 @@ class PageUtil:
                 page["movie"]["link"] = link
                 return page
             else:
-                logger.error("Request {} timed out".format(link))
+                self.logger.error("Request {} timed out".format(link))
                 return None
         else:
-            logger.error("Source for link {} is None".format(link))
+            self.logger.error("Source for link {} is None".format(link))
             return None
 
     def getSampleImageLinks(self, page):
@@ -80,7 +82,7 @@ class PageUtil:
 
         # 发现禁止的tag,该网页放弃爬取
         if categories == -1:
-            logger.warning(
+            self.logger.warning(
                 "Forbidden category detected, skipping link: {}".format(link)
             )
             return -1
@@ -153,7 +155,7 @@ class PageUtil:
                             series["name"] = list(s.keys())[0]
                             series["link"] = s.get(series["name"])
                         else:
-                            logger.warning(
+                            self.logger.warning(
                                 "Series not found for movie code: {}".format(
                                     movie.get("code")
                                 )
@@ -200,7 +202,7 @@ class PageUtil:
                 links = self.attrsUtil.getMagnets(magnet_link)
                 items = self.build_magnet_items(links)
                 return items
-            logger.error("Failed to get magnet link for: {}".format(link))
+            self.logger.error("Failed to get magnet link for: {}".format(link))
             return None
 
     def build_magnet_items(self, links):
@@ -234,7 +236,7 @@ class PageUtil:
 
     def check_parameters(self, gid, uc, img):
         if gid is None or uc is None or img is None:
-            logger.error("Missing parameters: gid:{} uc:{} img:{}".format(gid, uc, img))
+            self.logger.error("Missing parameters: gid:{} uc:{} img:{}".format(gid, uc, img))
             return False
         return True
 
@@ -316,13 +318,13 @@ class PageUtil:
         if alert:
             rows = alert.find_all("a")[1:]
             if rows:
-                logger.info("Found backup links")
+                self.logger.info("Found backup links")
                 for row in rows:
                     link = row["href"]
                     backup_links.append(link)
                 return backup_links
             else:
-                logger.info("Couldn't find backup links")
+                self.logger.info("Couldn't find backup links")
                 return None
         else:
             return None
