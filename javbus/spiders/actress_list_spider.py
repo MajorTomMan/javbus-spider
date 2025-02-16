@@ -22,7 +22,7 @@ class ActressListSpider(RedisSpider):
     def __init__(self, url="https://www.javbus.com/", is_censored=False):
         super(ActressListSpider, self).__init__(*args, **kwargs)
         self.base_url = url
-        self.is_censored = is_censored
+        self.is_censored = AttrsUtil().str_to_bool(is_censored)
 
     def start_requests(self):
         if self.is_censored is False:
