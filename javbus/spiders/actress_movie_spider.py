@@ -35,7 +35,7 @@ class ActressMovieSpider(RedisSpider):
                 return
             censored = json.loads(censored_dict.decode("utf-8"))
             bs = BeautifulSoup(response.body, "html.parser")
-            self.log(f"Now parsing page {page_num}")
+            self.log(f"Now parsing page {current_page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
                 bricks = bs.find_all("a", attrs={"class": "movie-box"})
