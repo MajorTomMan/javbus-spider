@@ -1,3 +1,4 @@
+
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
@@ -38,7 +39,7 @@ class IndexSpider(RedisSpider):
             if links:
                 for link in links:
                     back_link={"url":link}
-                    self.server.lpush("javbus:back_links", json.dumps(back_link))
+                    self.server.lpush("javbus:backup_links", json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:

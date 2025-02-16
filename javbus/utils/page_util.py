@@ -28,6 +28,7 @@ class PageUtil:
     timeoutUtil = None
     base_url = "https://www.javbus.com"
     big_image_url = "https://pics.dmm.co.jp/mono/movie/adult/"
+
     def parsePage(self, link, source, is_censored):
         """解析电影详情页"""
         if source:
@@ -36,9 +37,10 @@ class PageUtil:
                 page["movie"]["link"] = link
                 return page
             else:
-                return -1
+                scrapy.logger.error("Request {} timed out".format(link))
+                return None
         else:
-            scrapy.logger.error("Request {} timed out".format(link))
+            scrapy.logger.error("Source for link {} is None".format(link))
             return None
 
     def getSampleImageLinks(self, page):
@@ -73,13 +75,18 @@ class PageUtil:
             categories = self.getCategories(bs, True, is_censored)
         else:
             categories = self.getCategories(bs, False, is_censored)
+
         # 发现禁止的tag,该网页放弃爬取
         if categories == -1:
+            scrapy.logger.warning(
+                "Forbidden category detected, skipping link: {}".format(link)
+            )
             return -1
+
         # 获取种子链接
         magnets = self.getMagnets(bs, link)
         # 获取大图链接
-        bigimage["link"] = self.getBigImageLink(bs,movie["code"])
+        bigimage["link"] = self.getBigImageLink(bs, movie["code"])
 
         # 获取样品图像链接
         sampleimages = self.getSampleImages(bs)
@@ -144,7 +151,11 @@ class PageUtil:
                             series["name"] = list(s.keys())[0]
                             series["link"] = s.get(series["name"])
                         else:
-                            scrapy.logger.warning("Series not found")
+                            scrapy.logger.warning(
+                                "Series not found for movie code: {}".format(
+                                    movie.get("code")
+                                )
+                            )
 
     def getActresses(self, bs):
         """获取所有的女演员信息"""
@@ -186,6 +197,7 @@ class PageUtil:
                 links = self.attrsUtil.getMagnets(magnet_link)
                 items = self.build_magnet_items(links)
                 return items
+            scrapy.logger.error("Failed to get magnet link for: {}".format(link))
             return None
 
     def build_magnet_items(self, links):
@@ -219,8 +231,9 @@ class PageUtil:
 
     def check_parameters(self, gid, uc, img):
         if gid is None or uc is None or img is None:
-            print("some parameters is none ")
-            print("gid:{} uc:{} img:{} ", gid, uc, img)
+            scrapy.logger.error(
+                "Missing parameters: gid:{} uc:{} img:{}".format(gid, uc, img)
+            )
             return False
         return True
 
@@ -231,13 +244,13 @@ class PageUtil:
                 return True
         return False
 
-    def getBigImageLink(self, bs,code):
+    def getBigImageLink(self, bs, code):
         if code:
-            url = self.big_image_url+code+"/"+code+"pl.jpg"
+            url = self.big_image_url + code + "/" + code + "pl.jpg"
             response = self.requestUtil.get(url)
             if response.status_code == 200:
                 return url
-            else: 
+            else:
                 a = bs.find("a", {"class": "bigImage"})
                 if a:
                     link = self.attrsUtil.getBigImage(a)
@@ -284,7 +297,7 @@ class PageUtil:
         page["actresses"] = actressesList
         page["categories"] = categories
         page["bigimage"] = bigimage
-        page["sampleimages"] = sampleimages
+        page["sampleimage"] = sampleimages
         page["magnets"] = magnets
         return page
 

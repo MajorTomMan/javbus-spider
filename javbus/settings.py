@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-15 21:54:45
+LastEditTime: 2025-02-16 18:41:59
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -19,9 +19,19 @@ BOT_NAME = "javbus"
 SPIDER_MODULES = ["javbus.spiders"]
 NEWSPIDER_MODULE = "javbus.spiders"
 
-
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "loggers": {
+        "scrapy_redis": {
+            "level": "ERROR",  # 只显示错误级别的日志
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
+}
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+# USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -71,14 +81,15 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     "javbus.middlewares.JavbusDownloaderMiddleware": 543,
-    "javbus.middlewares.JavbusProxyMiddleware":542,
+    "javbus.middlewares.JavbusProxyMiddleware": 544,
+    "javbus.middlewares.JavbusTimeOutMiddleware": 545,
 }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
+# EXTENSIONS = {
 #    'scrapy_prometheus.prometheus.PrometheusExporter': 500,
-#}
+# }
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
@@ -121,7 +132,7 @@ SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.FifoQueue"
 # 保证去重数据保存在 Redis 中，支持分布式
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # 持久化爬取队列（爬虫结束后，保留队列）
-SCHEDULER_PERSIST = True
+SCHEDULER_PERSIST = False
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
 REDIS_HOST = "192.168.253.131"
@@ -131,15 +142,12 @@ REDIS_PARAMS = {
     "password": "root",
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 13  # 每个请求之间的延迟为 13 秒
+DOWNLOAD_DELAY = 12  # 每个请求之间的延迟为 13 秒
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 # 设置最大并发请求数，避免过度并发
-CONCURRENT_REQUESTS = 1
-
-# 设置每个连接的最大并发请求数
-CONCURRENT_REQUESTS_PER_DOMAIN = 2
-CONCURRENT_REQUESTS_PER_IP = 2
-DUPEFILTER_DEBUG = True
+CONCURRENT_REQUESTS = 12
+CONCURRENT_REQUESTS_PER_IP = 12
+DUPEFILTER_DEBUG = True 
