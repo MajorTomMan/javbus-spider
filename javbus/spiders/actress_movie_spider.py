@@ -1,3 +1,10 @@
+'''
+Date: 2025-02-14 20:07:34
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-16 20:59:38
+FilePath: \spider\javbus\spiders\actress_movie_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 import json
 import scrapy
 from scrapy_redis.spiders import RedisSpider

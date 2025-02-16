@@ -29,7 +29,6 @@ class SearchSpider(RedisSpider):
         series="",
         is_censored=False,
     ):
-        super(SearchSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.page_num = 1
         self.actress = actress

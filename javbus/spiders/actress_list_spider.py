@@ -11,7 +11,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
-
+from javbus.utils.attrs_util import AttrsUtil
 
 # 女优列表爬虫
 class ActressListSpider(RedisSpider):
@@ -20,7 +20,6 @@ class ActressListSpider(RedisSpider):
     page_num = 1
 
     def __init__(self, url="https://www.javbus.com/", is_censored=False):
-        super(ActressListSpider, self).__init__(*args, **kwargs)
         self.base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
 

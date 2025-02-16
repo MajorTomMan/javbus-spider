@@ -284,7 +284,6 @@ class AttrsUtil:
 
 
     def str_to_bool(self, value):
-        """
-        将字符串转换为布尔值（'True'/'False' 转换为 True/False）
-        """
-        return value.lower() == "true"
+        if type(value) is str:
+            return value.lower() == "true"
+        return value
