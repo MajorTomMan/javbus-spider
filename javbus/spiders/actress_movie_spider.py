@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-14 20:07:34
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 20:59:38
+LastEditTime: 2025-02-16 21:06:21
 FilePath: \spider\javbus\spiders\actress_movie_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -19,7 +19,7 @@ class ActressMovieSpider(RedisSpider):
     censored_key = "actress_movie:censored_link"
     is_first_time = True
     def parse(self, response):
-        if self.is_first_time == False:
+        if self.is_first_time is False:
             page_num = response.meta.get("page_num", self.page_num)
         else:
             self.is_first_time = False
