@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-14 20:07:34
 LastEditors: MajorTomMan 765719516@qq.com
@@ -14,13 +13,13 @@ from bs4 import BeautifulSoup
 from javbus.items import CategoryItem, GenreItem, GenresItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-
+from javbus.common.static import base_url
 
 class GenreSpider(RedisSpider):
     name = "genre"
     allowed_domains = None
 
-    def __init__(self, url="https://www.javbus.com/", is_censored=True):
+    def __init__(self, url=base_url, is_censored=True):
         self.base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
 

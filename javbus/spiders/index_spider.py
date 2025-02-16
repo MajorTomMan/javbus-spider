@@ -12,13 +12,13 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-
+from javbus.common.static import base_url
 
 class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = None
 
-    def __init__(self, url="https://www.busdmm.help/", is_censored=True):
+    def __init__(self, url=base_url, is_censored=True):
 
         self.base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
