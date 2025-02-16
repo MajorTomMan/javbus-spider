@@ -73,7 +73,7 @@ class ActressListSpider(RedisSpider):
                     url = self.base_url + "uncensored" + "/actresses/"
                 else:
                     url = self.base_url + "actresses/"
-                url = self.base_url + str(next_page_num)
+                url = url + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )

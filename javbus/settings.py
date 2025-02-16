@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 22:35:10
+LastEditTime: 2025-02-16 23:06:28
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -136,6 +136,6 @@ DOWNLOAD_DELAY = 12  # 每个请求之间的延迟为 13 秒
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 # 设置最大并发请求数，避免过度并发
-CONCURRENT_REQUESTS = 8
-CONCURRENT_REQUESTS_PER_IP = 8
+CONCURRENT_REQUESTS = 5
+CONCURRENT_REQUESTS_PER_IP = 5
 DUPEFILTER_DEBUG = True 
