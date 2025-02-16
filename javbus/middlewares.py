@@ -8,7 +8,12 @@ import requests
 from scrapy import signals
 from scrapy.http.response import Response
 from urllib.parse import urlparse, urlunparse
-from twisted.internet.error import TCPTimedOutError, ConnectionRefusedError,DNSLookupError
+from twisted.internet.error import (
+    TCPTimedOutError,
+    ConnectionRefusedError,
+    DNSLookupError,
+)
+from requests.exceptions import ConnectionError, ConnectTimeout
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
@@ -52,7 +57,6 @@ class JavbusSpiderMiddleware:
             yield r
 
 
-
 class JavbusDownloaderMiddleware:
 
     def process_request(self, request, spider):
@@ -60,14 +64,16 @@ class JavbusDownloaderMiddleware:
         return None
 
     def process_response(self, request, response, spider):
-        spider.logger.info(f"Received response: {response.url} with status: {response.status}")
+        spider.logger.info(
+            f"Received response: {response.url} with status: {response.status}"
+        )
         return response
 
     def process_exception(self, request, exception, spider):
-        spider.logger.error(f"Exception occurred for request {request.url}: {exception}")
+        spider.logger.error(
+            f"Exception occurred for request {request.url}: {exception}"
+        )
         return None
-
-
 
 
 class JavbusTimeOutMiddleware:
@@ -85,6 +91,8 @@ class JavbusTimeOutMiddleware:
             type(exception) is TCPTimedOutError
             or ConnectionRefusedError
             or DNSLookupError
+            or ConnectionError
+            or ConnectTimeout
         ):
             spider.logger.warning(
                 f"request {request.url} timeout,try another link to request"
@@ -110,12 +118,12 @@ class JavbusTimeOutMiddleware:
                         "is_change_link": True,
                         "new_url": backup_url_dict["url"],
                     },
+                    dont_filter=True,
                 )
                 # 重新发起请求
                 return new_request
         else:
             pass
-
 
     def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL
@@ -146,13 +154,12 @@ class JavbusProxyMiddleware:
         "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36"
     }
 
-
     def process_request(self, request, spider):
         is_change_link = request.meta.get("is_change_link", False)
         if is_change_link:
             new_url = request.meta.get("new_url", "")
             if new_url:
-                request.url = self.replace_base_url(request.url,new_url)
+                request.url = self.replace_base_url(request.url, new_url)
         return None
 
     def process_response(self, request, response, spider):
@@ -162,8 +169,7 @@ class JavbusProxyMiddleware:
     def process_exception(self, request, exception, spider):
         pass
 
-
-    def _replace_base_url(self, original_url, new_base_url):
+    def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL
         parsed_original = urlparse(original_url)
         parsed_new_base = urlparse(new_base_url)

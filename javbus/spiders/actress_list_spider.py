@@ -25,13 +25,11 @@ class ActressListSpider(RedisSpider):
 
     def start_requests(self):
         if self.is_censored is False:
-            self.base_url = self.base_url + "uncensored" + "/actresses/"
+            url = self.base_url + "uncensored" + "/actresses/"
         else:
-            self.base_url = self.base_url + "actresses/"
-        url = self.base_url + str(self.page_num)
-        yield scrapy.Request(
-            self.base_url, callback=self.parse, meta={"page_num": self.page_num}
-        )
+            url = self.base_url + "actresses/"
+        url = url + str(self.page_num)
+        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num})
 
     # 用于解析reponse的方法
     def parse(self, response):
@@ -70,7 +68,11 @@ class ActressListSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                base_url = self.base_url + "/" + str(next_page_num)
+                if self.is_censored is False:
+                    url = self.base_url + "uncensored" + "/actresses/"
+                else:
+                    url = self.base_url + "actresses/"
+                url = self.base_url + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )

@@ -1,4 +1,3 @@
-
 import random
 import requests
 import scrapy
@@ -53,7 +52,9 @@ class RequestUtil:
     def send(self, data, path, is_image=False):
         response = self.post(data=data, path=path, is_image=is_image)
         if not response:
-            scrapy.logger.error(f"Error sending data to {path}. Check server status or logs.")
+            scrapy.logger.error(
+                f"Error sending data to {path}. Check server status or logs."
+            )
             scrapy.logger.error(f"Data: {data}")
         elif response.status_code == 200:
             scrapy.logger.info(f"Successfully sent data to {path}")
@@ -67,12 +68,18 @@ class RequestUtil:
     def sendImage(self, data, path):
         self.send(data, path, is_image=True)
 
-    def sendMangets(self, gid, img, uc, referer):
-        t = f"https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid={gid}&lang=zh&img={img}&uc={uc}&floor={random.randint(1, 1000)}"
+    def sendMangets(self, base_url, gid, img, uc, referer):
+        url = (
+            base_url
+            + f"/ajax/uncledatoolsbyajax.php?gid={gid}&lang=zh&img={img}&uc={uc}&floor={random.randint(1, 1000)}"
+        )
         if referer:
             self.magnet_headers["referer"] = referer
         try:
-            response = requests.get(t, headers=self.magnet_headers)
+            response = requests.get(
+                url=url,
+                headers=self.magnet_headers,
+            )
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as error:

@@ -1,5 +1,6 @@
 import re
 import scrapy
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -188,8 +189,9 @@ class PageUtil:
         # 找到所有 <script> 标签
         scripts = bs.find_all("script")
         gid, uc, img = self.get_magnet_parameters(scripts)
+        base_url = self.extract_domain_with_https(link)
         if self.check_parameters(gid, uc, img):
-            magnet_reponse = self.requestUtil.sendMangets(gid, img, uc, link)
+            magnet_reponse = self.requestUtil.sendMangets(base_url, gid, img, uc, link)
             if magnet_reponse:
                 # 解析 JavaScript 返回的 HTML 内容
                 magnet_link = BeautifulSoup(magnet_reponse.content, "html.parser")
@@ -325,3 +327,8 @@ class PageUtil:
                 return None
         else:
             return None
+
+    def extract_domain_with_https(self,url):
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc  # 提取域名部分
+        return f"https://{domain}"  # 拼接 https://

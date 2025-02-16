@@ -13,6 +13,7 @@ from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 
+
 class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = None
@@ -27,7 +28,7 @@ class IndexSpider(RedisSpider):
         if self.is_censored is False:
             base_url = self.base_url + "uncensored/" + "page/" + str(self.page_num)
         else:
-            base_url = self.base_url +"page/"+ str(self.page_num)
+            base_url = self.base_url + "page/" + str(self.page_num)
         yield scrapy.Request(
             base_url, callback=self.parse, meta={"page_num": self.page_num}
         )
@@ -41,7 +42,7 @@ class IndexSpider(RedisSpider):
             links = PageUtil().get_backup_links(bs)
             if links:
                 for link in links:
-                    back_link={"url":link}
+                    back_link = {"url": link}
                     self.server.lpush("javbus:backup_links", json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
@@ -71,7 +72,12 @@ class IndexSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                base_url = self.base_url + str(next_page_num)
+                if self.is_censored is False:
+                    base_url = (
+                        self.base_url + "uncensored/" + "page/" + str(self.page_num)
+                    )
+                else:
+                    base_url = self.base_url + "page/" + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )
