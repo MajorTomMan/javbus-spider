@@ -1,3 +1,4 @@
+
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
@@ -75,7 +76,7 @@ class ActressListSpider(RedisSpider):
                     url = self.base_url + "actresses/"
                 url = url + str(next_page_num)
                 yield scrapy.Request(
-                    base_url, callback=self.parse, meta={"page_num": next_page_num}
+                    url, callback=self.parse, meta={"page_num": next_page_num}
                 )
             else:
                 self.log("No next page, stopping crawl.")

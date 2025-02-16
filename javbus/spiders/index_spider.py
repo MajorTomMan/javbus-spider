@@ -1,3 +1,4 @@
+
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
@@ -19,7 +20,6 @@ class IndexSpider(RedisSpider):
     allowed_domains = None
 
     def __init__(self, url=base_url, is_censored=True):
-
         self.base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
         self.page_num = 1
@@ -74,7 +74,7 @@ class IndexSpider(RedisSpider):
                 next_page_num = page_num + 1
                 if self.is_censored is False:
                     base_url = (
-                        self.base_url + "uncensored/" + "page/" + str(self.page_num)
+                        self.base_url + "uncensored/" + "page/" + str(next_page_num)
                     )
                 else:
                     base_url = self.base_url + "page/" + str(next_page_num)
