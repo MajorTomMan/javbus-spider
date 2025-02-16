@@ -21,12 +21,13 @@ class ActressMovieSpider(RedisSpider):
     is_first_time = True
 
     def parse(self, response):
+        current_page_num = None 
         if self.is_first_time is False:
-            page_num = response.meta.get("page_num", self.page_num)
+            current_page_num = response.meta.get("page_num", self.page_num)
         else:
             self.is_first_time = False
-        if page_num is None:
-            page_num = self.page_num
+        if current_page_num is None:
+            current_page_num = self.page_num
         if response.status == 200:
             censored_dict = self.server.lpop(self.censored_key)
             if censored_dict is None:
@@ -61,7 +62,7 @@ class ActressMovieSpider(RedisSpider):
                 # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
-                next_page_num = page_num + 1
+                next_page_num = current_page_num + 1
                 base_url = censored["url"] + "/" + str(next_page_num)
                 yield scrapy.Request(
                     base_url, callback=self.parse, meta={"page_num": next_page_num}
