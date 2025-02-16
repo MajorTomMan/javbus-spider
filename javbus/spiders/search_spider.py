@@ -27,7 +27,7 @@ class SearchSpider(RedisSpider):
         studio="",
         label="",
         series="",
-        is_censored=True,
+        is_censored=False,
     ):
         self.base_url = url
         self.page_num = 1

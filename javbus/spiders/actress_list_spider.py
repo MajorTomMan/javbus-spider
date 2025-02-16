@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
@@ -20,13 +19,15 @@ class ActressListSpider(RedisSpider):
     allowed_domains = ["javbus.com"]
     page_num = 1
 
-    def __init__(self, url="https://www.javbus.com/actresses", is_censored=True):
+    def __init__(self, url="https://www.javbus.com/", is_censored=False):
         self.base_url = url
         self.is_censored = is_censored
-        if is_censored is False:
-            self.base_url = "https://www.javbus.com/uncensored/actresses"
 
     def start_requests(self):
+        if self.is_censored is False:
+            self.base_url = self.base_url + "uncensored" + "/actresses/"
+        else:
+            self.base_url = self.base_url + "actresses/"
         url = self.base_url + str(self.page_num)
         yield scrapy.Request(
             self.base_url, callback=self.parse, meta={"page_num": self.page_num}
@@ -34,7 +35,7 @@ class ActressListSpider(RedisSpider):
 
     # 用于解析reponse的方法
     def parse(self, response):
-        page_num = response.meta['page_num']
+        page_num = response.meta["page_num"]
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:

@@ -2,7 +2,7 @@ import scrapy
 import hashlib
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from javbus.items import CategoryItem, GenreItem,GenresItem
+from javbus.items import CategoryItem, GenreItem, GenresItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 
@@ -13,13 +13,17 @@ class GenreSpider(RedisSpider):
 
     def __init__(
         self,
-        url="https://www.javbus.com/genre",
+        url="https://www.javbus.com/",
         is_censored=True,
     ):
         self.base_url = url
         self.is_censored = is_censored
 
     def start_requests(self):
+        if self.is_censored is False:
+            self.base_url = self.base_url + "/uncensored" + "/genre"
+        else:
+            self.base_url = self.base_url + "/genre"
         yield scrapy.Request(self.base_url, callback=self.parse)
 
     def parse(self, response):

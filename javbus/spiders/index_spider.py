@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
@@ -18,12 +17,16 @@ class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = ["javbus.com"]
 
-    def __init__(self, url="https://www.javbus.com/page/", is_censored=True):
+    def __init__(self, url="https://www.javbus.com/", is_censored=False):
         self.base_url = url
         self.is_censored = is_censored
         self.page_num = 1
 
     def start_requests(self):
+        if self.is_censored is False:
+            base_url = self.base_url + "uncensored/" + "page/" + str(self.page_num)
+        else:
+            base_url = self.base_url +"page/"+ str(self.page_num)
         base_url = self.base_url + str(self.page_num)
         yield scrapy.Request(
             base_url, callback=self.parse, meta={"page_num": self.page_num}
