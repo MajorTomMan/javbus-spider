@@ -84,6 +84,7 @@ class PageItem(scrapy.Item):
     studio = scrapy.Field()
     series = scrapy.Field()
     actresses = scrapy.Field()
+    topicimage = scrapy.Field()
     bigimage = scrapy.Field()
     categories = scrapy.Field()
     sampleimages = scrapy.Field()
@@ -91,6 +92,10 @@ class PageItem(scrapy.Item):
 
 
 class SampleImageItem(scrapy.Item):
+    link = scrapy.Field()
+
+
+class TopicImageItem(scrapy.Item):
     link = scrapy.Field()
 
 
@@ -117,12 +122,17 @@ class GenreCategoryItem(scrapy.Item):
     genre = scrapy.Field()
     categories = scrapy.Field()
 
+class MovieTopicImageItem(scrapy.Item):
+    movie = scrapy.Field()
+    topic_image = scrapy.Field()
+
 
 class MovieBigImageItem(scrapy.Item):
     movie = scrapy.Field()
     big_image = scrapy.Field()
 
-class MovieSampleItem(scrapy.Item):
+
+class MovieSampleImageItem(scrapy.Item):
     movie = scrapy.Field()
     sample_images = scrapy.Field()
 

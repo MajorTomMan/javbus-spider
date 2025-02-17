@@ -1,7 +1,7 @@
 import re
 import scrapy
 import logging
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -19,8 +19,16 @@ from javbus.items import (
     BigImageItem,
     CategoryItem,
     ActressItem,
+    TopicImageItem,
 )
-from javbus.common.static import base_url
+from javbus.common.static import (
+    base_url,
+    javbooks_url,
+    high_quality_image_link,
+    normal_image_link,
+)
+from javbooks.utils.search_page_util import SearchPageUtil
+
 
 class PageUtil:
     attrsUtil = AttrsUtil()
@@ -28,8 +36,8 @@ class PageUtil:
     companys = CompanyLinks()
     requestUtil = RequestUtil()
     base_url = base_url
-    big_image_url = "https://pics.dmm.co.jp/mono/movie/adult/"
     logger = logging.getLogger(__name__)
+
     def __init__(self):
         self.logger.setLevel(logging.INFO)  # 设置日志级别
 
@@ -66,6 +74,7 @@ class PageUtil:
         studio = StudioItem()
         label = LabelItem()
         categories = CategoryItem()
+        topic_image = TopicImageItem()
         actressesList = []
         magnets = []
 
@@ -90,7 +99,12 @@ class PageUtil:
         # 获取种子链接
         magnets = self.getMagnets(bs, link)
         # 获取大图链接
-        bigimage["link"] = self.getBigImageLink(bs, movie["code"])
+        images = self.getTopicAndBigImageLink(bs, movie["code"])
+        if type(images) is dict:
+            bigimage["link"] = images["big_image_link"]
+            topic_image["link"] = images["topic_image_link"]
+        elif type(images) is str:
+            bigimage["link"] = images
 
         # 获取样品图像链接
         sampleimages = self.getSampleImages(bs)
@@ -107,6 +121,7 @@ class PageUtil:
             bigimage,
             sampleimages,
             magnets,
+            topic_image,
         )
 
         return page
@@ -236,7 +251,9 @@ class PageUtil:
 
     def check_parameters(self, gid, uc, img):
         if gid is None or uc is None or img is None:
-            self.logger.error("Missing parameters: gid:{} uc:{} img:{}".format(gid, uc, img))
+            self.logger.error(
+                "Missing parameters: gid:{} uc:{} img:{}".format(gid, uc, img)
+            )
             return False
         return True
 
@@ -247,21 +264,49 @@ class PageUtil:
                 return True
         return False
 
-    def getBigImageLink(self, bs, code):
+    def getTopicAndBigImageLink(self, bs, code):
         if code:
-            url = self.big_image_url + code + "/" + code + "pl.jpg"
-            response = self.requestUtil.get(url)
+            images = {}
+            # 调用javbooks的搜索结果
+            data = {"skey":code}
+            cookies = {"PHPSESSID": "khckh2dtn3cksqfoagr2e7f2h6", "TSCvalue": "gb"}
+            response = self.requestUtil.post(javbooks_url, data, cookies=cookies)
             if response.status_code == 200:
-                return url
-            else:
-                a = bs.find("a", {"class": "bigImage"})
-                if a:
-                    link = self.attrsUtil.getBigImage(a)
-                    is_company_link = self.matchLinkIsCompanyLink(link)
-                    if is_company_link:
-                        return bigImageLink
+                topic_image_link = SearchPageUtil().get_topic_image(response,cookies=cookies)
+                if topic_image_link:
+                    high_quality_image_url = self.replace_base_url(
+                        topic_image_link, high_quality_image_link
+                    )
+                    response = self.requestUtil.get(high_quality_image_url)
+                    if response.status_code == 200:
+                        images["big_image_link"] = high_quality_image_url.replace(
+                            "ps.jpg", "pl.jpg"
+                        )
+                        images["topic_image_link"] = high_quality_image_url.replace(
+                            "pl.jpg", "ps.jpg"
+                        )
+                        return images
                     else:
-                        return self.base_url + link
+                        normal_image_url = self.replace_base_url(
+                            topic_image_link, normal_image_link
+                        )
+                        response = self.requestUtil.get(normal_image_url)
+                        if response.status_code == 200:
+                            images["big_image_link"] = high_quality_image_url.replace(
+                                "ps", "pl"
+                            )
+                            images["topic_image_link"] = high_quality_image_url
+                            return images
+                        else:
+                            pass
+            a = bs.find("a", {"class": "bigImage"})
+            if a:
+                link = self.attrsUtil.getBigImage(a)
+                is_company_link = self.matchLinkIsCompanyLink(link)
+                if is_company_link:
+                    return link
+                else:
+                    return self.base_url + link
         return ""
 
     def getSampleImages(self, bs):
@@ -291,6 +336,7 @@ class PageUtil:
         bigimage,
         sampleimages,
         magnets,
+        topicimage,
     ):
         page["movie"] = movie
         page["director"] = director
@@ -302,6 +348,7 @@ class PageUtil:
         page["bigimage"] = bigimage
         page["sampleimages"] = sampleimages
         page["magnets"] = magnets
+        page["topicimage"] = topicimage
         return page
 
     def hasNextPage(self, bs):
@@ -332,4 +379,19 @@ class PageUtil:
     def extract_domain_with_https(self, url):
         parsed_url = urlparse(url)
         domain = parsed_url.netloc  # 提取域名部分
-        return f"https://{domain}"  # 拼接 https://
+        return f"https://{domain}"
+
+    def replace_base_url(self, original_url, new_base_url):
+        parsed_original = urlparse(original_url)
+        new_url = urlunparse(
+            (
+                parsed_original.scheme,  # 使用新 URL 的 scheme
+                new_base_url,  # 使用新 URL 的域名
+                parsed_original.path,  # 保留原来的路径
+                parsed_original.params,  # 保留原来的 params
+                parsed_original.query,  # 保留原来的 query
+                parsed_original.fragment,  # 保留原来的 fragment
+            )
+        )
+
+        return new_url

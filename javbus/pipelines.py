@@ -17,7 +17,8 @@ from javbus.items import (
     MovieSeriesItem,
     MovieStudioItem,
     MovieBigImageItem,
-    MovieSampleItem,
+    MovieSampleImageItem,
+    MovieTopicImageItem,
     PageItem,
 )
 from javbus.utils.request_util import RequestUtil
@@ -39,7 +40,8 @@ class JavbusPipeline:
             MovieSeriesItem: "/movie/relation/series/save",
             MovieStudioItem: "/movie/relation/studio/save",
             MovieBigImageItem: "/movie/relation/bigimage/save",
-            MovieSampleItem: "/movie/relation/sampleimage/save",
+            MovieSampleImageItem: "/movie/relation/sampleimage/save",
+            MovieTopicImageItem: "/movie/relation/topicimage/save",
         }
 
     def process_item(self, item, spider):
@@ -70,6 +72,7 @@ class JavbusPipeline:
         actresses = page.get("actresses")
         bigimage = page.get("bigimage")
         sampleimages = page.get("sampleimages")
+        topicimage = page.get("topicimage")
         if movie:
             if actresses:
                 movie_actress_item = MovieActressItem(movie=movie, actress=actresses)
@@ -122,10 +125,18 @@ class JavbusPipeline:
                     self.path_map[MovieBigImageItem],
                 )
             if sampleimages:
-                movie_sampleimages_item = MovieSampleItem(
+                movie_sampleimages_item = MovieSampleImageItem(
                     movie=movie, sample_images=sampleimages
                 )
                 self.request_util.send(
                     ItemAdapter(movie_sampleimages_item).asdict(),
-                    self.path_map[MovieSampleItem],
+                    self.path_map[MovieSampleImageItem],
+                )
+            if topicimage:
+                movie_topic_item = MovieTopicImageItem(
+                    movie=movie, topic_image=topicimage
+                )
+                self.request_util.send(
+                    ItemAdapter(movie_topic_item).asdict(),
+                    self.path_map[MovieTopicImageItem],
                 )

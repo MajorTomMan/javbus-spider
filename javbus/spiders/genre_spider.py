@@ -8,7 +8,6 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 
 import scrapy
 import hashlib
-from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from javbus.items import CategoryItem, GenreItem, GenresItem
 from scrapy_redis.spiders import RedisSpider

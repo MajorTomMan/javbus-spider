@@ -1,10 +1,4 @@
-'''
-Date: 2025-02-14 20:07:34
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 23:02:24
-FilePath: \spider\javbus\spiders\search_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com

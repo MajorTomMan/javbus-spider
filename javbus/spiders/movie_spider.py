@@ -1,11 +1,17 @@
 '''
+Date: 2025-02-14 20:07:34
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-18 00:01:48
+FilePath: \spider\javbus\spiders\movie_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
+"""
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
 LastEditTime: 2025-02-13 23:14:50
 FilePath: \spider\javbus\spiders\movie_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-'''
-
+"""
 
 import json
 from javbus.utils.page_util import PageUtil
@@ -30,20 +36,22 @@ class MovieSpider(RedisSpider):
             page = PageUtil().parsePage(
                 link=response.url, source=bs, is_censored=censored["is_censored"]
             )
-            if page== -1:
-                self.log("in "+censored["url"]+" found ban tag skipping crawl")
+            if page == -1 or page is None:
+                self.log("in " + censored["url"] + " found ban tag skipping crawl")
                 return
             actresses = page["actresses"]
             # 启动女优详情页爬虫
             if actresses:
                 for actress in actresses:
+                    actress["is_censored"] = censored["is_censored"]
                     link = actress["actress_link"]
                     if link:
                         actress_detail_request_data = {
                             "url": link,
                         }
                         self.server.lpush(
-                            "actress_detail:start_urls", json.dumps(actress_detail_request_data)
+                            "actress_detail:start_urls",
+                            json.dumps(actress_detail_request_data),
                         )
                         actress_detail_request_data = {
                             "url": link,

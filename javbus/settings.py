@@ -1,10 +1,11 @@
-'''
+"""
 Date: 2025-02-07 22:00:29
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 23:17:21
+LastEditTime: 2025-02-17 20:40:51
 FilePath: \spider\javbus\settings.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+"""
+
 # Scrapy settings for javbus project
 #
 # For simplicity, this file contains only settings considered important or
@@ -43,7 +44,6 @@ ROBOTSTXT_OBEY = False
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "accept-encoding": "gzip, deflate, br, zstd",
     "accept-language": "zh-CN,zh;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
     "cache-control": "no-cache",
     "pragma": "no-cache",
@@ -57,7 +57,7 @@ DEFAULT_REQUEST_HEADERS = {
     "sec-fetch-user": "?1",
     "upgrade-insecure-requests": "1",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
- }
+}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
@@ -138,4 +138,4 @@ RANDOMIZE_DOWNLOAD_DELAY = True
 # 设置最大并发请求数，避免过度并发
 CONCURRENT_REQUESTS = 3
 CONCURRENT_REQUESTS_PER_IP = 3
-DUPEFILTER_DEBUG = True 
+DUPEFILTER_DEBUG = True

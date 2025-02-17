@@ -40,8 +40,11 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in GET request: {str(e)}")
 
-    def post(self, data, path, is_image=False):
-        url = self.baseUrl + path
+    def post2server(self, data, path=None, is_image=False):
+        if path:
+            url = self.baseUrl + path
+        else:
+            url = self.baseUrl
         headers = self.image_headers if is_image else self.headers
         try:
             response = self.session.post(url, json=data, headers=headers)
@@ -61,8 +64,30 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in GET request: {str(e)}")
 
+    def post(self, url, data, cookies=None):
+        try:
+            if cookies:
+                response = self.session.post(url, data=data, cookies=cookies)
+            else:
+                response = self.session.post(url, data=data)
+            response.raise_for_status()  # 触发异常以捕获 HTTP 错误
+            return response
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error in POST request to {url}: {str(e)}")
+        except Exception as e:
+            logger.error(f"Unexpected error in POST request: {str(e)}")
+
+        try:
+            response = self.session.get(url)
+            response.raise_for_status()
+            return response
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error in GET request to {url}: {str(e)}")
+        except Exception as e:
+            logger.error(f"Unexpected error in GET request: {str(e)}")
+
     def send(self, data, path, is_image=False):
-        response = self.post(data=data, path=path, is_image=is_image)
+        response = self.post2server(data=data, path=path, is_image=False)
         if not response:
             logger.error(f"Error sending data to {path}. Check server status or logs.")
             logger.error(f"Data: {data}")
