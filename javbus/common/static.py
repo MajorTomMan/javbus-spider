@@ -1,7 +1,7 @@
 '''
 Date: 2025-02-16 23:00:52
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-17 22:23:51
+LastEditTime: 2025-02-18 00:17:26
 FilePath: \spider\javbus\common\static.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
