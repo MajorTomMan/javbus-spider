@@ -1,3 +1,10 @@
+'''
+Date: 2025-02-18 19:30:05
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-02-18 20:29:15
+FilePath: \spider\javbus\spiders\index_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 
 """
 Date: 2025-02-13 19:14:01
@@ -43,7 +50,7 @@ class IndexSpider(RedisSpider):
             if links:
                 for link in links:
                     back_link = {"url": link}
-                    self.server.lpush("javbus:backup_links", json.dumps(back_link))
+                    self.server.sadd("javbus:backup_links", json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:

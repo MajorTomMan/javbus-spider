@@ -104,7 +104,7 @@ class JavbusTimeOutMiddleware:
                 **settings.get("REDIS_PARAMS"),
             )
             # 从 Redis 获取备用 URL
-            backup_url_dict = redis_client.lpop(self.back_links)
+            backup_url_dict = redis_client.spop(self.back_links)
             if backup_url_dict:
                 backup_url_dict = json.loads(backup_url_dict)  # 需要解码 Redis 字符串
                 # 替换原有 URL 的主机部分为新的 URL
