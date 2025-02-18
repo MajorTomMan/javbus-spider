@@ -85,16 +85,16 @@ class PageUtil:
         actressesList = self.getActresses(bs)
 
         if actressesList:
-            categories = self.getCategories(bs, True, is_censored)
+            categories = self.getCategories(bs, True)
         else:
-            categories = self.getCategories(bs, False, is_censored)
+            categories = self.getCategories(bs, False)
 
         # 发现禁止的tag,该网页放弃爬取
         if categories == -1:
             self.logger.warning(
                 "Forbidden category detected, skipping link: {}".format(link)
             )
-            return -1
+            return categories
 
         # 获取种子链接
         magnets = self.getMagnets(bs, link)
@@ -192,15 +192,15 @@ class PageUtil:
             return actresses
         return None
 
-    def getCategories(self, bs, has_actresses, is_censored):
+    def getCategories(self, bs, has_actresses):
         temp = []
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
             if has_actresses:
-                temp = self.attrsUtil.getGenres(ps[-3], is_censored)
+                temp = self.attrsUtil.getGenres(ps[-3])
             else:
-                temp = self.attrsUtil.getGenres(ps[-2], is_censored)
+                temp = self.attrsUtil.getGenres(ps[-2])
         return temp
 
     def getMagnets(self, bs, link):

@@ -50,7 +50,6 @@ class BigImageItem(scrapy.Item):
 class CategoryItem(scrapy.Item):
     name = scrapy.Field()
     link = scrapy.Field()
-    is_censored = scrapy.Field()
 
 
 class DirectorItem(scrapy.Item):
@@ -121,7 +120,9 @@ class StudioItem(scrapy.Item):
 class GenreCategoryItem(scrapy.Item):
     genre = scrapy.Field()
     categories = scrapy.Field()
-
+    is_censored = scrapy.Field()
+    
+    
 class MovieTopicImageItem(scrapy.Item):
     movie = scrapy.Field()
     topic_image = scrapy.Field()

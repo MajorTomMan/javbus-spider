@@ -100,7 +100,7 @@ class AttrsUtil:
             self.logger.warning("label not found")
             return None
 
-    def getGenres(self, bs,is_censored):
+    def getGenres(self, bs):
         genres = []
         genreList = bs.find_all("span", {"class": "genre"})
         if genreList:
@@ -121,14 +121,13 @@ class AttrsUtil:
                     temp["name"] = tag
                     href = a["href"]
                     temp["link"] = href
-                    temp["is_censored"] = is_censored
                     genres.append(temp)
             return genres
         else:
             self.logger.warning("genres not found")
             return None
 
-    def getCategories(self, bs, is_censored):
+    def getCategories(self, bs):
         categories = []
         ass = bs.find_all("a")
         if ass:
@@ -138,7 +137,6 @@ class AttrsUtil:
                 temp["name"] = tag
                 href = a["href"]
                 temp["link"] = href
-                temp["is_censored"] = is_censored
                 categories.append(temp)
             return categories
         else:

@@ -7,9 +7,8 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
 import scrapy
-import hashlib
 from bs4 import BeautifulSoup
-from javbus.items import CategoryItem, GenreItem, GenresItem
+from javbus.items import  GenreItem, GenreCategoryItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.static import base_url
@@ -45,13 +44,13 @@ class GenreSpider(RedisSpider):
                     genreList.append(genre)
                 boxs = bs.find_all("div", {"class": "row genre-box"})
                 if boxs:
-                    vos = []
                     for index, box in enumerate(boxs):
-                        categories = AttrsUtil().getCategories(box, self.is_censored)
-                        genres = GenresItem()
+                        categories = AttrsUtil().getCategories(box)
+                        genres = GenreCategoryItem()
                         genre = genreList[index]
                         genres["genre"] = genre
                         genres["categories"] = categories
+                        genres["is_censored"] =self.is_censored
                         yield genres
         else:
             self.log("Request failed with status code: {}".format(response.status))

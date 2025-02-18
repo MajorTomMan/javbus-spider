@@ -1,10 +1,4 @@
-'''
-Date: 2025-02-14 20:07:34
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-18 00:01:48
-FilePath: \spider\javbus\spiders\movie_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
