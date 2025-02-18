@@ -1,5 +1,9 @@
+import logging
 import requests
 from bs4 import BeautifulSoup
+from javbus.utils.web_util import WebUtil
+from javbus.utils.request_util import RequestUtil
+from javbus.common.static import javbooks_url
 
 headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -17,11 +21,34 @@ headers = {
     "upgrade-insecure-requests": "1",
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
 }
+cookies = None
+
 
 class SearchPageUtil:
-    def get_topic_image(self,response,cookies):
-        if response:
-            bs = BeautifulSoup(response.content,"html.parser")
+    logger = logging.getLogger(__name__)
+
+    def get_topic_image(self, keyword=None):
+        global cookies
+        response = RequestUtil().post(javbooks_url, keyword, cookies=cookies)
+        bs = BeautifulSoup(response.content,"html.parser")
+        scale = bs.find("div", {"class": "scale_2"})
+        if scale:
+            self.logger.info("Cookies have expired")
+            # 用于解决javbooks的cookies过期而被弹窗拦在外面的问题
+            # 利用drissionpage执行点击来获取新的cookies然后设置给requests
+            tag = WebUtil().get(response.url)
+            if tag:
+                if not cookies:
+                    try:
+                        tag.actions.move_to("@type=submit").click()
+                    except e:
+                        pass
+                    cookies = tag.cookies(as_dict=True, all_info=True)
+                    response = RequestUtil().post(
+                        javbooks_url, keyword, cookies=cookies
+                    )
+        if response.status_code == 200:
+            bs = BeautifulSoup(response.content, "html.parser")
             topic = bs.find("div", {"class": "Po_topic"})
             if topic:
                 link = topic.find("a")["href"]
@@ -31,16 +58,20 @@ class SearchPageUtil:
                         bs = BeautifulSoup(response.content, "html.parser")
                         info = bs.find("div", id="info")
                         if info:
-                            info_cg = info.find("div",{"class":"info_cg"})
+                            info_cg = info.find("div", {"class": "info_cg"})
                             if info_cg:
                                 src = info_cg.find("img")["src"]
                                 if src:
                                     return src
-                                else:
-                                    return None
                             else:
                                 return None
                         else:
                             return None
+                    else:
+                        return None
+                else:
+                    return None
             else:
                 return None
+        else:
+            return None

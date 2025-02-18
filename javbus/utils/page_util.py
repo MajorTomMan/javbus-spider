@@ -268,37 +268,34 @@ class PageUtil:
         if code:
             images = {}
             # 调用javbooks的搜索结果
-            data = {"skey":code}
-            cookies = {"PHPSESSID": "khckh2dtn3cksqfoagr2e7f2h6", "TSCvalue": "gb"}
-            response = self.requestUtil.post(javbooks_url, data, cookies=cookies)
-            if response.status_code == 200:
-                topic_image_link = SearchPageUtil().get_topic_image(response,cookies=cookies)
-                if topic_image_link:
-                    high_quality_image_url = self.replace_base_url(
-                        topic_image_link, high_quality_image_link
+            data = {"skey": code}
+            topic_image_link = SearchPageUtil().get_topic_image(keyword=data)
+            if topic_image_link:
+                high_quality_image_url = self.replace_base_url(
+                    topic_image_link, high_quality_image_link
+                )
+                response = self.requestUtil.get(high_quality_image_url)
+                if response.status_code == 200:
+                    images["big_image_link"] = high_quality_image_url.replace(
+                        "ps.jpg", "pl.jpg"
                     )
-                    response = self.requestUtil.get(high_quality_image_url)
+                    images["topic_image_link"] = high_quality_image_url.replace(
+                        "pl.jpg", "ps.jpg"
+                    )
+                    return images
+                else:
+                    normal_image_url = self.replace_base_url(
+                        topic_image_link, normal_image_link
+                    )
+                    response = self.requestUtil.get(normal_image_url)
                     if response.status_code == 200:
                         images["big_image_link"] = high_quality_image_url.replace(
-                            "ps.jpg", "pl.jpg"
+                            "ps", "pl"
                         )
-                        images["topic_image_link"] = high_quality_image_url.replace(
-                            "pl.jpg", "ps.jpg"
-                        )
+                        images["topic_image_link"] = high_quality_image_url
                         return images
                     else:
-                        normal_image_url = self.replace_base_url(
-                            topic_image_link, normal_image_link
-                        )
-                        response = self.requestUtil.get(normal_image_url)
-                        if response.status_code == 200:
-                            images["big_image_link"] = high_quality_image_url.replace(
-                                "ps", "pl"
-                            )
-                            images["topic_image_link"] = high_quality_image_url
-                            return images
-                        else:
-                            pass
+                        pass
             a = bs.find("a", {"class": "bigImage"})
             if a:
                 link = self.attrsUtil.getBigImage(a)
