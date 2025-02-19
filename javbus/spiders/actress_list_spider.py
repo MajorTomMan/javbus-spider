@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
@@ -80,6 +79,7 @@ class ActressListSpider(RedisSpider):
                 )
             else:
                 self.log("No next page, stopping crawl.")
+                self.crawler.engine.close_spider(self, "No next page")
 
     def get_link(self, brick):
         return brick["href"] if brick["href"] else None

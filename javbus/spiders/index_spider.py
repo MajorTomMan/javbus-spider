@@ -1,10 +1,4 @@
-'''
-Date: 2025-02-18 19:30:05
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-18 20:29:15
-FilePath: \spider\javbus\spiders\index_spider.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-'''
+
 
 """
 Date: 2025-02-13 19:14:01
@@ -90,6 +84,7 @@ class IndexSpider(RedisSpider):
                 )
             else:
                 self.log("No next page, stopping crawl.")
+                self.crawler.engine.close_spider(self, "No next page")
         else:
             self.log("Request failed with status code: {}".format(response.status))
 

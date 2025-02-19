@@ -1,4 +1,3 @@
-
 """
 Date: 2025-02-08 19:33:55
 LastEditors: MajorTomMan 765719516@qq.com
@@ -14,6 +13,7 @@ from scrapy_redis.spiders import RedisSpider
 from javbus.utils.page_util import PageUtil
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.static import base_url
+
 
 class SearchSpider(RedisSpider):
     name = "search"
@@ -105,7 +105,7 @@ class SearchSpider(RedisSpider):
             )
 
     def parse(self, response):
-        page_num = response.meta['page_num']
+        page_num = response.meta["page_num"]
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:
@@ -171,6 +171,7 @@ class SearchSpider(RedisSpider):
                 )
             else:
                 self.log("Final page reached.")
+                self.crawler.engine.close_spider(self, "No next page")
                 return
         elif response.status == 404:
             self.log(f"Key Word Not Exist")
