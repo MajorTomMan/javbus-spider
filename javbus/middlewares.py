@@ -149,10 +149,6 @@ class JavbusProxyMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
-    session = requests.Session()
-    headers = {
-        "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36"
-    }
 
     def process_request(self, request, spider):
         is_change_link = request.meta.get("is_change_link", False)
@@ -160,6 +156,21 @@ class JavbusProxyMiddleware:
             new_url = request.meta.get("new_url", "")
             if new_url:
                 request.url = self.replace_base_url(request.url, new_url)
+
+        settings = spider.settings
+        redis_client = redis.StrictRedis(
+            host=settings.get("REDIS_HOST"),
+            port=settings.get("REDIS_PORT"),
+            **settings.get("REDIS_PARAMS"),
+        )
+        ip = redis_client.srandmember("proxy:ip", number=1)
+        if ip:
+            ip = json.loads(ip)
+            address = ip["ip"]
+            port = ip["port"]
+            proxy = f"http://{address}:{port}"
+            request.meat["proxy"] = proxy
+            spider.logger.info(f"change proxy ip to {proxy}")
         return None
 
     def process_response(self, request, response, spider):
