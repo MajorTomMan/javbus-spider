@@ -1,7 +1,5 @@
 import re
-import scrapy
 import logging
-from urllib.parse import urlparse, urlunparse
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -30,21 +28,22 @@ from javbus.common.static import (
 from javbooks.utils.search_page_util import SearchPageUtil
 
 
+
 class PageUtil:
-    attrsUtil = AttrsUtil()
-    actressUtil = ActressUtil()
+    attrs_util = AttrsUtil()
+    actress_util = ActressUtil()
     companys = CompanyLinks()
-    requestUtil = RequestUtil()
+    request_util = RequestUtil()
     base_url = base_url
     logger = logging.getLogger(__name__)
 
     def __init__(self):
         self.logger.setLevel(logging.INFO)  # 设置日志级别
 
-    def parsePage(self, link, source, is_censored):
+    def parse_page(self, link, source, is_censored):
         """解析电影详情页"""
         if source:
-            page = self.getPage(source, link, is_censored)
+            page = self.get_page(source, link, is_censored)
             if page != -1:
                 page["movie"]["link"] = link
                 return page
@@ -55,7 +54,7 @@ class PageUtil:
             self.logger.error("Source for link {} is None".format(link))
             return None
 
-    def getSampleImageLinks(self, page):
+    def get_sample_image_links(self, page):
         """获取样品图像链接集合"""
         links = []
         if page.sampleimage:
@@ -64,7 +63,7 @@ class PageUtil:
                     links.append(sample[link])
         return links
 
-    def getPage(self, bs, link, is_censored):
+    def get_page(self, bs, link, is_censored):
         """从 BeautifulSoup 中获取页面数据"""
         page = PageItem()
         bigimage = BigImageItem()
@@ -75,19 +74,19 @@ class PageUtil:
         label = LabelItem()
         categories = CategoryItem()
         topic_image = TopicImageItem()
-        actressesList = []
+        actresses_list = []
         magnets = []
 
         # 获取电影信息（如代码、发行日期、导演等）
-        self.getMovieInfo(bs, movie, director, studio, label, series)
+        self.get_movie_info(bs, movie, director, studio, label, series)
         movie["is_censored"] = is_censored
         # 获取女演员信息
-        actressesList = self.getActresses(bs)
+        actresses_list = self.get_actresses(bs)
 
-        if actressesList:
-            categories = self.getCategories(bs, True)
+        if actresses_list:
+            categories = self.get_categories(bs, True)
         else:
-            categories = self.getCategories(bs, False)
+            categories = self.get_categories(bs, False)
 
         # 发现禁止的tag,该网页放弃爬取
         if categories == -1:
@@ -97,9 +96,9 @@ class PageUtil:
             return categories
 
         # 获取种子链接
-        magnets = self.getMagnets(bs, link)
+        magnets = self.get_magnets(bs, link)
         # 获取大图链接
-        images = self.getTopicAndBigImageLink(bs, movie["code"])
+        images = self.get_topic_and_big_image_link(bs, movie["code"])
         if type(images) is dict:
             bigimage["link"] = images["big_image_link"]
             topic_image["link"] = images["topic_image_link"]
@@ -107,28 +106,29 @@ class PageUtil:
             bigimage["link"] = images
 
         # 获取样品图像链接
-        sampleimages = self.getSampleImages(bs)
+        sampleimages = self.get_sample_images(bs)
+        page_args = {
+            "movie": movie,
+            "director": director,
+            "series": series,
+            "studio": studio,
+            "label": label,
+            "actresses_list": actresses_list,
+            "categories": categories,
+            "bigimage": bigimage,
+            "sampleimages": sampleimages,
+            "magnets": magnets,
+            "topic_image": topic_image
+    }
         # 填充 PageItem 对象
-        page = self.fillPageData(
-            page,
-            movie,
-            director,
-            series,
-            studio,
-            label,
-            actressesList,
-            categories,
-            bigimage,
-            sampleimages,
-            magnets,
-            topic_image,
+        page = self.fill_page_data(page,**page_args
         )
 
         return page
 
-    def getMovieInfo(self, bs, movie, director, studio, label, series):
+    def get_movie_info(self, bs, movie, director, studio, label, series):
         """获取电影信息"""
-        title = self.attrsUtil.getTitle(bs)
+        title = self.attrs_util.get_title(bs)
         if title:
             movie["title"] = title
         info = bs.find("div", {"class": "col-md-3 info"})
@@ -138,34 +138,34 @@ class PageUtil:
                 header = p.find("span", {"class": "header"})
                 if header:
                     if "識別碼:" in header:
-                        code = self.attrsUtil.getCode(p)
+                        code = self.attrs_util.get_code(p)
                         if code:
                             movie["code"] = code
                     if "發行日期:" in header:
-                        date = self.attrsUtil.getReleaseDate(header)
+                        date = self.attrs_util.get_release_date(header)
                         if date:
                             movie["release_date"] = date
                     if "長度:" in header:
-                        length = self.attrsUtil.getLength(header)
+                        length = self.attrs_util.get_length(header)
                         if length:
                             movie["length"] = length
                     if "導演:" in header:
-                        d = self.attrsUtil.getDirector(p)
+                        d = self.attrs_util.get_director(p)
                         if d:
                             director["name"] = list(d.keys())[0]
                             director["link"] = d.get(director["name"])
                     if "製作商:" in header:
-                        s = self.attrsUtil.getStudio(p)
+                        s = self.attrs_util.get_studio(p)
                         if s:
                             studio["name"] = list(s.keys())[0]
                             studio["link"] = s.get(studio["name"])
                     if "發行商:" in header:
-                        l = self.attrsUtil.getLabel(p)
+                        l = self.attrs_util.get_label(p)
                         if l:
                             label["name"] = list(l.keys())[0]
                             label["link"] = l.get(label["name"])
                     if "系列:" in header:
-                        s = self.attrsUtil.getSeries(p)
+                        s = self.attrs_util.get_series(p)
                         if s:
                             series["name"] = list(s.keys())[0]
                             series["link"] = s.get(series["name"])
@@ -176,15 +176,15 @@ class PageUtil:
                                 )
                             )
 
-    def getActresses(self, bs):
+    def get_actresses(self, bs):
         """获取所有的女演员信息"""
         actresses = []
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
-            actressList = self.attrsUtil.getActresses(ps[-1])
-            if actressList:
-                for actress in actressList:
+            actress_list = self.attrs_util.get_actresses(ps[-1])
+            if actress_list:
+                for actress in actress_list:
                     temp = ActressItem()
                     temp["actress_link"] = actress["link"]
                     temp["name"] = actress["name"]
@@ -192,29 +192,29 @@ class PageUtil:
             return actresses
         return None
 
-    def getCategories(self, bs, has_actresses):
+    def get_categories(self, bs, has_actresses):
         temp = []
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
             if has_actresses:
-                temp = self.attrsUtil.getGenres(ps[-3])
+                temp = self.attrs_util.get_genres(ps[-3])
             else:
-                temp = self.attrsUtil.getGenres(ps[-2])
+                temp = self.attrs_util.get_genres(ps[-2])
         return temp
 
-    def getMagnets(self, bs, link):
+    def get_magnets(self, bs, link):
         # 找到所有 <script> 标签
         scripts = bs.find_all("script")
         gid, uc, img = self.get_magnet_parameters(scripts)
         base_url = self.extract_domain_with_https(link)
         if self.check_parameters(gid, uc, img):
-            magnet_reponse = self.requestUtil.sendMangets(base_url, gid, img, uc, link)
-            if magnet_reponse:
+            magnet_response = self.request_util.send_mangets(base_url, gid, img, uc, link)
+            if magnet_response:
                 # 解析 JavaScript 返回的 HTML 内容
-                magnet_link = BeautifulSoup(magnet_reponse.content, "html.parser")
+                magnet_link = BeautifulSoup(magnet_response.content, "html.parser")
                 # 获取磁力链接
-                links = self.attrsUtil.getMagnets(magnet_link)
+                links = self.attrs_util.get_magnets(magnet_link)
                 items = self.build_magnet_items(links)
                 return items
             self.logger.error("Failed to get magnet link for: {}".format(link))
@@ -257,14 +257,14 @@ class PageUtil:
             return False
         return True
 
-    def matchLinkIsCompanyLink(self, link):
+    def match_link_is_company_link(self, link):
         """检查链接是否属于公司"""
         for company in self.companys.values:
             if company in link:
                 return True
         return False
 
-    def getTopicAndBigImageLink(self, bs, code):
+    def get_topic_and_big_image_link(self, bs, code):
         if code:
             images = {}
             # 调用javbooks的搜索结果
@@ -274,7 +274,7 @@ class PageUtil:
                 high_quality_image_url = self.replace_base_url(
                     topic_image_link, high_quality_image_link
                 )
-                response = self.requestUtil.get(high_quality_image_url)
+                response = self.request_util.get(high_quality_image_url)
                 if response.status_code == 200:
                     images["big_image_link"] = high_quality_image_url.replace(
                         "ps.jpg", "pl.jpg"
@@ -287,7 +287,7 @@ class PageUtil:
                     normal_image_url = self.replace_base_url(
                         topic_image_link, normal_image_link
                     )
-                    response = self.requestUtil.get(normal_image_url)
+                    response = self.request_util.get(normal_image_url)
                     if response.status_code == 200:
                         images["big_image_link"] = high_quality_image_url.replace(
                             "ps", "pl"
@@ -298,97 +298,29 @@ class PageUtil:
                         pass
             a = bs.find("a", {"class": "bigImage"})
             if a:
-                link = self.attrsUtil.getBigImage(a)
-                is_company_link = self.matchLinkIsCompanyLink(link)
+                link = self.attrs_util.get_big_image(a)
+                is_company_link = self.match_link_is_company_link(link)
                 if is_company_link:
                     return link
                 else:
                     return self.base_url + link
         return ""
 
-    def getSampleImages(self, bs):
+    def get_sample_images(self, bs):
         samples = []
         waterfall = bs.find("div", {"id": "sample-waterfall"})
         if waterfall:
-            imgs = self.attrsUtil.getSampleImages(waterfall)
+            imgs = self.attrs_util.get_sample_images(waterfall)
             if imgs:
                 for img in imgs:
                     sample = SampleImageItem()
                     sample["link"] = (
-                        self.matchLinkIsCompanyLink(img) and img or self.base_url + img
+                        self.match_link_is_company_link(img) and img or self.base_url + img
                     )
                     samples.append(sample)
         return samples
 
-    def fillPageData(
-        self,
-        page,
-        movie,
-        director,
-        series,
-        studio,
-        label,
-        actressesList,
-        categories,
-        bigimage,
-        sampleimages,
-        magnets,
-        topicimage,
-    ):
-        page["movie"] = movie
-        page["director"] = director
-        page["series"] = series
-        page["studio"] = studio
-        page["label"] = label
-        page["actresses"] = actressesList
-        page["categories"] = categories
-        page["bigimage"] = bigimage
-        page["sampleimages"] = sampleimages
-        page["magnets"] = magnets
-        page["topicimage"] = topicimage
+    def fill_page_data(self, page, **kwargs):
+        for key, value in kwargs.items():
+            page[key] = value
         return page
-
-    def hasNextPage(self, bs):
-        next_button = bs.find("a", id="next")
-        if next_button:
-            return True
-        return False
-
-    def get_backup_links(self, bs):
-        backup_links = []
-        alert = bs.find(
-            "div", {"class": "alert alert-info alert-dismissable alert-common"}
-        )
-        if alert:
-            rows = alert.find_all("a")[1:]
-            if rows:
-                self.logger.info("Found backup links")
-                for row in rows:
-                    link = row["href"]
-                    backup_links.append(link)
-                return backup_links
-            else:
-                self.logger.info("Couldn't find backup links")
-                return None
-        else:
-            return None
-
-    def extract_domain_with_https(self, url):
-        parsed_url = urlparse(url)
-        domain = parsed_url.netloc  # 提取域名部分
-        return f"https://{domain}"
-
-    def replace_base_url(self, original_url, new_base_url):
-        parsed_original = urlparse(original_url)
-        new_url = urlunparse(
-            (
-                parsed_original.scheme,  # 使用新 URL 的 scheme
-                new_base_url,  # 使用新 URL 的域名
-                parsed_original.path,  # 保留原来的路径
-                parsed_original.params,  # 保留原来的 params
-                parsed_original.query,  # 保留原来的 query
-                parsed_original.fragment,  # 保留原来的 fragment
-            )
-        )
-
-        return new_url

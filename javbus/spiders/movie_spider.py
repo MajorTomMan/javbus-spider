@@ -1,4 +1,5 @@
 
+
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
@@ -27,7 +28,7 @@ class MovieSpider(RedisSpider):
         censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
-            page = PageUtil().parsePage(
+            page = PageUtil().parse_page(
                 link=response.url, source=bs, is_censored=censored["is_censored"]
             )
             if page == -1 or page is None:
