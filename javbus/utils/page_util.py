@@ -19,7 +19,7 @@ from javbus.items import (
     ActressItem,
     TopicImageItem,
 )
-from javbus.common.static import (
+from javbus.common.constants import (
     base_url,
     javbooks_url,
     high_quality_image_link,

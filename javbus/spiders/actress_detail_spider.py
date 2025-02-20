@@ -6,22 +6,21 @@ FilePath: \spider\javbus\spiders\actress_detail_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
-import scrapy
 
 from bs4 import BeautifulSoup
 from javbus.items import ActressesItem
 from javbus.utils.actress_util import ActressUtil
 from scrapy_redis.spiders import RedisSpider
-from scrapy.http import Request
+from javbus.common.redis_keys import actress_detail_censored_link_key,actress_movie_censored_link_key_key
+
 import json
-import redis
 
 
 # 女优详情页爬虫
 class ActressDetailSpider(RedisSpider):
     name = "actress_detail"
     allowed_domains = None
-    censored_key = "actress_detail:censored_link"
+    censored_key = actress_detail_censored_link_key
     page_num = 1
 
     def parse(self, response):
@@ -49,7 +48,7 @@ class ActressDetailSpider(RedisSpider):
                 "is_censored": censored["is_censored"],
             }
             self.server.lpush(
-                "actress_movie:censored_link", json.dumps(movie_request_data)
+                actress_movie_censored_link_key_key, json.dumps(movie_request_data)
             )
         else:
             self.log("Request failed with status code: {}".format(response.status))

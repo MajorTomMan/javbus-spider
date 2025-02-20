@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from javbus.items import  GenreItem, GenreCategoryItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.static import base_url
+from javbus.common.constants import base_url
 
 class GenreSpider(RedisSpider):
     name = "genre"

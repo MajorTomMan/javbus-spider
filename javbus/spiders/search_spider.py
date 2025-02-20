@@ -11,9 +11,8 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.page_util import PageUtil
-from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.static import base_url
-
+from javbus.common.constants import base_url
+from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key,movie_start_url_key
 
 class SearchSpider(RedisSpider):
     name = "search"
@@ -125,7 +124,7 @@ class SearchSpider(RedisSpider):
                                 "url": link,
                             }
                             self.server.lpush(
-                                "actress_detail:start_urls",
+                                actress_detail_start_url_key,
                                 json.dumps(actress_detail_request_data),
                             )
                             actress_detail_request_data = {
@@ -133,7 +132,7 @@ class SearchSpider(RedisSpider):
                                 "is_censored": self.is_censored,
                             }
                             self.server.lpush(
-                                "actress_detail:censored_link",
+                                actress_detail_censored_link_key,
                                 json.dumps(actress_detail_request_data),
                             )
                 else:
@@ -144,14 +143,14 @@ class SearchSpider(RedisSpider):
                             if link:
                                 movie_request_data = {"url": link}
                                 self.server.lpush(
-                                    "movie:start_urls", json.dumps(movie_request_data)
+                                    movie_start_url_key, json.dumps(movie_request_data)
                                 )
                                 movie_request_data = {
                                     "url": link,
                                     "is_censored": self.is_censored,
                                 }
                                 self.server.lpush(
-                                    "movie:censored_link",
+                                    movie_censored_link_key,
                                     json.dumps(movie_request_data),
                                 )
 
@@ -165,7 +164,7 @@ class SearchSpider(RedisSpider):
                 next_page_num = page_num + 1
                 next_url = self.get_next_url(str(next_page_num))
                 yield scrapy.Request(
-                    url,
+                    next_url,
                     callback=self.parse,
                     meta={"page_num": self.page_num},
                 )

@@ -7,10 +7,9 @@ from javbus.items import ActressItem
 
 class ActressUtil:
     attrsUtil = AttrsUtil()
-    companys = CompanyLinks()
     lock = threading.Lock()
 
-    def getActressDetails(self, source):
+    def get_details(self, source):
         if source:
             actress = self.getInfo(source)
             if actress:
@@ -21,14 +20,7 @@ class ActressUtil:
             self.logUtil.log("actress detail page not found")
             return None
 
-    def matchLinkIsCompanyLink(self, link):
-        if isinstance(link, str):
-            for company in self.companys.values:
-                if company in link:
-                    return True
-        return False
-
-    def getInfo(self, bs):
+    def get_info(self, bs):
         box = bs.find("div", {"class": "avatar-box"})
         if box:
             actress = ActressItem()

@@ -14,7 +14,8 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.static import base_url
+from javbus.common.constants import base_url
+from javbus.common.redis_keys import movie_start_url_key,javbus_backup_links,movie_censored_link_key
 
 class IndexSpider(RedisSpider):
     name = "index"
@@ -44,7 +45,7 @@ class IndexSpider(RedisSpider):
             if links:
                 for link in links:
                     back_link = {"url": link}
-                    self.server.sadd("javbus:backup_links", json.dumps(back_link))
+                    self.server.sadd(javbus_backup_links, json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
@@ -55,14 +56,14 @@ class IndexSpider(RedisSpider):
                         if link:
                             movie_request_data = {"url": link}
                             self.server.lpush(
-                                "movie:start_urls", json.dumps(movie_request_data)
+                                movie_start_url_key, json.dumps(movie_request_data)
                             )
                             movie_request_data = {
                                 "url": link,
                                 "is_censored": self.is_censored,
                             }
                             self.server.lpush(
-                                "movie:censored_link", json.dumps(movie_request_data)
+                                movie_censored_link_key, json.dumps(movie_request_data)
                             )
 
                 else:

@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.static import base_url
+from javbus.common.constants import base_url
+from javbus.common.redis_keys import actress_detail_start_url_key,actress_detail_censored_link_key
 
 # 女优列表爬虫
 class ActressListSpider(RedisSpider):
@@ -49,7 +50,7 @@ class ActressListSpider(RedisSpider):
                         if link:
                             actresses_request_data = {"url": link}
                             self.server.lpush(
-                                "actress_detail:start_urls",
+                                actress_detail_start_url_key,
                                 json.dumps(actresses_request_data),
                             )
                             actresses_request_data = {
@@ -57,7 +58,7 @@ class ActressListSpider(RedisSpider):
                                 "is_censored": self.is_censored,
                             }
                             self.server.lpush(
-                                "actress_detail:censored_link",
+                                actress_detail_censored_link_key,
                                 json.dumps(actresses_request_data),
                             )
 

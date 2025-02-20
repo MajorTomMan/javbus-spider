@@ -4,9 +4,6 @@
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 import redis
 import json
-import requests
-from scrapy import signals
-from scrapy.http.response import Response
 from urllib.parse import urlparse, urlunparse
 from twisted.internet.error import (
     TCPTimedOutError,
@@ -14,10 +11,7 @@ from twisted.internet.error import (
     DNSLookupError,
 )
 from requests.exceptions import ConnectionError, ConnectTimeout
-
-# useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
-from scrapy_redis.spiders import RedisSpider
+from javbus.common.redis_keys import javbus_backup_links,proxy_ip_key
 
 
 class JavbusSpiderMiddleware:
@@ -81,7 +75,7 @@ class JavbusTimeOutMiddleware:
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
     def __init__(self):
-        self.back_links = "javbus:backup_links"
+        self.back_links = javbus_backup_links
 
     def process_response(self, request, response, spider):
         return response
@@ -163,7 +157,7 @@ class JavbusProxyMiddleware:
             port=settings.get("REDIS_PORT"),
             **settings.get("REDIS_PARAMS"),
         )
-        ip = redis_client.srandmember("proxy:ip", number=1)
+        ip = redis_client.srandmember(proxy_ip_key, number=1)
         if ip:
             ip = json.loads(ip)
             address = ip["ip"]

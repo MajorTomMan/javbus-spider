@@ -40,7 +40,7 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in GET request: {str(e)}")
 
-    def post2server(self, data, path=None, is_image=False):
+    def post_to_server(self, data, path=None, is_image=False):
         if path:
             url = self.baseUrl + path
         else:
@@ -86,8 +86,8 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in GET request: {str(e)}")
 
-    def send(self, data, path, is_image=False):
-        response = self.post2server(data=data, path=path, is_image=False)
+    def send(self, data, path):
+        response = self.post_to_server(data=data, path=path)
         if not response:
             logger.error(f"Error sending data to {path}. Check server status or logs.")
             logger.error(f"Data: {data}")
@@ -100,8 +100,6 @@ class RequestUtil:
             )
             logger.warning(f"Response Body: {response.text}")
 
-    def sendImage(self, data, path):
-        self.send(data, path, is_image=True)
 
     def sendMangets(self, base_url, gid, img, uc, referer):
         url = (

@@ -11,13 +11,14 @@ import scrapy
 from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
+from javbus.common.redis_keys import movie_start_url_key,movie_censored_link_key,actress_movie_censored_link_key_key
 
 
 class ActressMovieSpider(RedisSpider):
     name = "actress_movie"
     allowed_domains = None
     page_num = 1
-    censored_key = "actress_movie:censored_link"
+    censored_key = actress_movie_censored_link_key_key
     is_first_time = True
 
     def parse(self, response):
@@ -45,14 +46,14 @@ class ActressMovieSpider(RedisSpider):
                         if link:
                             movie_request_data = {"url": link}
                             self.server.lpush(
-                                "movie:start_urls", json.dumps(movie_request_data)
+                                movie_start_url_key, json.dumps(movie_request_data)
                             )
                             movie_request_data = {
                                 "url": link,
                                 "is_censored": censored["is_censored"],
                             }
                             self.server.lpush(
-                                "movie:censored_link", json.dumps(movie_request_data)
+                                movie_censored_link_key, json.dumps(movie_request_data)
                             )
 
                 else:

@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from javbus.utils.web_util import WebUtil
 from javbus.utils.request_util import RequestUtil
-from javbus.common.static import javbooks_url
+from javbus.common.constants import javbooks_url
 
 headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
