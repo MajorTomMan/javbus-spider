@@ -1,3 +1,4 @@
+
 """
 Date: 2025-02-14 20:07:34
 LastEditors: MajorTomMan 765719516@qq.com
@@ -11,14 +12,14 @@ import scrapy
 from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
-from javbus.common.redis_keys import movie_start_url_key,movie_censored_link_key,actress_movie_censored_link_key_key
+from javbus.common.redis_keys import movie_start_url_key,movie_censored_link_key,actress_movie_censored_link_key
 
 
 class ActressMovieSpider(RedisSpider):
     name = "actress_movie"
     allowed_domains = None
     page_num = 1
-    censored_key = actress_movie_censored_link_key_key
+    censored_key = actress_movie_censored_link_key
     is_first_time = True
 
     def parse(self, response):
@@ -72,7 +73,7 @@ class ActressMovieSpider(RedisSpider):
                 self.log("No next page, stopping crawl.")
 
     def get_next_page(self, bs):
-        return PageUtil().hasNextPage(bs)
+        return PageUtil()
 
     def get_link(self, brick):
         return brick["href"] if brick["href"] else None

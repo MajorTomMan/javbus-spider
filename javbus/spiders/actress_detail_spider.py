@@ -11,7 +11,11 @@ from bs4 import BeautifulSoup
 from javbus.items import ActressesItem
 from javbus.utils.actress_util import ActressUtil
 from scrapy_redis.spiders import RedisSpider
-from javbus.common.redis_keys import actress_detail_censored_link_key,actress_movie_censored_link_key_key
+from javbus.common.redis_keys import (
+    actress_detail_censored_link_key,
+    actress_movie_censored_link_key,
+    actress_movie_start_url_key,
+)
 
 import json
 
@@ -31,7 +35,7 @@ class ActressDetailSpider(RedisSpider):
         censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
-            actress_detail = ActressUtil().getActressDetails(bs)
+            actress_detail = ActressUtil().get_details(bs)
             actress_detail["is_censored"] = censored["is_censored"]
             actress_detail["actress_link"] = censored["url"]
             if actress_detail:
@@ -41,14 +45,14 @@ class ActressDetailSpider(RedisSpider):
             # 爬取女优详情页的电影
             movie_request_data = {"url": censored["url"]}
             self.server.lpush(
-                "actress_movie:start_urls", json.dumps(movie_request_data)
+                actress_movie_start_url_key, json.dumps(movie_request_data)
             )
             movie_request_data = {
                 "url": censored["url"],
                 "is_censored": censored["is_censored"],
             }
             self.server.lpush(
-                actress_movie_censored_link_key_key, json.dumps(movie_request_data)
+                actress_movie_censored_link_key, json.dumps(movie_request_data)
             )
         else:
             self.log("Request failed with status code: {}".format(response.status))

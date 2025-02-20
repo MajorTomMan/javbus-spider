@@ -101,7 +101,7 @@ class RequestUtil:
             logger.warning(f"Response Body: {response.text}")
 
 
-    def sendMangets(self, base_url, gid, img, uc, referer):
+    def request_magnets(self, base_url, gid, img, uc, referer):
         url = (
             base_url
             + f"/ajax/uncledatoolsbyajax.php?gid={gid}&lang=zh&img={img}&uc={uc}&floor={random.randint(1, 1000)}"

@@ -1,5 +1,6 @@
 import re
 import logging
+from urllib.parse import urlparse,urlunparse
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -26,7 +27,6 @@ from javbus.common.constants import (
     normal_image_link,
 )
 from javbooks.utils.search_page_util import SearchPageUtil
-
 
 
 class PageUtil:
@@ -113,16 +113,15 @@ class PageUtil:
             "series": series,
             "studio": studio,
             "label": label,
-            "actresses_list": actresses_list,
+            "actresses": actresses_list,
             "categories": categories,
             "bigimage": bigimage,
             "sampleimages": sampleimages,
             "magnets": magnets,
-            "topic_image": topic_image
-    }
+            "topicimage": topic_image,
+        }
         # 填充 PageItem 对象
-        page = self.fill_page_data(page,**page_args
-        )
+        page = self.fill_page_data(page, **page_args)
 
         return page
 
@@ -150,22 +149,22 @@ class PageUtil:
                         if length:
                             movie["length"] = length
                     if "導演:" in header:
-                        d = self.attrs_util.get_director(p)
+                        d = self.attrs_util.get_director_info(p)
                         if d:
                             director["name"] = list(d.keys())[0]
                             director["link"] = d.get(director["name"])
                     if "製作商:" in header:
-                        s = self.attrs_util.get_studio(p)
+                        s = self.attrs_util.get_studio_info(p)
                         if s:
                             studio["name"] = list(s.keys())[0]
                             studio["link"] = s.get(studio["name"])
                     if "發行商:" in header:
-                        l = self.attrs_util.get_label(p)
+                        l = self.attrs_util.get_label_info(p)
                         if l:
                             label["name"] = list(l.keys())[0]
                             label["link"] = l.get(label["name"])
                     if "系列:" in header:
-                        s = self.attrs_util.get_series(p)
+                        s = self.attrs_util.get_series_info(p)
                         if s:
                             series["name"] = list(s.keys())[0]
                             series["link"] = s.get(series["name"])
@@ -182,7 +181,7 @@ class PageUtil:
         info = bs.find("div", {"class": "col-md-3 info"})
         if info:
             ps = info.find_all("p")
-            actress_list = self.attrs_util.get_actresses(ps[-1])
+            actress_list = self.attrs_util.get_actress_list(ps[-1])
             if actress_list:
                 for actress in actress_list:
                     temp = ActressItem()
@@ -207,9 +206,11 @@ class PageUtil:
         # 找到所有 <script> 标签
         scripts = bs.find_all("script")
         gid, uc, img = self.get_magnet_parameters(scripts)
-        base_url = self.extract_domain_with_https(link)
+        base_url = self.change_links(link)
         if self.check_parameters(gid, uc, img):
-            magnet_response = self.request_util.send_mangets(base_url, gid, img, uc, link)
+            magnet_response = self.request_util.request_magnets(
+                base_url, gid, img, uc, link
+            )
             if magnet_response:
                 # 解析 JavaScript 返回的 HTML 内容
                 magnet_link = BeautifulSoup(magnet_response.content, "html.parser")
@@ -315,7 +316,9 @@ class PageUtil:
                 for img in imgs:
                     sample = SampleImageItem()
                     sample["link"] = (
-                        self.match_link_is_company_link(img) and img or self.base_url + img
+                        self.match_link_is_company_link(img)
+                        and img
+                        or self.base_url + img
                     )
                     samples.append(sample)
         return samples
@@ -324,3 +327,48 @@ class PageUtil:
         for key, value in kwargs.items():
             page[key] = value
         return page
+
+    def has_next_page(self, bs):
+        next_button = bs.find("a", id="next")
+        if next_button:
+            return True
+        return False
+
+    def get_backup_links(self, bs):
+        backup_links = []
+        alert = bs.find(
+            "div", {"class": "alert alert-info alert-dismissable alert-common"}
+        )
+        if alert:
+            rows = alert.find_all("a")[1:]
+            if rows:
+                self.logger.info("Found backup links")
+                for row in rows:
+                    link = row["href"]
+                    backup_links.append(link)
+                return backup_links
+            else:
+                self.logger.info("Couldn't find backup links")
+                return None
+        else:
+            return None
+
+    def change_links(self, url):
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc  # 提取域名部分
+        return f"https://{domain}"
+
+    def replace_base_url(self, original_url, new_base_url):
+        parsed_original = urlparse(original_url)
+        new_url = urlunparse(
+            (
+                parsed_original.scheme,  # 使用新 URL 的 scheme
+                new_base_url,  # 使用新 URL 的域名
+                parsed_original.path,  # 保留原来的路径
+                parsed_original.params,  # 保留原来的 params
+                parsed_original.query,  # 保留原来的 query
+                parsed_original.fragment,  # 保留原来的 fragment
+            )
+        )
+
+        return new_url

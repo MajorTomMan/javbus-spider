@@ -45,7 +45,7 @@ class GenreSpider(RedisSpider):
                 boxs = bs.find_all("div", {"class": "row genre-box"})
                 if boxs:
                     for index, box in enumerate(boxs):
-                        categories = AttrsUtil().getCategories(box)
+                        categories = AttrsUtil().get_categories(box)
                         genres = GenreCategoryItem()
                         genre = genreList[index]
                         genres["genre"] = genre

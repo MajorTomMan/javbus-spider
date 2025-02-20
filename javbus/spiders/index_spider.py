@@ -1,5 +1,3 @@
-
-
 """
 Date: 2025-02-13 19:14:01
 LastEditors: MajorTomMan 765719516@qq.com
@@ -15,7 +13,12 @@ from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import base_url
-from javbus.common.redis_keys import movie_start_url_key,javbus_backup_links,movie_censored_link_key
+from javbus.common.redis_keys import (
+    movie_start_url_key,
+    javbus_backup_links,
+    movie_censored_link_key,
+)
+
 
 class IndexSpider(RedisSpider):
     name = "index"
@@ -93,7 +96,7 @@ class IndexSpider(RedisSpider):
         return brick["href"] if brick["href"] else None
 
     def get_next_page(self, bs):
-        return PageUtil().hasNextPage(bs)
+        return PageUtil().has_next_page(bs)
 
     def log(self, message):
         """

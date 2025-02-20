@@ -202,7 +202,7 @@ class SearchSpider(RedisSpider):
         return brick["href"] if brick["href"] else None
 
     def get_next_page(self, bs):
-        return PageUtil().hasNextPage(bs)
+        return PageUtil().has_next_page(bs)
 
     def log(self, message):
         """

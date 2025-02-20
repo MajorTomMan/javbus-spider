@@ -75,7 +75,7 @@ class SearchPageUtil:
             except Exception as e:
                 self.logger.warning(f"Error during DrissionPage action: {e}")
             
-            cookies = tag.cookies(as_dict=True, all_info=True)
+            cookies = tag.cookies(all_info=True).as_dict()
             if cookies:
                 self.logger.info("Successfully fetched new cookies.")
 

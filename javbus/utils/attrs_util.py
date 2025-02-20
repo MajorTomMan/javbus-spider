@@ -8,19 +8,7 @@ class AttrsUtil:
     def __init__(self):
         self.logger.setLevel(logging.INFO)  # 设置日志级别
 
-    def getLink(self, bs):
-        a = bs.find("a", {"class": "movie-box"})
-        if a:
-            link = a["href"]
-            return link
-        a = bs.find("a", {"class": "avatar-box text-center"})
-        if a:
-            link = a["href"]
-            return link
-        self.logger.warning("singer movie link not found, skip")
-        return None
-
-    def getTitle(self, bs):
+    def get_title(self, bs):
         h3 = bs.find("h3")
         if h3:
             title = h3.text
@@ -29,7 +17,7 @@ class AttrsUtil:
             self.logger.warning("title not found")
             return None
 
-    def getBigImage(self, bs):
+    def get_big_image(self, bs):
         imgs = bs.find("img")
         if imgs:
             img = imgs["src"]
@@ -38,7 +26,7 @@ class AttrsUtil:
             self.logger.warning("img not found")
             return None
 
-    def getSampleImages(self, bs):
+    def get_sample_images(self, bs):
         sampleImgs = []
         boxs = bs.find_all("a", {"class": "sample-box"})
         if boxs:
@@ -49,7 +37,7 @@ class AttrsUtil:
         else:
             self.logger.warning("sampleImage not found")
 
-    def getCode(self, bs):
+    def get_code(self, bs):
         span = bs.find("span", {"style": "color:#CC0000;"})
         if span:
             code = span.text.strip()
@@ -58,13 +46,13 @@ class AttrsUtil:
             self.logger.warning("code not found")
             return None
 
-    def getReleaseDate(self, bs):
+    def get_release_date(self, bs):
         return bs.next_sibling.text.strip()
 
-    def getLength(self, bs):
+    def get_length(self, bs):
         return bs.next_sibling.text.strip()
 
-    def getDirector(self, bs):
+    def get_director_info(self, bs):
         director = {}
         a = bs.find("a")
         if a:
@@ -76,7 +64,7 @@ class AttrsUtil:
             self.logger.warning("director not found")
             return None
 
-    def getStudio(self, bs):
+    def get_studio_info(self, bs):
         studio = {}
         a = bs.find("a")
         if a:
@@ -88,7 +76,7 @@ class AttrsUtil:
             self.logger.warning("studio not found")
             return None
 
-    def getLabel(self, bs):
+    def get_label_info(self, bs):
         labels = {}
         a = bs.find("a")
         if a:
@@ -100,11 +88,10 @@ class AttrsUtil:
             self.logger.warning("label not found")
             return None
 
-    def getGenres(self, bs):
+    def get_genres(self, bs):
         genres = []
         genreList = bs.find_all("span", {"class": "genre"})
         if genreList:
-            # 查找目标影片是否含有禁止的分类
             for genre in genreList:
                 a = genre.find("a")
                 if a:
@@ -113,7 +100,7 @@ class AttrsUtil:
                         self.logger.warning("found ban tag in movie")
                         return -1
             for genre in genreList:
-                temp={}
+                temp = {}
                 a = genre.find("a")
                 if a:
                     temp = {}
@@ -127,7 +114,7 @@ class AttrsUtil:
             self.logger.warning("genres not found")
             return None
 
-    def getCategories(self, bs):
+    def get_categories(self, bs):
         categories = []
         ass = bs.find_all("a")
         if ass:
@@ -143,7 +130,7 @@ class AttrsUtil:
             self.logger.warning("categories not found")
             return None
 
-    def getActresses(self, bs):
+    def get_actress_list(self, bs):
         names = []
         spans = bs.find_all("span", {"class": "genre"})
         if spans:
@@ -161,7 +148,7 @@ class AttrsUtil:
             self.logger.warning("actresses not found")
             return None
 
-    def getSeries(self, bs):
+    def get_series_info(self, bs):
         series = {}
         a = bs.find("a")
         if a:
@@ -173,58 +160,58 @@ class AttrsUtil:
             self.logger.warning("series not found")
             return None
 
-    def getPhotoLink(self, bs):
+    def get_photo_link(self, bs):
         img = bs.find("img")
         if img:
             src = img["src"]
             return src
 
-    def getBirthDay(self, bs):
+    def get_birth_day(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getAge(self, bs):
+    def get_age(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getHeight(self, bs):
+    def get_height(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getCup(self, bs):
+    def get_cup_size(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getBust(self, bs):
+    def get_bust_size(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getWaist(self, bs):
+    def get_waist_size(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getHip(self, bs):
+    def get_hip_size(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getBirthPlace(self, bs):
+    def get_birth_place(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getHobby(self, bs):
+    def get_hobby(self, bs):
         attr = bs.text.split(":")
         if attr:
             return attr[-1].strip()
 
-    def getName(self, bs):
+    def get_name(self, bs):
         span = bs.find("span", {"class": "pb10"})
         if span:
             name = span.text
@@ -233,31 +220,8 @@ class AttrsUtil:
             self.logger.warning("name not found")
             return None
 
-    def getSingleActressLink(self, bs):
-        box = bs.find("a", {"class": "avatar-box text-center"})
-        if box:
-            img = box.find("img")
-            if img:
-                name = img["title"]
-                photo_link = img["src"]
-                return {
-                    "name": name,
-                    "photo_link": photo_link,
-                    "actress_link": box["href"],
-                }
-        else:
-            self.logger.warning("page actresses not found")
-            return None
 
-    def getIsCensored(self, bs):
-        button = bs.find("button", {"class": "btn btn-xs btn-info"})
-        if button:
-            if "有碼" in button.text.strip():
-                return True
-            elif "无碼" in button.text.strip():
-                return False
-
-    def getMagnets(self, bs):
+    def get_magnets(self, bs):
         magnets = []
         trs = bs.find_all("tr")
         if trs:
@@ -279,7 +243,6 @@ class AttrsUtil:
             return magnets
         else:
             return None
-
 
     def str_to_bool(self, value):
         if type(value) is str:
