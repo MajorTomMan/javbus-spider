@@ -45,7 +45,7 @@ class SearchPageUtil:
         """
         global cookies
         response = RequestUtil().post(url, keyword, cookies=cookies)
-        
+
         # If cookies are expired, re-fetch cookies and retry the request
         if self._cookies_expired(response):
             self._handle_cookie_expiry(response, keyword)
@@ -66,17 +66,16 @@ class SearchPageUtil:
         """
         global cookies
         self.logger.info("Cookies expired, attempting to fetch new cookies.")
-        
-        # Use DrissionPage to get fresh cookies
-        tag = WebUtil().get(response.url)
-        if tag:
-            try:
-                tag.actions.move_to("@type=submit").click()
-            except Exception as e:
-                self.logger.warning(f"Error during DrissionPage action: {e}")
-            
-            cookies = tag.cookies(all_info=True).as_dict()
-            if cookies:
+
+        response = RequestUtil().get(
+            "https://jkk057.com//serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
+        )
+        if response:
+            new_cookies = requests.utils.dict_from_cookiejar(response.cookies)
+            if new_cookies:
+                new_cookies["TSCvalue"] = "gb"
+                self.logger.info("get new cookies:" + str(new_cookies))
+                cookies = new_cookies
                 self.logger.info("Successfully fetched new cookies.")
 
     def _extract_image_url(self, response):

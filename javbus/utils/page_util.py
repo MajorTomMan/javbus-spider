@@ -1,6 +1,6 @@
 import re
 import logging
-from urllib.parse import urlparse,urlunparse
+from urllib.parse import urlparse,urlunparse,urljoin
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -304,7 +304,7 @@ class PageUtil:
                 if is_company_link:
                     return link
                 else:
-                    return self.base_url + link
+                    return urljoin(self.base_url,link)
         return ""
 
     def get_sample_images(self, bs):
@@ -318,7 +318,7 @@ class PageUtil:
                     sample["link"] = (
                         self.match_link_is_company_link(img)
                         and img
-                        or self.base_url + img
+                        or urljoin(self.base_url,link)
                     )
                     samples.append(sample)
         return samples
