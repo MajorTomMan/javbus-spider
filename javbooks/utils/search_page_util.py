@@ -1,7 +1,6 @@
 import logging
 import requests
 from bs4 import BeautifulSoup
-from javbus.utils.web_util import WebUtil
 from javbus.utils.request_util import RequestUtil
 from javbus.common.constants import javbooks_url
 
