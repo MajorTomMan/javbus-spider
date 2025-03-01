@@ -1,10 +1,17 @@
+'''
+Date: 2025-02-19 21:37:06
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-03-01 19:46:11
+FilePath: \spiders\spider\javbus\spiders\ip_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 
 from re import L
 import scrapy
 import json
 from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
-from javbus.common.constants import get_ip_proxy_url
+from javbus.common.constants import get_cloud_ip_proxy_url
 from javbus.common.redis_keys import proxy_ip_key
 
 class IP_Proxy_Spider(RedisSpider):
