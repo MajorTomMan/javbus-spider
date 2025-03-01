@@ -123,18 +123,18 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = False
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
-REDIS_HOST = "13.114.140.140"
-REDIS_PORT = 5533
+REDIS_HOST = "192.168.253.131"
+REDIS_PORT = 6379
 REDIS_PARAMS = {
     "db": 0,
     "password": "root",
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 12  # 每个请求之间的延迟为 13 秒
+DOWNLOAD_DELAY = 1.2
+# 保证每分钟只有50个请求
+CONCURRENT_REQUESTS = 1
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
 
-# 设置最大并发请求数，避免过度并发
-CONCURRENT_REQUESTS = 8
 DUPEFILTER_DEBUG = True
