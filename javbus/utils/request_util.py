@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class RequestUtil:
-    baseUrl = "http://localhost:7788"
+    baseUrl = "http://13.114.140.140:9999/api/"
+    #baseUrl = "http://localhost:9999"
     headers = {"Content-Type": "application/json"}
     image_headers = {"Content-Type": "image/jpeg"}
     magnet_headers = {
@@ -99,7 +100,6 @@ class RequestUtil:
                 f"Status Code: {response.status_code}, Reason: {response.reason}"
             )
             logger.warning(f"Response Body: {response.text}")
-
 
     def request_magnets(self, base_url, gid, img, uc, referer):
         url = (
