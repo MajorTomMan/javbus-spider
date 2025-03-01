@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class RequestUtil:
-    baseUrl = "http://13.114.140.140:9999/api/"
+    baseUrl = "http://13.114.140.140/api/"
     #baseUrl = "http://localhost:9999"
     headers = {"Content-Type": "application/json"}
     image_headers = {"Content-Type": "image/jpeg"}
