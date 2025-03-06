@@ -12,8 +12,8 @@ from twisted.internet.error import (
 )
 from requests.exceptions import ConnectionError, ConnectTimeout
 from javbus.common.redis_keys import javbus_backup_links,proxy_ip_key
-
-
+from javbus.utils.request_util import RequestUtil
+from javbus.common.constants import get_cloud_ip_proxy_url
 class JavbusSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -150,21 +150,14 @@ class JavbusProxyMiddleware:
             new_url = request.meta.get("new_url", "")
             if new_url:
                 request.url = self.replace_base_url(request.url, new_url)
-
-        settings = spider.settings
-        redis_client = redis.StrictRedis(
-            host=settings.get("REDIS_HOST"),
-            port=settings.get("REDIS_PORT"),
-            **settings.get("REDIS_PARAMS"),
-        )
-        ip = redis_client.srandmember(proxy_ip_key, number=1)
-        if ip:
-            ip = json.loads(ip)
-            address = ip["ip"]
-            port = ip["port"]
-            proxy = f"http://{address}:{port}"
-            request.meat["proxy"] = proxy
-            spider.logger.info(f"change proxy ip to {proxy}")
+        response = RequestUtil().get(get_cloud_ip_proxy_url)
+        if response.status_code == 200:
+            proxy = json.loads(response)
+            ip = proxy["ip"]
+            port = proxy["port"]
+            new_ip = f"http://{ip}:{port}"
+            request.meat["proxy"] = new_ip
+            spider.logger.info(f"change proxy ip to {new_ip}")
         return None
 
     def process_response(self, request, response, spider):
