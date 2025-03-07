@@ -108,7 +108,7 @@ class JavbusTimeOutMiddleware:
             if backup_url_dict:
                 backup_url_dict = json.loads(backup_url_dict)  # 需要解码 Redis 字符串
                 # 替换原有 URL 的主机部分为新的 URL
-                new_url = self.replace_javbus_base_url(request.url, backup_url_dict["url"])
+                new_url = self.replace_base_url(request.url, backup_url_dict["url"])
                 spider.logger.info(f"Retrying with new URL: {new_url}")
                 # 创建新的 Request
                 new_request = request.replace(
@@ -125,10 +125,10 @@ class JavbusTimeOutMiddleware:
         else:
             return None
 
-    def replace_javbus_base_url(self, original_url, new_javbus_base_url):
+    def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL
         parsed_original = urlparse(original_url)
-        parsed_new_base = urlparse(new_javbus_base_url)
+        parsed_new_base = urlparse(new_base_url)
 
         # 替换 scheme 和 netloc（即 http/https 和域名部分）
         new_url = urlunparse(
@@ -155,7 +155,7 @@ class JavbusProxyMiddleware:
         if is_change_link:
             new_url = request.meta.get("new_url", "")
             if new_url:
-                request.url = self.replace_javbus_base_url(request.url, new_url)
+                request.url = self.replace_base_url(request.url, new_url)
         response = RequestUtil().get(get_cloud_ip_proxy_url)
         if response.status_code == 200:
             proxy = json.loads(response)
@@ -173,10 +173,10 @@ class JavbusProxyMiddleware:
     def process_exception(self, request, exception, spider):
         pass
 
-    def replace_javbus_base_url(self, original_url, new_javbus_base_url):
+    def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL
         parsed_original = urlparse(original_url)
-        parsed_new_base = urlparse(new_javbus_base_url)
+        parsed_new_base = urlparse(new_base_url)
 
         # 替换 scheme 和 netloc（即 http/https 和域名部分）
         new_url = urlunparse(

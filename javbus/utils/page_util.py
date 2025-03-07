@@ -21,7 +21,7 @@ from javbus.items import (
     TopicImageItem,
 )
 from javbus.common.constants import (
-    javbus_base_url,
+    base_url,
     high_quality_image_link,
     normal_image_link,
 )
@@ -33,7 +33,7 @@ class PageUtil:
     actress_util = ActressUtil()
     companys = CompanyLinks()
     request_util = RequestUtil()
-    javbus_base_url = javbus_base_url
+    base_url = base_url
     logger = logging.getLogger(__name__)
 
     def __init__(self):
@@ -205,10 +205,10 @@ class PageUtil:
         # 找到所有 <script> 标签
         scripts = bs.find_all("script")
         gid, uc, img = self.get_magnet_parameters(scripts)
-        javbus_base_url = self.change_links(link)
+        base_url = self.change_links(link)
         if self.check_parameters(gid, uc, img):
             magnet_response = self.request_util.request_magnets(
-                javbus_base_url, gid, img, uc, link
+                base_url, gid, img, uc, link
             )
             if magnet_response:
                 # 解析 JavaScript 返回的 HTML 内容
@@ -271,7 +271,7 @@ class PageUtil:
             data = {"skey": code}
             topic_image_link = SearchPageUtil().get_topic_image(keyword=data)
             if topic_image_link:
-                high_quality_image_url = self.replace_javbus_base_url(
+                high_quality_image_url = self.replace_base_url(
                     topic_image_link, high_quality_image_link
                 )
                 response = self.request_util.get(high_quality_image_url)
@@ -284,7 +284,7 @@ class PageUtil:
                     )
                     return images
                 else:
-                    normal_image_url = self.replace_javbus_base_url(
+                    normal_image_url = self.replace_base_url(
                         topic_image_link, normal_image_link
                     )
                     response = self.request_util.get(normal_image_url)
@@ -303,7 +303,7 @@ class PageUtil:
                 if is_company_link:
                     return link
                 else:
-                    return urljoin(self.javbus_base_url,link)
+                    return urljoin(self.base_url,link)
         return ""
 
     def get_sample_images(self, bs):
@@ -317,7 +317,7 @@ class PageUtil:
                     sample["link"] = (
                         self.match_link_is_company_link(img)
                         and img
-                        or urljoin(self.javbus_base_url,link)
+                        or urljoin(self.base_url,link)
                     )
                     samples.append(sample)
         return samples
@@ -357,12 +357,12 @@ class PageUtil:
         domain = parsed_url.netloc  # 提取域名部分
         return f"https://{domain}"
 
-    def replace_javbus_base_url(self, original_url, new_javbus_base_url):
+    def replace_base_url(self, original_url, new_base_url):
         parsed_original = urlparse(original_url)
         new_url = urlunparse(
             (
                 parsed_original.scheme,  # 使用新 URL 的 scheme
-                new_javbus_base_url,  # 使用新 URL 的域名
+                new_base_url,  # 使用新 URL 的域名
                 parsed_original.path,  # 保留原来的路径
                 parsed_original.params,  # 保留原来的 params
                 parsed_original.query,  # 保留原来的 query
