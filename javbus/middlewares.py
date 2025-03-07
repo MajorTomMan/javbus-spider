@@ -14,6 +14,10 @@ from requests.exceptions import ConnectionError, ConnectTimeout
 from javbus.common.redis_keys import javbus_backup_links,proxy_ip_key
 from javbus.utils.request_util import RequestUtil
 from javbus.common.constants import get_cloud_ip_proxy_url
+
+
+
+
 class JavbusSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -67,8 +71,10 @@ class JavbusDownloaderMiddleware:
         spider.logger.error(
             f"Exception occurred for request {request.url}: {exception}"
         )
+        if response.status == 403:
+            spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
+            return request
         return None
-
 
 class JavbusTimeOutMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -117,7 +123,7 @@ class JavbusTimeOutMiddleware:
                 # 重新发起请求
                 return new_request
         else:
-            pass
+            return None
 
     def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL

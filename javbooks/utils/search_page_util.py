@@ -67,7 +67,7 @@ class SearchPageUtil:
         self.logger.info("Cookies expired, attempting to fetch new cookies.")
 
         response = RequestUtil().get(
-            "https://jkk057.com//serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
+            "https://jkk057.com/serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
         )
         if response:
             new_cookies = requests.utils.dict_from_cookiejar(response.cookies)
