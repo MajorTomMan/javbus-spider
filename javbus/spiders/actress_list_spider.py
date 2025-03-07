@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.constants import base_url
+from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import actress_detail_start_url_key,actress_detail_censored_link_key
 
 # 女优列表爬虫
@@ -21,15 +21,15 @@ class ActressListSpider(RedisSpider):
     allowed_domains = None
     page_num = 1
 
-    def __init__(self, url=base_url, is_censored=False):
-        self.base_url = url
+    def __init__(self, url=javbus_base_url, is_censored=False):
+        self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
 
     def start_requests(self):
         if self.is_censored is False:
-            url = self.base_url + "uncensored" + "/actresses/"
+            url = self.javbus_base_url + "uncensored" + "/actresses/"
         else:
-            url = self.base_url + "actresses/"
+            url = self.javbus_base_url + "actresses/"
         url = url + str(self.page_num)
         yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num})
 
@@ -71,9 +71,9 @@ class ActressListSpider(RedisSpider):
             if next_page:
                 next_page_num = page_num + 1
                 if self.is_censored is False:
-                    url = self.base_url + "uncensored" + "/actresses/"
+                    url = self.javbus_base_url + "uncensored" + "/actresses/"
                 else:
-                    url = self.base_url + "actresses/"
+                    url = self.javbus_base_url + "actresses/"
                 url = url + str(next_page_num)
                 yield scrapy.Request(
                     url, callback=self.parse, meta={"page_num": next_page_num}

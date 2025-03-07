@@ -11,21 +11,21 @@ from bs4 import BeautifulSoup
 from javbus.items import  GenreItem, GenreCategoryItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.constants import base_url
+from javbus.common.constants import javbus_base_url
 
 class GenreSpider(RedisSpider):
     name = "genre"
     allowed_domains = None
 
-    def __init__(self, url=base_url, is_censored=True):
-        self.base_url = url
+    def __init__(self, url=javbus_base_url, is_censored=True):
+        self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
 
     def start_requests(self):
         if self.is_censored:
-            url = self.base_url + "genre"
+            url = self.javbus_base_url + "genre"
         else:
-            url = self.base_url + "uncensored" + "/genre"
+            url = self.javbus_base_url + "uncensored" + "/genre"
         yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):

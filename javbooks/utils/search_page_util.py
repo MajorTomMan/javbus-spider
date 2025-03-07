@@ -2,7 +2,8 @@ import logging
 import requests
 from bs4 import BeautifulSoup
 from javbus.utils.request_util import RequestUtil
-from javbus.common.constants import javbooks_url
+from javbooks.common.constants import javbooks_search_url
+from javbooks.common.constants import javbooks_base_url
 
 headers = {
     "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -32,7 +33,7 @@ class SearchPageUtil:
         Retrieves the topic image URL based on the given keyword.
         Handles expired cookies and retrieves new ones when necessary.
         """
-        response = self._get_page(javbooks_url, keyword)
+        response = self._get_page(javbooks_search_url, keyword)
         if response:
             return self._extract_image_url(response)
         return None
@@ -67,7 +68,7 @@ class SearchPageUtil:
         self.logger.info("Cookies expired, attempting to fetch new cookies.")
 
         response = RequestUtil().get(
-            "https://jkk057.com/serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
+            javbooks_base_url+"/serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
         )
         if response:
             new_cookies = requests.utils.dict_from_cookiejar(response.cookies)

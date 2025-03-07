@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.constants import base_url
+from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import (
     movie_start_url_key,
     javbus_backup_links,
@@ -24,18 +24,18 @@ class IndexSpider(RedisSpider):
     name = "index"
     allowed_domains = None
 
-    def __init__(self, url=base_url, is_censored=True):
-        self.base_url = url
+    def __init__(self, url=javbus_base_url, is_censored=True):
+        self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
         self.page_num = 1
 
     def start_requests(self):
         if self.is_censored is False:
-            base_url = self.base_url + "uncensored/" + "page/" + str(self.page_num)
+            javbus_base_url = self.javbus_base_url + "uncensored/" + "page/" + str(self.page_num)
         else:
-            base_url = self.base_url + "page/" + str(self.page_num)
+            javbus_base_url = self.javbus_base_url + "page/" + str(self.page_num)
         yield scrapy.Request(
-            base_url, callback=self.parse, meta={"page_num": self.page_num}
+            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num}
         )
 
     def parse(self, response):
@@ -78,13 +78,13 @@ class IndexSpider(RedisSpider):
             if next_page:
                 next_page_num = page_num + 1
                 if self.is_censored is False:
-                    base_url = (
-                        self.base_url + "uncensored/" + "page/" + str(next_page_num)
+                    javbus_base_url = (
+                        self.javbus_base_url + "uncensored/" + "page/" + str(next_page_num)
                     )
                 else:
-                    base_url = self.base_url + "page/" + str(next_page_num)
+                    javbus_base_url = self.javbus_base_url + "page/" + str(next_page_num)
                 yield scrapy.Request(
-                    base_url, callback=self.parse, meta={"page_num": next_page_num}
+                    javbus_base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )
             else:
                 self.log("No next page, stopping crawl.")

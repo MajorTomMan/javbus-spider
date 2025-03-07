@@ -65,9 +65,9 @@ class ActressMovieSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = current_page_num + 1
-                base_url = censored["url"] + "/" + str(next_page_num)
+                javbus_base_url = censored["url"] + "/" + str(next_page_num)
                 yield scrapy.Request(
-                    base_url, callback=self.parse, meta={"page_num": next_page_num}
+                    javbus_base_url, callback=self.parse, meta={"page_num": next_page_num}
                 )
             else:
                 self.log("No next page, stopping crawl.")

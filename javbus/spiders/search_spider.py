@@ -11,7 +11,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.page_util import PageUtil
-from javbus.common.constants import base_url
+from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key,movie_start_url_key
 
 class SearchSpider(RedisSpider):
@@ -21,7 +21,7 @@ class SearchSpider(RedisSpider):
 
     def __init__(
         self,
-        url=base_url,
+        url=javbus_base_url,
         actress="北野未奈",
         code="",
         director="",
@@ -30,7 +30,7 @@ class SearchSpider(RedisSpider):
         series="",
         is_censored=False,
     ):
-        self.base_url = url
+        self.javbus_base_url = url
         self.page_num = 1
         self.actress = actress
         self.code = code
@@ -45,10 +45,10 @@ class SearchSpider(RedisSpider):
         Starts the requests by fetching the first page.
         """
         if self.is_censored is False:
-            self.base_url = self.base_url + "uncensored/"
+            self.javbus_base_url = self.javbus_base_url + "uncensored/"
         url = ""
         if self.actress:
-            url = self.base_url + "searchstar/" + self.actress
+            url = self.javbus_base_url + "searchstar/" + self.actress
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -58,9 +58,9 @@ class SearchSpider(RedisSpider):
         # Code search
         if self.code:
             if self.is_censored:
-                url = self.base_url + "search/" + self.code + "&type=1"
+                url = self.javbus_base_url + "search/" + self.code + "&type=1"
             else:
-                url = self.base_url + "search/" + self.code + "&type=0"
+                url = self.javbus_base_url + "search/" + self.code + "&type=0"
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -69,7 +69,7 @@ class SearchSpider(RedisSpider):
 
         # Director search
         if self.director:
-            url = self.base_url + "search/" + self.director + "&type=2"
+            url = self.javbus_base_url + "search/" + self.director + "&type=2"
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -78,7 +78,7 @@ class SearchSpider(RedisSpider):
 
         # Studio search
         if self.studio:
-            url = self.base_url + "search/" + self.studio + "&type=3"
+            url = self.javbus_base_url + "search/" + self.studio + "&type=3"
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -87,7 +87,7 @@ class SearchSpider(RedisSpider):
 
         # Label search
         if self.label:
-            url = self.base_url + "search/" + self.label + "&type=4"
+            url = self.javbus_base_url + "search/" + self.label + "&type=4"
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -96,7 +96,7 @@ class SearchSpider(RedisSpider):
 
         # Series search
         if self.series:
-            url = self.base_url + "search/" + self.series + "&type=5"
+            url = self.javbus_base_url + "search/" + self.series + "&type=5"
             yield scrapy.Request(
                 url,
                 callback=self.parse,
@@ -180,22 +180,22 @@ class SearchSpider(RedisSpider):
     def get_next_url(self, page_num):
         url = ""
         if self.actress:
-            url = self.base_url + "searchstar/" + self.actress + "/" + page_num
+            url = self.javbus_base_url + "searchstar/" + self.actress + "/" + page_num
         # Code search
         if self.code:
-            url = self.base_url + "search/" + self.code + "/" + page_num + "&type=1"
+            url = self.javbus_base_url + "search/" + self.code + "/" + page_num + "&type=1"
         # Director search
         if self.director:
-            url = self.base_url + "search/" + self.director + "/" + page_num + "&type=2"
+            url = self.javbus_base_url + "search/" + self.director + "/" + page_num + "&type=2"
         # Studio search
         if self.studio:
-            url = self.base_url + "search/" + self.studio + "/" + page_num + "&type=3"
+            url = self.javbus_base_url + "search/" + self.studio + "/" + page_num + "&type=3"
         # Label search
         if self.label:
-            url = self.base_url + "search/" + self.label + "/" + page_num + "&type=4"
+            url = self.javbus_base_url + "search/" + self.label + "/" + page_num + "&type=4"
         # Series search
         if self.series:
-            url = self.base_url + "search/" + self.series + "/" + page_num + "&type=5"
+            url = self.javbus_base_url + "search/" + self.series + "/" + page_num + "&type=5"
         return url
 
     def get_link(self, brick):
