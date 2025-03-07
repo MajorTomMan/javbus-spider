@@ -67,7 +67,7 @@ class JavbusDownloaderMiddleware:
         )
         if response.status == 403:
             spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
-            return request
+            return request.replace(dont_filter=True)
         return response
 
     def process_exception(self, request, exception, spider):
