@@ -21,7 +21,7 @@ from javbus.items import (
     TopicImageItem,
 )
 from javbus.common.constants import (
-    base_url,
+    javbus_base_url,
     high_quality_image_link,
     normal_image_link,
 )
@@ -33,7 +33,7 @@ class PageUtil:
     actress_util = ActressUtil()
     companys = CompanyLinks()
     request_util = RequestUtil()
-    base_url = base_url
+    base_url = javbus_base_url
     logger = logging.getLogger(__name__)
 
     def __init__(self):
