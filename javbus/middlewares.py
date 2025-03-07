@@ -155,7 +155,7 @@ class JavbusProxyMiddleware:
             new_ip = f"http://{ip}:{port}"
             request.meta["proxy"] = new_ip
             spider.logger.info(f"change proxy ip to {new_ip}")
-        return None
+        return request
 
 
     def replace_base_url(self, original_url, new_base_url):
