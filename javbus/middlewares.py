@@ -149,7 +149,7 @@ class JavbusProxyMiddleware:
                 request.url = self.replace_base_url(request.url, new_url)
         response = RequestUtil().get(get_cloud_ip_proxy_url)
         if response.status_code == 200:
-            proxy = json.loads(response)
+            proxy = response.json()
             ip = proxy["ip"]
             port = proxy["port"]
             new_ip = f"http://{ip}:{port}"
