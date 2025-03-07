@@ -69,7 +69,7 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     "javbus.middlewares.JavbusDownloaderMiddleware": 543,
-    "javbus.middlewares.JavbusProxyMiddleware": 544,
+    #"javbus.middlewares.JavbusProxyMiddleware": 544,
     "javbus.middlewares.JavbusTimeOutMiddleware": 545,
 }
 
