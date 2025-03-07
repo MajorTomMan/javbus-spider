@@ -65,15 +65,15 @@ class JavbusDownloaderMiddleware:
         spider.logger.info(
             f"Received response: {response.url} with status: {response.status}"
         )
+        if response.status == 403:
+            spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
+            return request
         return response
 
     def process_exception(self, request, exception, spider):
         spider.logger.error(
             f"Exception occurred for request {request.url}: {exception}"
         )
-        if response.status == 403:
-            spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
-            return request
         return None
 
 class JavbusTimeOutMiddleware:
@@ -83,17 +83,8 @@ class JavbusTimeOutMiddleware:
     def __init__(self):
         self.back_links = javbus_backup_links
 
-    def process_response(self, request, response, spider):
-        return response
-
     def process_exception(self, request, exception, spider):
-        if (
-            type(exception) is TCPTimedOutError
-            or ConnectionRefusedError
-            or DNSLookupError
-            or ConnectionError
-            or ConnectTimeout
-        ):
+        if isinstance(exception, (TCPTimedOutError, ConnectionRefusedError, DNSLookupError, ConnectionError, ConnectTimeout)):
             spider.logger.warning(
                 f"request {request.url} timeout,try another link to request"
             )
@@ -162,16 +153,10 @@ class JavbusProxyMiddleware:
             ip = proxy["ip"]
             port = proxy["port"]
             new_ip = f"http://{ip}:{port}"
-            request.meat["proxy"] = new_ip
+            request.meta["proxy"] = new_ip
             spider.logger.info(f"change proxy ip to {new_ip}")
         return None
 
-    def process_response(self, request, response, spider):
-        # 处理响应，记录响应状态码并检查是否有异常
-        return response
-
-    def process_exception(self, request, exception, spider):
-        pass
 
     def replace_base_url(self, original_url, new_base_url):
         # 解析原始 URL 和新的 Base URL
