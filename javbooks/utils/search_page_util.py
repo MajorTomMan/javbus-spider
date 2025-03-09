@@ -44,7 +44,7 @@ class SearchPageUtil:
         If cookies have expired, it handles the re-acquisition of cookies.
         """
         global cookies
-        response = RequestUtil().post(url, keyword, cookies=cookies)
+        response = requests.post(url, keyword, cookies=cookies)
 
         # If cookies are expired, re-fetch cookies and retry the request
         if self._cookies_expired(response):

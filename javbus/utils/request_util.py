@@ -1,5 +1,5 @@
 import random
-import requests
+from curl_cffi import requests
 import logging
 
 # 创建日志记录器
