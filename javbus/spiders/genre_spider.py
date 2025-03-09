@@ -52,5 +52,7 @@ class GenreSpider(RedisSpider):
                         genres["categories"] = categories
                         genres["is_censored"] =self.is_censored
                         yield genres
+            self.log("No next page, stopping crawl.")
+            self.crawler.engine.close_spider(self, "No next page")
         else:
             self.log("Request failed with status code: {}".format(response.status))
