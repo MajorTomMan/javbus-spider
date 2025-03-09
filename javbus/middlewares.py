@@ -147,14 +147,6 @@ class JavbusProxyMiddleware:
             new_url = request.meta.get("new_url", "")
             if new_url:
                 request.url = self.replace_base_url(request.url, new_url)
-        response = RequestUtil().get(get_cloud_ip_proxy_url)
-        if response.status_code == 200:
-            proxy = response.json()
-            ip = proxy["ip"]
-            port = proxy["port"]
-            new_ip = f"http://{ip}:{port}"
-            request.meta["proxy"] = new_ip
-            spider.logger.info(f"change proxy ip to {new_ip}")
         return request
 
 
