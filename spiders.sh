@@ -41,14 +41,14 @@ fi
 # 创建虚拟环境目录
 VENV_DIR="myvenv"
 if [ ! -d "$VENV_DIR" ]; then
-    echo "创建虚拟环境 $VENV_DIR ..."
-    python3 -m venv "$VENV_DIR"
+    echo "创建虚拟环境 ~/$VENV_DIR ..."
+    python3 -m venv ~/"$VENV_DIR"
 else
     echo "虚拟环境 $VENV_DIR 已存在，跳过创建步骤."
 fi
 
 # 激活虚拟环境
-source "$VENV_DIR/bin/activate"
+source "~/$VENV_DIR/bin/activate"
 
 # 安装项目依赖
 echo "安装项目依赖..."
