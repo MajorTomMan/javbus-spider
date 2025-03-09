@@ -1,8 +1,9 @@
-beautifulsoup4==4.13.3
-redis==5.2.1
-Requests==2.32.3
-Scrapy==2.11.0
-scrapy_redis==0.9.1
-fake_useragent==1.4.0
+beautifulsoup4
+redis
+Requests
+Scrapy
+scrapy_redis
+fake_useragent
 scrapyd
 scrapyd-client
+curl_cffi

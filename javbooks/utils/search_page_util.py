@@ -1,5 +1,5 @@
 import logging
-import requests
+from curl_cffi import requests
 from bs4 import BeautifulSoup
 from javbus.utils.request_util import RequestUtil
 from javbooks.common.constants import javbooks_search_url
