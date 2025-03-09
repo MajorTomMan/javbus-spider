@@ -1,5 +1,4 @@
 #!/bin/bash 
-
 # 查找所有 scrapy 进程并杀死它们
 pgrep -f "scrapy crawl" | xargs -r kill
 echo "查找并杀死所有scrapy进程..."
@@ -50,7 +49,6 @@ fi
 # 激活虚拟环境
 source "$VENV_DIR/bin/activate"
 
-
 # 安装项目依赖
 echo "安装项目依赖..."
 pip install --upgrade pip
@@ -66,7 +64,7 @@ mkdir -p ~/logs
 touch ~/logs/movie.log ~/logs/actress_detail.log ~/logs/actress_movie.log \
       ~/logs/index_censored.log ~/logs/index_uncensored.log \
       ~/logs/actresses_list_censored.log ~/logs/actresses_list_uncensored.log \
-      ~/logs/genre_censored.log ~/logs/genre_uncensored.log
+      ~/logs/genre_censored.log ~/logs/genre_uncensored.log ~/logs/pids.txt
 
 # 清空日志文件
 > ~/logs/movie.log
@@ -78,6 +76,7 @@ touch ~/logs/movie.log ~/logs/actress_detail.log ~/logs/actress_movie.log \
 > ~/logs/actresses_list_uncensored.log
 > ~/logs/genre_censored.log
 > ~/logs/genre_uncensored.log
+> ~/logs/pids.txt
 
 # 启动第一批爬虫并记录日志
 nohup scrapy crawl index -a is_censored=True > ~/logs/index_censored.log 2>&1 &
