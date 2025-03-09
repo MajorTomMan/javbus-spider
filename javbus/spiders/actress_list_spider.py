@@ -31,7 +31,7 @@ class ActressListSpider(RedisSpider):
         else:
             url = self.javbus_base_url + "actresses/"
         url = url + str(self.page_num)
-        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num})
+        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num},dont_filter=True)
 
     # 用于解析reponse的方法
     def parse(self, response):

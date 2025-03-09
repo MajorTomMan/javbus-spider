@@ -35,7 +35,7 @@ class IndexSpider(RedisSpider):
         else:
             javbus_base_url = self.javbus_base_url + "page/" + str(self.page_num)
         yield scrapy.Request(
-            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num}
+            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num},dont_filter=True
         )
 
     def parse(self, response):

@@ -26,7 +26,7 @@ class GenreSpider(RedisSpider):
             url = self.javbus_base_url + "genre"
         else:
             url = self.javbus_base_url + "uncensored" + "/genre"
-        yield scrapy.Request(url, callback=self.parse)
+        yield scrapy.Request(url, callback=self.parse,dont_filter=True)
 
     def parse(self, response):
         if response.status == 200:
