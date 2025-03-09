@@ -33,7 +33,7 @@ class RequestUtil:
 
     def get(self, url):
         try:
-            response = self.session.get(url)
+            response = self.session.get(url,timeout=3)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
@@ -48,7 +48,7 @@ class RequestUtil:
             url = self.baseUrl
         headers = self.image_headers if is_image else self.headers
         try:
-            response = self.session.post(url, json=data, headers=headers)
+            response = self.session.post(url, json=data, headers=headers,timeout=3)
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:
@@ -56,21 +56,13 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in POST request: {str(e)}")
 
-        try:
-            response = self.session.get(url)
-            response.raise_for_status()
-            return response
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error in GET request to {url}: {str(e)}")
-        except Exception as e:
-            logger.error(f"Unexpected error in GET request: {str(e)}")
 
     def post(self, url, data, cookies=None):
         try:
             if cookies:
-                response = self.session.post(url, data=data, cookies=cookies)
+                response = self.session.post(url, data=data, cookies=cookies,timeout=3)
             else:
-                response = self.session.post(url, data=data)
+                response = self.session.post(url, data=data,timeout=3)
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:
@@ -78,14 +70,6 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in POST request: {str(e)}")
 
-        try:
-            response = self.session.get(url)
-            response.raise_for_status()
-            return response
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error in GET request to {url}: {str(e)}")
-        except Exception as e:
-            logger.error(f"Unexpected error in GET request: {str(e)}")
 
     def send(self, data, path):
         response = self.post_to_server(data=data, path=path)
