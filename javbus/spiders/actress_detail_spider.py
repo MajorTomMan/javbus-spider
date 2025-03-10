@@ -25,7 +25,6 @@ class ActressDetailSpider(RedisSpider):
     name = "actress_detail"
     allowed_domains = None
     censored_key = actress_detail_censored_link_key
-    page_num = 1
 
     def parse(self, response):
         censored_dict = self.server.lpop(self.censored_key)

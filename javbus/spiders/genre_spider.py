@@ -26,9 +26,12 @@ class GenreSpider(RedisSpider):
             url = self.javbus_base_url + "genre"
         else:
             url = self.javbus_base_url + "uncensored" + "/genre"
-        yield scrapy.Request(url, callback=self.parse,dont_filter=True)
+        yield scrapy.Request(url, callback=self.parse,meta={"is_censored":self.is_censored},dont_filter=True)
 
     def parse(self, response):
+        is_censored = response.meta["is_censored"]
+        if is_censored is None:
+            is_censored = self.is_censored
         if response.status == 200:
             genreList = []
             bs = BeautifulSoup(response.body, "html.parser")
@@ -50,7 +53,7 @@ class GenreSpider(RedisSpider):
                         genre = genreList[index]
                         genres["genre"] = genre
                         genres["categories"] = categories
-                        genres["is_censored"] =self.is_censored
+                        genres["is_censored"] =is_censored
                         yield genres
             self.log("No next page, stopping crawl.")
             self.crawler.engine.close_spider(self, "No next page")

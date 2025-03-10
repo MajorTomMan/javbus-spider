@@ -35,10 +35,13 @@ class IndexSpider(RedisSpider):
         else:
             javbus_base_url = self.javbus_base_url + "page/" + str(self.page_num)
         yield scrapy.Request(
-            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num},dont_filter=True
+            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num,"is_censored":self.is_censored},dont_filter=True
         )
 
     def parse(self, response):
+        is_censored = response.meta["is_censored"]
+        if is_censored is None:
+            is_censored = self.is_censored
         page_num = response.meta["page_num"]
         if page_num is None:
             page_num = self.page_num
@@ -63,7 +66,7 @@ class IndexSpider(RedisSpider):
                             )
                             movie_request_data = {
                                 "url": link,
-                                "is_censored": self.is_censored,
+                                "is_censored": is_censored,
                             }
                             self.server.lpush(
                                 movie_censored_link_key, json.dumps(movie_request_data)
@@ -77,7 +80,7 @@ class IndexSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                if self.is_censored is False:
+                if is_censored is False:
                     javbus_base_url = (
                         self.javbus_base_url + "uncensored/" + "page/" + str(next_page_num)
                     )

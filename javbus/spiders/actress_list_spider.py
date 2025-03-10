@@ -31,11 +31,14 @@ class ActressListSpider(RedisSpider):
         else:
             url = self.javbus_base_url + "actresses/"
         url = url + str(self.page_num)
-        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num},dont_filter=True)
+        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num,"is_censored":self.is_censored},dont_filter=True)
 
     # 用于解析reponse的方法
     def parse(self, response):
         page_num = response.meta["page_num"]
+        is_censored = response.meta["is_censored"]
+        if is_censored is None:
+            is_censored = self.is_censored
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:
@@ -55,7 +58,7 @@ class ActressListSpider(RedisSpider):
                             )
                             actresses_request_data = {
                                 "url": link,
-                                "is_censored": self.is_censored,
+                                "is_censored": is_censored,
                             }
                             self.server.lpush(
                                 actress_detail_censored_link_key,
@@ -70,7 +73,7 @@ class ActressListSpider(RedisSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
-                if self.is_censored is False:
+                if is_censored is False:
                     url = self.javbus_base_url + "uncensored" + "/actresses/"
                 else:
                     url = self.javbus_base_url + "actresses/"
