@@ -131,13 +131,13 @@ start_remaining_spiders() {
     PID_movie=$!
     echo "Movie spider is running with PID: $PID_movie"
     
-    nohup scrapy crawl actressMovie > ~/logs/actress_movie.log 2>&1 &
-    PID_actressMovie=$!
-    echo "Actress Movie spider is running with PID: $PID_actressMovie"
+    nohup scrapy crawl actress_movie > ~/logs/actress_movie.log 2>&1 &
+    PID_actress_movie=$!
+    echo "Actress Movie spider is running with PID: $PID_actress_movie"
     
-    nohup scrapy crawl actressDetail > ~/logs/actress_detail.log 2>&1 &
-    PID_actressDetail=$!
-    echo "Actress Detail spider is running with PID: $PID_actressDetail"
+    nohup scrapy crawl actress_detail > ~/logs/actress_detail.log 2>&1 &
+    PID_actress_detail=$!
+    echo "Actress Detail spider is running with PID: $PID_actress_detail"
 }
 
 # 执行监控并启动剩余爬虫
