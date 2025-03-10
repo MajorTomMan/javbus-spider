@@ -23,9 +23,6 @@ class BaseSpider(RedisSpider):
         
         return spider
     
-    def start_requests(self):
-        """可以覆盖此方法来发送请求"""
-        pass
     
     def parse(self, response):
         """可以覆盖此方法来处理 response"""
@@ -33,12 +30,14 @@ class BaseSpider(RedisSpider):
 
     def get_redis_connection(self):
         """获取 Redis 连接"""
-        redis_host = settings.get("REDIS_HOST", "172.26.4.174")
-        redis_port = settings.getint("REDIS_PORT", 6379)
-        redis_db = settings.getint("REDIS_DB", 0)
-        redis_password  = settings.get("REDIS_PASSWORD","root")
+        redis_params = settings.get('REDIS_PARAMS')
         # 请根据你的 Redis 设置调整
-        return redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db,password=redis_password)
+        return redis.StrictRedis(    
+                        host=redis_params['host'],
+                        port=redis_params['port'],
+                        db=redis_params['db'],
+                        password=redis_params['password']
+        )
 
 
     def handle_exception(self, failure):

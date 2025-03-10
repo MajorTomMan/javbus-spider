@@ -10,7 +10,6 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 
 import json
 from javbus.utils.page_util import PageUtil
-from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key
 from base.base_spider import BaseSpider
