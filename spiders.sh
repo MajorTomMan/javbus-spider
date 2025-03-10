@@ -69,7 +69,8 @@ mkdir -p "$SCRIPT_DIR/logs"
 touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIPT_DIR/logs/actress_movie.log" \
       "$SCRIPT_DIR/logs/index_censored.log" "$SCRIPT_DIR/logs/index_uncensored.log" \
       "$SCRIPT_DIR/logs/actresses_list_censored.log" "$SCRIPT_DIR/logs/actresses_list_uncensored.log" \
-      "$SCRIPT_DIR/logs/genre_censored.log" "$SCRIPT_DIR/logs/genre_uncensored.log" "$SCRIPT_DIR/logs/pids.log"
+      "$SCRIPT_DIR/logs/genre_censored.log" "$SCRIPT_DIR/logs/genre_uncensored.log" "$SCRIPT_DIR/logs/pids.log" \
+      "$SCRIPT_DIR/logs/index_again.log "
 
 # 清空日志文件
 > "$SCRIPT_DIR/logs/movie.log"
@@ -82,6 +83,7 @@ touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIP
 > "$SCRIPT_DIR/logs/genre_censored.log"
 > "$SCRIPT_DIR/logs/genre_uncensored.log"
 > "$SCRIPT_DIR/logs/pids.log"
+> "$SCRIPT_DIR/logs/index_again.log"
 
 # 启动第一批爬虫并记录日志
 nohup scrapy crawl index -a is_censored=True > "$SCRIPT_DIR/logs/index_censored.log" 2>&1 &
@@ -150,7 +152,7 @@ start_remaining_spiders
 
 
 # 第二批爬虫的 kill 命令
- kill_command_second_batch=$(echo "$PID_movie $PID_actressMovie $PID_actressDetail" | xargs -I {} echo "kill -9 {}")
+kill_command_second_batch=$(echo "$PID_movie $PID_actress_movie $PID_actress_detail" | xargs -I {} echo "kill -9 {}")
 # 输出第二批的 kill 命令
  echo "以下是可以用来终止第二批爬虫进程的命令："
  echo "$kill_command_second_batch"
@@ -158,6 +160,6 @@ start_remaining_spiders
 
  
 # 添加定时任务 (cron) 每三天执行一次 index_censored 和 index_uncensored 爬虫
-(crontab -l ; echo "0 0 */3 * * /bin/bash $SCRIPT_DIR/run_spiders.sh") | crontab -
+(crontab -l ; echo "0 0 */3 * * /bin/bash $SCRIPT_DIR/run_spiders.sh > $SCRIPT_DIR/logs/index_again.log ") | crontab -
 
 echo "已添加定时任务：每三天执行一次爬虫"
