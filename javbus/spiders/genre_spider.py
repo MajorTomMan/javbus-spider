@@ -29,7 +29,7 @@ class GenreSpider(RedisSpider):
         yield scrapy.Request(url, callback=self.parse,meta={"is_censored":self.is_censored},dont_filter=True)
 
     def parse(self, response):
-        is_censored = response.meta["is_censored"]
+        is_censored = response.meta.get("is_censored",self.is_censored)
         if is_censored is None:
             is_censored = self.is_censored
         if response.status == 200:

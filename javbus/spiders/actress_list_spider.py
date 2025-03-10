@@ -35,8 +35,8 @@ class ActressListSpider(RedisSpider):
 
     # 用于解析reponse的方法
     def parse(self, response):
-        page_num = response.meta["page_num"]
-        is_censored = response.meta["is_censored"]
+        page_num = response.meta.get("page_num", self.page_num)
+        is_censored = response.meta.get("is_censored", self.is_censored)
         if is_censored is None:
             is_censored = self.is_censored
         if page_num is None:
