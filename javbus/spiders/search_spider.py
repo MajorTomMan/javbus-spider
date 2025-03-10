@@ -9,12 +9,12 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 import json
 import scrapy
 from bs4 import BeautifulSoup
-from scrapy_redis.spiders import RedisSpider
 from javbus.utils.page_util import PageUtil
 from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key,movie_start_url_key
+from spider.base.base_spider import BaseSpider
 
-class SearchSpider(RedisSpider):
+class SearchSpider(BaseSpider):
     name = "search"
     allowed_domains = None
     search_type = 1
@@ -198,20 +198,3 @@ class SearchSpider(RedisSpider):
             url = self.javbus_base_url + "search/" + self.series + "/" + page_num + "&type=5"
         return url
 
-    def get_link(self, brick):
-        return brick["href"] if brick["href"] else None
-
-    def get_next_page(self, bs):
-        return PageUtil().has_next_page(bs)
-
-    def log(self, message):
-        """
-        Log the messages using the utility.
-        """
-        self.logger.info(message)
-
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

@@ -13,9 +13,10 @@ from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from javbus.common.redis_keys import movie_start_url_key,movie_censored_link_key,actress_movie_censored_link_key
+from spider.base.base_spider import BaseSpider
 
 
-class ActressMovieSpider(RedisSpider):
+class ActressMovieSpider(BaseSpider):
     name = "actress_movie"
     allowed_domains = None
     page_num = 1
@@ -72,14 +73,3 @@ class ActressMovieSpider(RedisSpider):
             else:
                 self.log("No next page, stopping crawl.")
 
-    def get_next_page(self, bs):
-        return PageUtil()
-
-    def get_link(self, brick):
-        return brick["href"] if brick["href"] else None
-    
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

@@ -12,8 +12,9 @@ from javbus.items import  GenreItem, GenreCategoryItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
+from spider.base.base_spider import BaseSpider
 
-class GenreSpider(RedisSpider):
+class GenreSpider(BaseSpider):
     name = "genre"
     allowed_domains = None
 
@@ -60,9 +61,3 @@ class GenreSpider(RedisSpider):
         else:
             self.log("Request failed with status code: {}".format(response.status))
             
-            
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

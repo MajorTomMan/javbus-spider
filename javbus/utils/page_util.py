@@ -317,7 +317,7 @@ class PageUtil:
                     sample["link"] = (
                         self.match_link_is_company_link(img)
                         and img
-                        or urljoin(self.base_url,link)
+                        or urljoin(self.base_url,img)
                     )
                     samples.append(sample)
         return samples

@@ -13,8 +13,9 @@ from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key
+from spider.base.base_spider import BaseSpider
 
-class MovieSpider(RedisSpider):
+class MovieSpider(BaseSpider):
     name = "movie"
     allowed_domains = None
     is_censored = True
@@ -62,14 +63,3 @@ class MovieSpider(RedisSpider):
         else:
             self.log("Request failed with status code: {}".format(response.status))
 
-    def log(self, message):
-        """
-        Log the message for debugging purposes.
-        """
-        self.logger.info(message)
-
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

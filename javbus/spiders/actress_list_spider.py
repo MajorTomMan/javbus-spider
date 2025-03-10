@@ -9,14 +9,13 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 import json
 import scrapy
 from bs4 import BeautifulSoup
-from javbus.utils.page_util import PageUtil
-from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import actress_detail_start_url_key,actress_detail_censored_link_key
+from spider.base.base_spider import BaseSpider
 
 # 女优列表爬虫
-class ActressListSpider(RedisSpider):
+class ActressListSpider(BaseSpider):
     name = "actresses_list"
     allowed_domains = None
     page_num = 1
@@ -84,15 +83,3 @@ class ActressListSpider(RedisSpider):
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")
-
-    def get_link(self, brick):
-        return brick["href"] if brick["href"] else None
-
-    def get_next_page(self, bs):
-        return PageUtil().has_next_page(bs)
-
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

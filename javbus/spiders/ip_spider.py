@@ -13,12 +13,13 @@ from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
 from javbus.common.constants import get_cloud_ip_proxy_url
 from javbus.common.redis_keys import proxy_ip_key
+from spider.base.base_spider import BaseSpider
 
-class IP_Proxy_Spider(RedisSpider):
+class IP_Proxy_Spider(BaseSpider):
     name = "ip_proxy"
 
     def start_requests(self):
-        yield scrapy.Request(url=get_ip_proxy_url,callback=self.parse,dont_filter=True,headers={})
+        yield scrapy.Request(url=get_cloud_ip_proxy_url,callback=self.parse,dont_filter=True,headers={})
 
     # 用于解析reponse的方法
     def parse(self, response):

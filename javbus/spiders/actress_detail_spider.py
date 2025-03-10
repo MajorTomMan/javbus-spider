@@ -10,7 +10,6 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 from bs4 import BeautifulSoup
 from javbus.items import ActressesItem
 from javbus.utils.actress_util import ActressUtil
-from scrapy_redis.spiders import RedisSpider
 from javbus.common.redis_keys import (
     actress_detail_censored_link_key,
     actress_movie_censored_link_key,
@@ -19,9 +18,11 @@ from javbus.common.redis_keys import (
 
 import json
 
+from spider.base.base_spider import BaseSpider
+
 
 # 女优详情页爬虫
-class ActressDetailSpider(RedisSpider):
+class ActressDetailSpider(BaseSpider):
     name = "actress_detail"
     allowed_domains = None
     censored_key = actress_detail_censored_link_key
@@ -56,9 +57,3 @@ class ActressDetailSpider(RedisSpider):
         else:
             self.log("Request failed with status code: {}".format(response.status))
 
-
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

@@ -18,9 +18,10 @@ from javbus.common.redis_keys import (
     javbus_backup_links,
     movie_censored_link_key,
 )
+from spider.base.base_spider import BaseSpider
 
 
-class IndexSpider(RedisSpider):
+class IndexSpider(BaseSpider):
     name = "index"
     allowed_domains = None
 
@@ -95,20 +96,3 @@ class IndexSpider(RedisSpider):
         else:
             self.log("Request failed with status code: {}".format(response.status))
 
-    def get_link(self, brick):
-        return brick["href"] if brick["href"] else None
-
-    def get_next_page(self, bs):
-        return PageUtil().has_next_page(bs)
-
-    def log(self, message):
-        """
-        Log the message for debugging purposes.
-        """
-        self.logger.info(message)
-
-    @signals.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
-        self.log(f"Spider error occurred: {failure}", level="ERROR")
-        raise CloseSpider("An error occurred, stopping spider.")

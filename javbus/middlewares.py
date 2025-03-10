@@ -92,7 +92,8 @@ class JavbusTimeOutMiddleware:
             redis_client = redis.StrictRedis(
                 host=settings.get("REDIS_HOST"),
                 port=settings.get("REDIS_PORT"),
-                **settings.get("REDIS_PARAMS"),
+                db=settings.get("REDIS_DB"),
+                password=settings.get("REDIS_PASSWORD")
             )
             # 从 Redis 获取备用 URL
             backup_url_dict = redis_client.spop(self.back_links)
