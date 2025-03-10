@@ -124,8 +124,8 @@ SCHEDULER_PERSIST = False
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
 REDIS_PARAMS = {
-    "host": "192.168.253.131",
-    "port":6379,
+    "host": "13.114.140.140",
+    "port":5533,
     "db":0,
     "password":"root"
 }
