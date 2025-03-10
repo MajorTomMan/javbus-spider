@@ -86,5 +86,5 @@ class ActressListSpider(BaseSpider):
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")
-        else:
+            
             
