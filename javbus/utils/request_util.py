@@ -1,13 +1,13 @@
 import random
 from curl_cffi import requests
 import logging
-
+from javbus.common.constants import server_url
 # 创建日志记录器
 logger = logging.getLogger(__name__)
 
 
 class RequestUtil:
-    baseUrl = "http://13.114.140.140/api"
+    baseUrl = "http://"+server_url+"/api"
     #baseUrl = "http://localhost:9999"
     headers = {"Content-Type": "application/json"}
     image_headers = {"Content-Type": "image/jpeg"}
@@ -41,14 +41,13 @@ class RequestUtil:
         except Exception as e:
             logger.error(f"Unexpected error in GET request: {str(e)}")
 
-    def post_to_server(self, data, path=None, is_image=False):
+    def post_to_server(self, data, path=None):
         if path:
             url = self.baseUrl + path
         else:
             url = self.baseUrl
-        headers = self.image_headers if is_image else self.headers
         try:
-            response = self.session.post(url, json=data, headers=headers,timeout=3)
+            response = self.session.post(url, json=data, headers=self.headers,timeout=3)
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:

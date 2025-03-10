@@ -1,8 +1,8 @@
 '''
 Date: 2025-02-16 23:00:52
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-01 19:45:13
-FilePath: \spiders\spider\javbus\common\constants.py
+LastEditTime: 2025-03-10 23:05:00
+FilePath: \spider\javbus\common\constants.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 get_cloud_ip_proxy_url = "http://13.114.140.140/proxy/"
@@ -11,3 +11,4 @@ javbus_base_url = "https://www.javbus.com/"
 
 high_quality_image_link = "awsimgsrc.dmm.co.jp/pics_dig"
 normal_image_link = "pics.dmm.co.jp"
+server_url = ""
