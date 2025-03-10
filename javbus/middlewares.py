@@ -2,6 +2,7 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
 import redis
 import json
 from urllib.parse import urlparse, urlunparse
@@ -67,6 +68,9 @@ class JavbusDownloaderMiddleware:
         if response.status == 403:
             spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
             return request.replace(dont_filter=True)
+        
+        self.save_response_to_file(request,response, spider)
+
         return response
 
     def process_exception(self, request, exception, spider):
@@ -74,7 +78,22 @@ class JavbusDownloaderMiddleware:
             f"Exception occurred for request {request.url}: {exception}"
         )
         return None
-
+    def save_response_to_file(self,request, response, spider):
+        # 根据爬虫名字和时间戳生成文件名
+        spider_name = spider.name
+        filename = f"{spider_name}-is_censored-{request.meta["is_censored"]}.html"
+        
+        # 指定文件存储的目录
+        output_dir = 'outputs'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        # 将响应内容保存为 HTML 文件
+        file_path = os.path.join(output_dir, filename)
+        with open(file_path, 'wb') as f:
+            f.write(response.body)
+        spider.logger.info(f"Saved response to {file_path}")
+        
 class JavbusTimeOutMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the

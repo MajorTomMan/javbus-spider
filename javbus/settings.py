@@ -145,4 +145,4 @@ DOWNLOAD_TIMEOUT = 10  # 设置请求超时时间
 DOWNLOAD_CONNECT_TIMEOUT = 10  # 设置连接超时时间
 RETRY_TIMES = 3  # 设置最大重试次数
 RETRY_HTTP_CODES = [408, 500, 502, 503, 504, 403, 404]  # 重试时的错误码
-REDIS_START_URLS_AS_ZSET = True
+REDIS_START_URLS_AS_ZSET = True # 将请求url保存为zset格式

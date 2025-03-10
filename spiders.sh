@@ -64,7 +64,7 @@ pip install -r "$SCRIPT_DIR/requirements.txt"
 
 # 创建日志目录
 mkdir -p "$SCRIPT_DIR/logs"
-
+mkdir -p "$SCRIPT_DIR/outputs"
 # 创建日志文件（如果不存在）
 touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIPT_DIR/logs/actress_movie.log" \
       "$SCRIPT_DIR/logs/index_censored.log" "$SCRIPT_DIR/logs/index_uncensored.log" \
