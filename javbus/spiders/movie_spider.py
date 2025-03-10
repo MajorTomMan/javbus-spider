@@ -21,7 +21,7 @@ class MovieSpider(BaseSpider):
     censored_key = movie_censored_link_key
 
     def parse(self, response):
-        censored_dict = self.server.lpop(self.censored_key)
+        censored_dict = self.pop_from_redis(self.censored_key)
         if censored_dict is None:
             self.log("censored_dict is None")
             return
@@ -44,7 +44,7 @@ class MovieSpider(BaseSpider):
                         actress_detail_request_data = {
                             "url": link,
                         }
-                        self.server.lpush(
+                        self.push_to_redis(
                             actress_detail_start_url_key,
                             json.dumps(actress_detail_request_data),
                         )
@@ -52,7 +52,7 @@ class MovieSpider(BaseSpider):
                             "url": link,
                             "is_censored": censored["is_censored"],
                         }
-                        self.server.lpush(
+                        self.push_to_redis(
                             actress_detail_censored_link_key,
                             json.dumps(actress_detail_request_data),
                         )

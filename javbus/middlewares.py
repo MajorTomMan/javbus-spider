@@ -10,12 +10,11 @@ from twisted.internet.error import (
     ConnectionRefusedError,
     DNSLookupError,
 )
+from twisted.web._newclient import ResponseNeverReceived
 from requests.exceptions import ConnectionError, ConnectTimeout
 from javbus.common.redis_keys import javbus_backup_links,proxy_ip_key
 from javbus.utils.request_util import RequestUtil
 from javbus.common.constants import get_cloud_ip_proxy_url
-
-
 
 
 class JavbusSpiderMiddleware:
@@ -84,7 +83,17 @@ class JavbusTimeOutMiddleware:
         self.back_links = javbus_backup_links
 
     def process_exception(self, request, exception, spider):
-        if isinstance(exception, (TCPTimedOutError, ConnectionRefusedError, DNSLookupError, ConnectionError, ConnectTimeout)):
+        if isinstance(
+            exception,
+            (
+                TCPTimedOutError,
+                ConnectionRefusedError,
+                DNSLookupError,
+                ConnectionError,
+                ConnectTimeout,
+                ResponseNeverReceived,
+            ),
+        ):
             spider.logger.warning(
                 f"request {request.url} timeout,try another link to request"
             )

@@ -32,11 +32,16 @@ class IndexSpider(BaseSpider):
 
     def start_requests(self):
         if self.is_censored is False:
-            javbus_base_url = self.javbus_base_url + "uncensored/" + "page/" + str(self.page_num)
+            javbus_base_url = (
+                self.javbus_base_url + "uncensored/" + "page/" + str(self.page_num)
+            )
         else:
             javbus_base_url = self.javbus_base_url + "page/" + str(self.page_num)
         yield scrapy.Request(
-            javbus_base_url, callback=self.parse, meta={"page_num": self.page_num,"is_censored":self.is_censored},dont_filter=True
+            javbus_base_url,
+            callback=self.parse,
+            meta={"page_num": self.page_num, "is_censored": self.is_censored},
+            dont_filter=True,
         )
 
     def parse(self, response):
@@ -55,7 +60,7 @@ class IndexSpider(BaseSpider):
             if links:
                 for link in links:
                     back_link = {"url": link}
-                    self.server.sadd(javbus_backup_links, json.dumps(back_link))
+                    self.push_to_redis(javbus_backup_links, json.dumps(back_link))
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
             if waterfall:
@@ -65,14 +70,14 @@ class IndexSpider(BaseSpider):
                         link = self.get_link(brick)
                         if link:
                             movie_request_data = {"url": link}
-                            self.server.lpush(
+                            self.push_to_redis(
                                 movie_start_url_key, json.dumps(movie_request_data)
                             )
                             movie_request_data = {
                                 "url": link,
                                 "is_censored": is_censored,
                             }
-                            self.server.lpush(
+                            self.push_to_redis(
                                 movie_censored_link_key, json.dumps(movie_request_data)
                             )
 
@@ -86,16 +91,23 @@ class IndexSpider(BaseSpider):
                 next_page_num = page_num + 1
                 if is_censored is False:
                     javbus_base_url = (
-                        self.javbus_base_url + "uncensored/" + "page/" + str(next_page_num)
+                        self.javbus_base_url
+                        + "uncensored/"
+                        + "page/"
+                        + str(next_page_num)
                     )
                 else:
-                    javbus_base_url = self.javbus_base_url + "page/" + str(next_page_num)
+                    javbus_base_url = (
+                        self.javbus_base_url + "page/" + str(next_page_num)
+                    )
                 yield scrapy.Request(
-                    javbus_base_url, callback=self.parse, meta={"page_num": next_page_num,"is_censored":is_censored}
+                    javbus_base_url,
+                    callback=self.parse,
+                    meta={"page_num": next_page_num, "is_censored": is_censored},
+                    dont_filter=True,
                 )
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")
         else:
             self.log("Request failed with status code: {}".format(response.status))
-

@@ -1,9 +1,17 @@
+'''
+Date: 2025-03-10 21:19:15
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-03-10 22:50:10
+FilePath: \spider\base\base_spider.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 
 
 from scrapy.exceptions import CloseSpider
 from scrapy_redis.spiders import RedisSpider
 import logging
 import redis
+import time
 from scrapy.utils.project import get_project_settings
 from scrapy import signals
 from javbus.utils.page_util import PageUtil
@@ -13,17 +21,16 @@ logger = logging.getLogger(__name__)
 
 class BaseSpider(RedisSpider):
     """所有爬虫的基类"""
-    
+
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(BaseSpider, cls).from_crawler(crawler, *args, **kwargs)
-        
+
         # **在这里绑定 spider_error 信号**
         spider.crawler.signals.connect(spider.on_spider_error, signal=signals.spider_error)
-        
+
         return spider
-    
-    
+
     def parse(self, response):
         """可以覆盖此方法来处理 response"""
         pass
@@ -33,22 +40,33 @@ class BaseSpider(RedisSpider):
         redis_params = settings.get('REDIS_PARAMS')
         # 请根据你的 Redis 设置调整
         return redis.StrictRedis(    
-                        host=redis_params['host'],
-                        port=redis_params['port'],
-                        db=redis_params['db'],
-                        password=redis_params['password']
+            host=redis_params['host'],
+            port=redis_params['port'],
+            db=redis_params['db'],
+            password=redis_params['password']
         )
-
 
     def handle_exception(self, failure):
         """统一处理爬虫中的异常"""
         logger.error(f"Spider encountered an exception: {failure}")
         raise CloseSpider("Encountered an exception, stopping spider.")
-    
-    def log(self, message):
-        """统一日志记录"""
-        logger.info(message)
-            
+
+    def log(self, message,level=None):
+        """统一日志记录，动态适配日志级别"""
+        if level:
+            level = level.upper() 
+            if level == "DEBUG":
+                logger.debug(message)
+            elif level == "INFO":
+                logger.info(message)
+            elif level == "WARNING":
+                logger.warning(message)
+            elif level == "ERROR":
+                logger.error(message)
+            elif level == "CRITICAL":
+                logger.critical(message)
+        else:
+            logger.info(message)
 
     def on_spider_error(self, failure, response, spider):
         """捕获爬虫错误"""
@@ -60,3 +78,24 @@ class BaseSpider(RedisSpider):
 
     def get_next_page(self, bs):
         return PageUtil().has_next_page(bs)
+
+    def push_to_redis(self,key,data):
+        # 获取微秒级别的时间戳
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        counter_id = self.server.incr("unique_id")
+        score = f"{timestamp}_{counter_id}"
+        self.server.execute_command("ZADD", key, score, data)
+
+    def pop_from_redis(self,key):
+        # use atomic range/remove using multi/exec
+        pipe = self.server.pipeline()
+        pipe.multi()
+        # 取出分数最大的元素（先进先出）
+        # 取出并从redis中删除最新的数据
+        pipe.zrange(key, 0, 0)
+        pipe.zremrangebyrank(key, 0, 0)
+        results, count = pipe.execute()
+        if results:
+            return results[0]
+        else:
+            return None

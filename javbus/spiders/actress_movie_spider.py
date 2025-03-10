@@ -32,7 +32,7 @@ class ActressMovieSpider(BaseSpider):
         if current_page_num is None:
             current_page_num = self.page_num
         if response.status == 200:
-            censored_dict = self.server.lpop(self.censored_key)
+            censored_dict = self.pop_from_redis(self.censored_key)
             if censored_dict is None:
                 self.log("censored_dict is None")
                 return
@@ -47,14 +47,14 @@ class ActressMovieSpider(BaseSpider):
                         link = self.get_link(brick)
                         if link:
                             movie_request_data = {"url": link}
-                            self.server.lpush(
+                            self.push_to_redis(
                                 movie_start_url_key, json.dumps(movie_request_data)
                             )
                             movie_request_data = {
                                 "url": link,
                                 "is_censored": censored["is_censored"],
                             }
-                            self.server.lpush(
+                            self.push_to_redis(
                                 movie_censored_link_key, json.dumps(movie_request_data)
                             )
 

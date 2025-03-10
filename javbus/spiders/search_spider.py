@@ -108,7 +108,6 @@ class SearchSpider(BaseSpider):
         if page_num is None:
             page_num = self.page_num
         if response.status == 200:
-
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
@@ -123,7 +122,7 @@ class SearchSpider(BaseSpider):
                             actress_detail_request_data = {
                                 "url": link,
                             }
-                            self.server.lpush(
+                            self.push_to_redis(
                                 actress_detail_start_url_key,
                                 json.dumps(actress_detail_request_data),
                             )
@@ -131,7 +130,7 @@ class SearchSpider(BaseSpider):
                                 "url": link,
                                 "is_censored": self.is_censored,
                             }
-                            self.server.lpush(
+                            self.push_to_redis(
                                 actress_detail_censored_link_key,
                                 json.dumps(actress_detail_request_data),
                             )
@@ -142,14 +141,14 @@ class SearchSpider(BaseSpider):
                             link = self.get_link(brick)
                             if link:
                                 movie_request_data = {"url": link}
-                                self.server.lpush(
+                                self.push_to_redis(
                                     movie_start_url_key, json.dumps(movie_request_data)
                                 )
                                 movie_request_data = {
                                     "url": link,
                                     "is_censored": self.is_censored,
                                 }
-                                self.server.lpush(
+                                self.push_to_redis(
                                     movie_censored_link_key,
                                     json.dumps(movie_request_data),
                                 )

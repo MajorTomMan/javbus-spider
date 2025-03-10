@@ -11,8 +11,12 @@ import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
-from javbus.common.redis_keys import actress_detail_start_url_key,actress_detail_censored_link_key
+from javbus.common.redis_keys import (
+    actress_detail_start_url_key,
+    actress_detail_censored_link_key,
+)
 from base.base_spider import BaseSpider
+
 
 # 女优列表爬虫
 class ActressListSpider(BaseSpider):
@@ -30,7 +34,12 @@ class ActressListSpider(BaseSpider):
         else:
             url = self.javbus_base_url + "actresses/"
         url = url + str(self.page_num)
-        yield scrapy.Request(url, callback=self.parse, meta={"page_num": self.page_num,"is_censored":self.is_censored},dont_filter=True)
+        yield scrapy.Request(
+            url,
+            callback=self.parse,
+            meta={"page_num": self.page_num, "is_censored": self.is_censored},
+            dont_filter=True,
+        )
 
     # 用于解析reponse的方法
     def parse(self, response):
@@ -54,7 +63,7 @@ class ActressListSpider(BaseSpider):
                         link = self.get_link(box)
                         if link:
                             actresses_request_data = {"url": link}
-                            self.server.lpush(
+                            self.push_to_redis(
                                 actress_detail_start_url_key,
                                 json.dumps(actresses_request_data),
                             )
@@ -62,7 +71,7 @@ class ActressListSpider(BaseSpider):
                                 "url": link,
                                 "is_censored": is_censored,
                             }
-                            self.server.lpush(
+                            self.push_to_redis(
                                 actress_detail_censored_link_key,
                                 json.dumps(actresses_request_data),
                             )
@@ -81,10 +90,11 @@ class ActressListSpider(BaseSpider):
                     url = self.javbus_base_url + "actresses/"
                 url = url + str(next_page_num)
                 yield scrapy.Request(
-                    url, callback=self.parse, meta={"page_num": next_page_num,"is_censored":is_censored}
+                    url,
+                    callback=self.parse,
+                    meta={"page_num": next_page_num, "is_censored": is_censored},
+                    dont_filter=True,
                 )
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")
-            
-            
