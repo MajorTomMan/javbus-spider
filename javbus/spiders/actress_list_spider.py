@@ -7,6 +7,7 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
 import json
+import threading
 import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
@@ -22,22 +23,28 @@ from base.base_spider import BaseSpider
 class ActressListSpider(BaseSpider):
     name = "actresses_list"
     allowed_domains = None
-    page_num = 1
-
+    # 定义 thread_local 为类变量
+    thread_local = threading.local()
     def __init__(self, url=javbus_base_url, is_censored=False):
         self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
-
+        # 设置线程局部存储
+        ActressListSpider.thread_local.is_censored = AttrsUtil().str_to_bool(is_censored)
+        ActressListSpider.thread_local.page_num = 1
+        
     def start_requests(self):
-        if self.is_censored is False:
+        # 从线程局部存储获取 is_censored
+        is_censored = getattr(ActressListSpider.thread_local, 'is_censored', False)
+        page_num = getattr(ActressListSpider.thread_local, 'page_num', 1)
+        if is_censored is False:
             url = self.javbus_base_url + "uncensored" + "/actresses/"
         else:
             url = self.javbus_base_url + "actresses/"
-        url = url + str(self.page_num)
+        url = url + str(page_num)
         yield scrapy.Request(
             url,
             callback=self.parse,
-            meta={"page_num": self.page_num, "is_censored": self.is_censored},
+            meta={"page_num": page_num, "is_censored": is_censored},
             dont_filter=True,
         )
 
@@ -45,13 +52,6 @@ class ActressListSpider(BaseSpider):
     def parse(self, response):
         page_num = response.meta["page_num"]
         is_censored = response.meta["is_censored"]
-        # 判断是否为 None，并记录日志
-        if is_censored is None:
-            self.logger.info("is_censored 为 None, 使用默认值: %s", self.is_censored)
-            is_censored = self.is_censored
-        if page_num is None:
-            self.logger.info("page_num 为 None, 使用默认值: %s", self.page_num)
-            page_num = self.page_num
         self.log(f"page_num:{page_num} is_censored:{is_censored}")
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")

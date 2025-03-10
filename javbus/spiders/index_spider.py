@@ -6,6 +6,7 @@ FilePath: \spider\javbus\spiders\index_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
+import threading
 import scrapy
 import json
 from bs4 import BeautifulSoup
@@ -24,36 +25,34 @@ from base.base_spider import BaseSpider
 class IndexSpider(BaseSpider):
     name = "index"
     allowed_domains = None
-
+    # 定义 thread_local 为类变量
+    thread_local = threading.local()
     def __init__(self, url=javbus_base_url, is_censored=True):
         self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
-        self.page_num = 1
-
+        # 设置线程局部存储
+        IndexSpider.thread_local.is_censored = AttrsUtil().str_to_bool(is_censored)
+        IndexSpider.thread_local.page_num = 1
     def start_requests(self):
-        if self.is_censored is False:
+        # 从线程局部存储获取 is_censored
+        is_censored = getattr(IndexSpider.thread_local, 'is_censored', False)
+        page_num = getattr(IndexSpider.thread_local, 'page_num', 1)
+        if is_censored is False:
             javbus_base_url = (
-                self.javbus_base_url + "uncensored/" + "page/" + str(self.page_num)
+                self.javbus_base_url + "uncensored/" + "page/" + str(page_num)
             )
         else:
-            javbus_base_url = self.javbus_base_url + "page/" + str(self.page_num)
+            javbus_base_url = self.javbus_base_url + "page/" + str(page_num)
         yield scrapy.Request(
             javbus_base_url,
             callback=self.parse,
-            meta={"page_num": self.page_num, "is_censored": self.is_censored},
+            meta={"page_num": page_num, "is_censored": is_censored},
             dont_filter=True,
         )
 
     def parse(self, response):
         page_num = response.meta["page_num"]
         is_censored = response.meta["is_censored"]
-        # 判断是否为 None，并记录日志
-        if is_censored is None:
-            self.logger.info("is_censored 为 None, 使用默认值: %s", self.is_censored)
-            is_censored = self.is_censored
-        if page_num is None:
-            self.logger.info("page_num 为 None, 使用默认值: %s", self.page_num)
-            page_num = self.page_num
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             links = PageUtil().get_backup_links(bs)
