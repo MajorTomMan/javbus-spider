@@ -70,7 +70,6 @@ touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIP
       "$SCRIPT_DIR/logs/index_censored.log" "$SCRIPT_DIR/logs/index_uncensored.log" \
       "$SCRIPT_DIR/logs/actresses_list_censored.log" "$SCRIPT_DIR/logs/actresses_list_uncensored.log" \
       "$SCRIPT_DIR/logs/genre_censored.log" "$SCRIPT_DIR/logs/genre_uncensored.log" "$SCRIPT_DIR/logs/pids.log" \
-      "$SCRIPT_DIR/logs/index_again.log "
 
 # 清空日志文件
 > "$SCRIPT_DIR/logs/movie.log"

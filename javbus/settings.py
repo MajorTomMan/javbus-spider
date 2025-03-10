@@ -132,7 +132,7 @@ REDIS_PARAMS = {
 # 设置请求之间的延迟时间（单位：秒）
 DOWNLOAD_DELAY = 1.2
 # 保证每分钟只有50个请求
-CONCURRENT_REQUESTS = 1
+CONCURRENT_REQUESTS = 2
 
 # 设置下载中间件随机化延迟时间（单位：秒），通过设置`randomize_download_delay`来启用更随机的延迟
 RANDOMIZE_DOWNLOAD_DELAY = True
