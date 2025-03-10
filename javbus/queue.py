@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-10 21:19:43
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-10 22:43:40
+LastEditTime: 2025-03-10 23:22:36
 FilePath: \spider\javbus\queue.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -55,9 +55,10 @@ class FifoSortedQueue(Base):
     def push(self, request):
         """Push a request"""
         data = self._encode_request(request=request)
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S') 
-        counter_id = self.server.incr("unique_id") 
-        score = f"{timestamp}_{counter_id}" 
+        # 获取微秒级别的时间戳
+        timestamp_us = int(time.time() * 1_000_000)
+        counter_id = self.server.incr("unique_id")
+        score = timestamp_us + counter_id
         self.server.execute_command("ZADD", self.key, score, data)
 
     def pop(self, timeout=0):

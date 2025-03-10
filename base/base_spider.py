@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-10 22:50:10
+LastEditTime: 2025-03-10 23:23:51
 FilePath: \spider\base\base_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -81,9 +81,9 @@ class BaseSpider(RedisSpider):
 
     def push_to_redis(self,key,data):
         # 获取微秒级别的时间戳
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp_us = int(time.time() * 1_000_000)
         counter_id = self.server.incr("unique_id")
-        score = f"{timestamp}_{counter_id}"
+        score = timestamp_us + counter_id
         self.server.execute_command("ZADD", key, score, data)
 
     def pop_from_redis(self,key):
@@ -91,7 +91,7 @@ class BaseSpider(RedisSpider):
         pipe = self.server.pipeline()
         pipe.multi()
         # 取出分数最大的元素（先进先出）
-        # 取出并从redis中删除最新的数据
+        # 取出并从redis中删除最旧的数据
         pipe.zrange(key, 0, 0)
         pipe.zremrangebyrank(key, 0, 0)
         results, count = pipe.execute()
