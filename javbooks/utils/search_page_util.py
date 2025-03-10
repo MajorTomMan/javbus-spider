@@ -56,6 +56,10 @@ class SearchPageUtil:
         """
         Checks if the cookies are expired by looking for specific HTML elements.
         """
+        if response is None:
+            # 记录错误日志
+            self.logger.error("Response is None")
+            return False  # 或者返回其他适当值
         bs = BeautifulSoup(response.content, "html.parser")
         scale = bs.find("div", {"class": "scale_2"})
         return bool(scale)

@@ -124,8 +124,8 @@ SCHEDULER_PERSIST = False
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
 REDIS_PARAMS = {
-    "host": "13.114.140.140",
-    "port":5533,
+    "host": "192.168.253.131",
+    "port":6379,
     "db":0,
     "password":"root"
 }
@@ -145,3 +145,4 @@ DOWNLOAD_TIMEOUT = 10  # 设置请求超时时间
 DOWNLOAD_CONNECT_TIMEOUT = 10  # 设置连接超时时间
 RETRY_TIMES = 3  # 设置最大重试次数
 RETRY_HTTP_CODES = [408, 500, 502, 503, 504, 403, 404]  # 重试时的错误码
+REDIS_START_URLS_AS_ZSET = True

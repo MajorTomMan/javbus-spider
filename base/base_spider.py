@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-10 23:23:51
+LastEditTime: 2025-03-10 23:41:26
 FilePath: \spider\base\base_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -99,3 +99,11 @@ class BaseSpider(RedisSpider):
             return results[0]
         else:
             return None
+
+    def pop_priority_queue(self, redis_key, batch_size):
+        results = []
+        for _ in range(batch_size):
+            item = self.pop_from_redis(redis_key)
+            if item is not None:
+                results.append(item)
+        return results
