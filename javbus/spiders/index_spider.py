@@ -40,8 +40,8 @@ class IndexSpider(BaseSpider):
         )
 
     def parse(self, response):
-        page_num = response.meta.get("page_num", self.page_num)
-        is_censored = response.meta.get("is_censored", self.is_censored)
+        page_num = response.meta["page_num"]
+        is_censored = response.meta["is_censored"]
         # 判断是否为 None，并记录日志
         if is_censored is None:
             self.logger.info("is_censored 为 None, 使用默认值: %s", self.is_censored)
@@ -91,7 +91,7 @@ class IndexSpider(BaseSpider):
                 else:
                     javbus_base_url = self.javbus_base_url + "page/" + str(next_page_num)
                 yield scrapy.Request(
-                    javbus_base_url, callback=self.parse, meta={"page_num": self.page_num,"is_censored":is_censored}
+                    javbus_base_url, callback=self.parse, meta={"page_num": next_page_num,"is_censored":is_censored}
                 )
             else:
                 self.log("No next page, stopping crawl.")
