@@ -82,7 +82,6 @@ touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIP
 > "$SCRIPT_DIR/logs/genre_censored.log"
 > "$SCRIPT_DIR/logs/genre_uncensored.log"
 > "$SCRIPT_DIR/logs/pids.log"
-> "$SCRIPT_DIR/logs/index_again.log"
 
 # 启动第一批爬虫并记录日志
 nohup scrapy crawl index -a is_censored=True > "$SCRIPT_DIR/logs/index_censored.log" 2>&1 &
