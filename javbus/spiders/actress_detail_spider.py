@@ -18,7 +18,7 @@ from javbus.common.redis_keys import (
 
 import json
 
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 
 # 女优详情页爬虫

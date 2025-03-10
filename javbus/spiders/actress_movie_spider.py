@@ -13,7 +13,7 @@ from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from javbus.common.redis_keys import movie_start_url_key,movie_censored_link_key,actress_movie_censored_link_key
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 
 class ActressMovieSpider(BaseSpider):

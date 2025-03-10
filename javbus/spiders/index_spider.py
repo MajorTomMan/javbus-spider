@@ -18,7 +18,7 @@ from javbus.common.redis_keys import (
     javbus_backup_links,
     movie_censored_link_key,
 )
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 
 class IndexSpider(BaseSpider):

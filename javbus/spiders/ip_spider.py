@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 from scrapy_redis.spiders import RedisSpider
 from javbus.common.constants import get_cloud_ip_proxy_url
 from javbus.common.redis_keys import proxy_ip_key
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 class IP_Proxy_Spider(BaseSpider):
     name = "ip_proxy"

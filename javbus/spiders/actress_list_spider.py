@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import actress_detail_start_url_key,actress_detail_censored_link_key
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 # 女优列表爬虫
 class ActressListSpider(BaseSpider):

@@ -5,14 +5,23 @@ from scrapy_redis.spiders import RedisSpider
 import logging
 import redis
 from scrapy.utils.project import get_project_settings
-
-from spider.javbus.utils.page_util import PageUtil
+from scrapy import signals
+from javbus.utils.page_util import PageUtil
 
 settings = get_project_settings()
 logger = logging.getLogger(__name__)
 
 class BaseSpider(RedisSpider):
     """所有爬虫的基类"""
+    
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = super(BaseSpider, cls).from_crawler(crawler, *args, **kwargs)
+        
+        # **在这里绑定 spider_error 信号**
+        spider.crawler.signals.connect(spider.on_spider_error, signal=signals.spider_error)
+        
+        return spider
     
     def start_requests(self):
         """可以覆盖此方法来发送请求"""
@@ -41,9 +50,9 @@ class BaseSpider(RedisSpider):
         """统一日志记录"""
         logger.info(message)
             
-    @signal.spider_error.connect
-    def on_spider_error(self, failure, spider):
-        # 触发爬虫停止，记录错误信息
+
+    def on_spider_error(self, failure, response, spider):
+        """捕获爬虫错误"""
         self.log(f"Spider error occurred: {failure}", level="ERROR")
         raise CloseSpider("An error occurred, stopping spider.")
 

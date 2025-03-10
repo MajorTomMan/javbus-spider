@@ -123,7 +123,7 @@ DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 SCHEDULER_PERSIST = False
 
 # Redis 服务器地址（默认 127.0.0.1:6379）
-REDIS_HOST = "13.114.140.140"
+REDIS_HOST = "172.26.4.174"
 REDIS_PORT = 5533
 REDIS_DB = 0
 REDIS_PASSWORD = "root"

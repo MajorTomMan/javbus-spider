@@ -12,7 +12,7 @@ from javbus.items import  GenreItem, GenreCategoryItem
 from scrapy_redis.spiders import RedisSpider
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 class GenreSpider(BaseSpider):
     name = "genre"

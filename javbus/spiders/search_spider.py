@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key,movie_start_url_key
-from spider.base.base_spider import BaseSpider
+from base.base_spider import BaseSpider
 
 class SearchSpider(BaseSpider):
     name = "search"
