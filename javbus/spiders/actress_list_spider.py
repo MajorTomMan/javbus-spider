@@ -52,6 +52,7 @@ class ActressListSpider(BaseSpider):
         if page_num is None:
             self.logger.info("page_num 为 None, 使用默认值: %s", self.page_num)
             page_num = self.page_num
+        self.log(f"page_num:{page_num} is_censored:{is_censored}")
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {page_num}")
