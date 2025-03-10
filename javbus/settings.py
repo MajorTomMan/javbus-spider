@@ -114,7 +114,7 @@ FEED_EXPORT_ENCODING = "utf-8"
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 
 # 使用 FIFO 队列
-SCHEDULER_QUEUE_CLASS = "javbus.queue.LifoSortedQueue"
+SCHEDULER_QUEUE_CLASS = "javbus.queue.FifoSortedQueue"
 
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 # 保证去重数据保存在 Redis 中，支持分布式
