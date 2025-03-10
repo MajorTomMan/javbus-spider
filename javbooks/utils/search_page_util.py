@@ -1,5 +1,5 @@
 import logging
-from curl_cffi import requests
+import requests
 from bs4 import BeautifulSoup
 from javbus.utils.request_util import RequestUtil
 from javbooks.common.constants import javbooks_search_url
@@ -44,7 +44,7 @@ class SearchPageUtil:
         If cookies have expired, it handles the re-acquisition of cookies.
         """
         global cookies
-        response = requests.post(url, keyword, cookies=cookies)
+        response = RequestUtil().post(url, keyword, cookies=cookies)
 
         # If cookies are expired, re-fetch cookies and retry the request
         if self._cookies_expired(response):
@@ -96,7 +96,7 @@ class SearchPageUtil:
         """
         Fetches the linked page containing the topic image.
         """
-        response = requests.get(link, headers=headers, cookies=cookies)
+        response = RequestUtil().get(link, headers=headers, cookies=cookies)
         return response if response.status_code == 200 else None
 
     def _parse_image_from_page(self, response):
