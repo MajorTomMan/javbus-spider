@@ -55,3 +55,10 @@ class ActressDetailSpider(RedisSpider):
             )
         else:
             self.log("Request failed with status code: {}".format(response.status))
+
+
+    @signals.spider_error.connect
+    def on_spider_error(self, failure, spider):
+        # 触发爬虫停止，记录错误信息
+        self.log(f"Spider error occurred: {failure}", level="ERROR")
+        raise CloseSpider("An error occurred, stopping spider.")
