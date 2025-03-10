@@ -116,7 +116,7 @@ SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 # 使用 FIFO 队列
 SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.FifoQueue"
 
-REQUEST_FINGERPRINTER_IMPLEMENTATION = "default"
+REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 # 保证去重数据保存在 Redis 中，支持分布式
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # 持久化爬取队列（爬虫结束后，保留队列）
