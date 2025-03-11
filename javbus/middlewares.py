@@ -59,7 +59,7 @@ class JavbusSpiderMiddleware:
 class JavbusDownloaderMiddleware:
 
     def process_request(self, request, spider):
-        spider.logger.info(f"Sending request: {request.url}")
+        spider.logger.info(f"Sending request: {request.url}, with meta: {request.meta}")
         return None
 
     def process_response(self, request, response, spider):

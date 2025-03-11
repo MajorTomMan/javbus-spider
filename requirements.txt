@@ -7,3 +7,4 @@ fake_useragent
 scrapyd
 scrapyd-client
 curl_cffi
+gerapy
