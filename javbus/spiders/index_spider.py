@@ -30,14 +30,10 @@ class IndexSpider(BaseSpider):
     def __init__(self, url=javbus_base_url, is_censored=True):
         self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
-        # 设置线程局部存储
-        IndexSpider.thread_local.is_censored = AttrsUtil().str_to_bool(is_censored)
-        IndexSpider.thread_local.page_num = 1
+        
     def start_requests(self):
-        # 从线程局部存储获取 is_censored
-        is_censored = getattr(IndexSpider.thread_local, 'is_censored', False)
-        page_num = getattr(IndexSpider.thread_local, 'page_num', 1)
-        if is_censored is False:
+        page_num = 1 
+        if self.is_censored is False:
             javbus_base_url = (
                 self.javbus_base_url + "uncensored/" + "page/" + str(page_num)
             )
@@ -46,7 +42,7 @@ class IndexSpider(BaseSpider):
         yield scrapy.Request(
             javbus_base_url,
             callback=self.parse,
-            meta={"page_num": page_num, "is_censored": is_censored},
+            meta={"page_num": page_num, "is_censored": self.is_censored},
             dont_filter=True,
         )
 

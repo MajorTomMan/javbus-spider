@@ -5,6 +5,7 @@
 import os
 import redis
 import json
+import copy
 from urllib.parse import urlparse, urlunparse
 from twisted.internet.error import (
     TCPTimedOutError,
@@ -67,7 +68,7 @@ class JavbusDownloaderMiddleware:
         )
         if response.status == 403:
             spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
-            return request.replace(dont_filter=True)
+            return request.replace(url=request.url,meta=copy.deepcopy(request.meta),dont_filter=True)
         
         self.save_response_to_file(request,response, spider)
 
@@ -81,8 +82,10 @@ class JavbusDownloaderMiddleware:
     def save_response_to_file(self,request, response, spider):
         # 根据爬虫名字和时间戳生成文件名
         spider_name = spider.name
-        filename = f"{spider_name}-is_censored-{request.meta["is_censored"]}.html"
-        
+        if request.meta["is_censored"] is not None:
+            filename = f"{spider_name}-is_censored-{request.meta["is_censored"]}.html"
+        else:
+            filename = f"{spider_name}.html"
         # 指定文件存储的目录
         output_dir = 'outputs'
         if not os.path.exists(output_dir):
@@ -134,7 +137,7 @@ class JavbusTimeOutMiddleware:
                 new_request = request.replace(
                     url=new_url,
                     meta={
-                        **request.meta,
+                        **copy.deepcopy(request.meta),
                         "is_change_link": True,
                         "new_url": backup_url_dict["url"],
                     },

@@ -23,20 +23,13 @@ from base.base_spider import BaseSpider
 class ActressListSpider(BaseSpider):
     name = "actresses_list"
     allowed_domains = None
-    # 定义 thread_local 为类变量
-    thread_local = threading.local()
     def __init__(self, url=javbus_base_url, is_censored=False):
         self.javbus_base_url = url
         self.is_censored = AttrsUtil().str_to_bool(is_censored)
-        # 设置线程局部存储
-        ActressListSpider.thread_local.is_censored = AttrsUtil().str_to_bool(is_censored)
-        ActressListSpider.thread_local.page_num = 1
         
     def start_requests(self):
-        # 从线程局部存储获取 is_censored
-        is_censored = getattr(ActressListSpider.thread_local, 'is_censored', False)
-        page_num = getattr(ActressListSpider.thread_local, 'page_num', 1)
-        if is_censored is False:
+        page_num = 1
+        if self.is_censored is False:
             url = self.javbus_base_url + "uncensored" + "/actresses/"
         else:
             url = self.javbus_base_url + "actresses/"
@@ -44,7 +37,7 @@ class ActressListSpider(BaseSpider):
         yield scrapy.Request(
             url,
             callback=self.parse,
-            meta={"page_num": page_num, "is_censored": is_censored},
+            meta={"page_num": page_num, "is_censored": self.is_censored},
             dont_filter=True,
         )
 
