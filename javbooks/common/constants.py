@@ -1,2 +1,2 @@
-javbooks_base_url = "https://www.javbooks.com"
-javbooks_search_url = "https://www.javbooks.com/serch_censored.htm"
+javbooks_base_url = "https://jkk095.com/"
+javbooks_search_url = javbooks_base_url+"serch_censored.htm"

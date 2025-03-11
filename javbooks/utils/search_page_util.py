@@ -6,20 +6,22 @@ from javbooks.common.constants import javbooks_search_url
 from javbooks.common.constants import javbooks_base_url
 
 headers = {
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "accept-language": "zh-CN,zh;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
-    "cache-control": "no-cache",
-    "pragma": "no-cache",
-    "priority": "u=0, i",
-    "sec-ch-ua": '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": '"Windows"',
-    "sec-fetch-dest": "document",
-    "sec-fetch-mode": "navigate",
-    "sec-fetch-site": "none",
-    "sec-fetch-user": "?1",
-    "upgrade-insecure-requests": "1",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+    "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding: gzip, deflate, br, zstd",
+    "Accept-Language: zh-CN,zh;q=0.9,ja-JP;q=0.8,ja;q=0.7,en-US;q=0.6,en;q=0.5",
+    "Cache-Control: no-cache",
+    "Cookie: PHPSESSID=grrbpnkjqjkeuoj3iuo1g3fsr4; TSCvalue=gb; _ga=GA1.2.404428871.1741698410; _gid=GA1.2.450998999.1741698410; HstCfa3110609=1741698410763; HstCmu3110609=1741698410763; HstCnv3110609=1; HstCns3110609=1; __dtsu=104017399642172DB5D5A7E9CDBFF8D0; _cc_id=e8d1745776cb7a6906db8fe6f59e6950; panoramaId_expiry=1741784823187; panoramaId=6179d28ef7445275b9dd2563ffe7a9fb927ae11a3bd6173a4cd8bc43e2bc3f46; panoramaIdType=panoDevice; HstCla3110609=1741699282768; HstPn3110609=3; HstPt3110609=3; _ga_9RRW7ZEM7N=GS1.2.1741698411.1.1.1741699287.0.0.0",
+    "Pragma: no-cache",
+    "Priority: u=0, i",
+    'Sec-CH-UA: "Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+    "Sec-CH-UA-Mobile: ?0",
+    'Sec-CH-UA-Platform: "Windows"',
+    "Sec-Fetch-Dest: document",
+    "Sec-Fetch-Mode: navigate",
+    "Sec-Fetch-Site: none",
+    "Sec-Fetch-User: ?1",
+    "Upgrade-Insecure-Requests: 1",
+    "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
 }
 
 cookies = None  # Global cookies
@@ -48,7 +50,7 @@ class SearchPageUtil:
 
         # If cookies are expired, re-fetch cookies and retry the request
         if self._cookies_expired(response):
-            self._handle_cookie_expiry(response, keyword)
+            self._handle_cookie_expiry(response)
 
         return RequestUtil().post(url, keyword, cookies=cookies) if cookies else None
 
@@ -64,13 +66,12 @@ class SearchPageUtil:
         scale = bs.find("div", {"class": "scale_2"})
         return bool(scale)
 
-    def _handle_cookie_expiry(self, response, keyword):
+    def _handle_cookie_expiry(self, response):
         """
         Handles the cookie expiry scenario, re-fetches cookies using DrissionPage.
         """
         global cookies
         self.logger.info("Cookies expired, attempting to fetch new cookies.")
-
         response = RequestUtil().get(
             javbooks_base_url+"/serchinfo_censored/IamOverEighteenYearsOld/topicsbt_1.htm"
         )

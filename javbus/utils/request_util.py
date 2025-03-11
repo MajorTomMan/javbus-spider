@@ -1,5 +1,5 @@
 import random
-from curl_cffi import requests
+import requests
 import logging
 from javbus.common.constants import server_url
 # 创建日志记录器
@@ -33,7 +33,7 @@ class RequestUtil:
 
     def get(self, url):
         try:
-            response = self.session.get(url,impersonate="chrome",timeout=3)
+            response = self.session.get(url,timeout=3)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
@@ -48,7 +48,7 @@ class RequestUtil:
             url = self.baseUrl
         try:
             response = self.session.post(
-                url, json=data, headers=self.headers, impersonate="chrome", timeout=3
+                url, json=data, headers=self.headers,  timeout=3
             )
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
@@ -61,11 +61,11 @@ class RequestUtil:
         try:
             if cookies:
                 response = self.session.post(
-                    url, data=data, cookies=cookies, impersonate="chrome", timeout=3
+                    url, data=data, cookies=cookies,  timeout=3
                 )
             else:
                 response = self.session.post(
-                    url, data=data, impersonate="chrome", timeout=3
+                    url, data=data,  timeout=3
                 )
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
@@ -96,7 +96,7 @@ class RequestUtil:
         if referer:
             self.magnet_headers["referer"] = referer
         try:
-            response = requests.get(url=url,impersonate="chrome",headers=self.magnet_headers,timeout=3)
+            response = requests.get(url=url,headers=self.magnet_headers,timeout=3)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as error:
