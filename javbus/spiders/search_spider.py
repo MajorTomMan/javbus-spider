@@ -17,30 +17,14 @@ from base.base_spider import BaseSpider
 class SearchSpider(BaseSpider):
     name = "search"
     allowed_domains = None
-    search_type = 1
-
-    def __init__(
-        self,
-        url=javbus_base_url,
-        actress="北野未奈",
-        code="",
-        director="",
-        studio="",
-        label="",
-        series="",
-        is_censored=False,
-    ):
-        self.javbus_base_url = url
-        self.page_num = 1
-        self.actress = actress
-        self.code = code
-        self.director = director
-        self.studio = studio
-        self.label = label
-        self.series = series
-        self.is_censored = is_censored
-
+    
+    def __init__(self, *args, **kwargs):
+        # 父类会处理参数初始化
+        super().__init__(*args, **kwargs)
+        
     def start_requests(self):
+        search_type = 1
+        page_num = 1
         """
         Starts the requests by fetching the first page.
         """

@@ -22,7 +22,11 @@ class ActressMovieSpider(BaseSpider):
     page_num = 1
     censored_key = actress_movie_censored_link_key
     is_first_time = True
-
+    
+    def __init__(self, *args, **kwargs):
+        # 父类会处理参数初始化
+        super().__init__(*args, **kwargs)
+        
     def parse(self, response):
         current_page_num = None 
         if self.is_first_time is False:

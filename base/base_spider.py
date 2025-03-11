@@ -21,7 +21,19 @@ logger = logging.getLogger(__name__)
 
 class BaseSpider(RedisSpider):
     """所有爬虫的基类"""
-
+    def __init__(self, *args, **kwargs):
+        self.javbus_base_url = kwargs.get("url", javbus_base_url)
+        self.is_censored = AttrsUtil().str_to_bool(kwargs.get("is_censored", True))
+        self.actress = kwargs.get("actress", "北野未奈")
+        self.code = kwargs.get("code", "")
+        self.director = kwargs.get("director", "")
+        self.studio = kwargs.get("studio", "")
+        self.label = kwargs.get("label", "")
+        self.series = kwargs.get("series", "")
+        # 确保调用父类的初始化
+        super(BaseSpider, self).__init__(*args, **kwargs)
+        
+        
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
         spider = super(BaseSpider, cls).from_crawler(crawler, *args, **kwargs)

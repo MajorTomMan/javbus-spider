@@ -19,7 +19,11 @@ class MovieSpider(BaseSpider):
     allowed_domains = None
     is_censored = True
     censored_key = movie_censored_link_key
-
+    
+    def __init__(self, *args, **kwargs):
+        # 父类会处理参数初始化
+        super().__init__(*args, **kwargs)
+        
     def parse(self, response):
         censored_dict = self.pop_from_redis(self.censored_key)
         if censored_dict is None:

@@ -26,7 +26,11 @@ class ActressDetailSpider(BaseSpider):
     name = "actress_detail"
     allowed_domains = None
     censored_key = actress_detail_censored_link_key
-
+    
+    def __init__(self, *args, **kwargs):
+        # 父类会处理参数初始化
+        super().__init__(*args, **kwargs)
+        
     def parse(self, response):
         censored_dict = self.pop_from_redis(self.censored_key)
         if censored_dict is None:
