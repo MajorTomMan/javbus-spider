@@ -11,17 +11,23 @@ import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from javbus.common.constants import javbus_base_url
-from javbus.common.redis_keys import movie_censored_link_key,actress_detail_start_url_key,actress_detail_censored_link_key,movie_start_url_key
+from javbus.common.redis_keys import (
+    movie_censored_link_key,
+    actress_detail_start_url_key,
+    actress_detail_censored_link_key,
+    movie_start_url_key,
+)
 from base.base_spider import BaseSpider
+
 
 class SearchSpider(BaseSpider):
     name = "search"
     allowed_domains = None
-    
+
     def __init__(self, *args, **kwargs):
         # 父类会处理参数初始化
         super().__init__(*args, **kwargs)
-        
+
     def start_requests(self):
         search_type = 1
         page_num = 1
@@ -34,9 +40,7 @@ class SearchSpider(BaseSpider):
         if self.actress:
             url = self.javbus_base_url + "searchstar/" + self.actress
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
         # Code search
@@ -46,51 +50,41 @@ class SearchSpider(BaseSpider):
             else:
                 url = self.javbus_base_url + "search/" + self.code + "&type=0"
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
         # Director search
         if self.director:
             url = self.javbus_base_url + "search/" + self.director + "&type=2"
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
         # Studio search
         if self.studio:
             url = self.javbus_base_url + "search/" + self.studio + "&type=3"
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
         # Label search
         if self.label:
             url = self.javbus_base_url + "search/" + self.label + "&type=4"
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
         # Series search
         if self.series:
             url = self.javbus_base_url + "search/" + self.series + "&type=5"
             yield scrapy.Request(
-                url,
-                callback=self.parse,
-                meta={"page_num": self.page_num},
+                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
             )
 
     def parse(self, response):
-        page_num = response.meta.get("page_num", self.page_num)
+        page_num = response.meta.get("page_num", 1)
         if page_num is None:
-            page_num = self.page_num
+            page_num = page_num
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {page_num}")
@@ -149,7 +143,8 @@ class SearchSpider(BaseSpider):
                 yield scrapy.Request(
                     next_url,
                     callback=self.parse,
-                    meta={"page_num": self.page_num},
+                    meta={"page_num": page_num},
+                    dont_filter=True,
                 )
             else:
                 self.log("Final page reached.")
@@ -166,18 +161,52 @@ class SearchSpider(BaseSpider):
             url = self.javbus_base_url + "searchstar/" + self.actress + "/" + page_num
         # Code search
         if self.code:
-            url = self.javbus_base_url + "search/" + self.code + "/" + page_num + "&type=1"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.code
+                + "/"
+                + page_num
+                + "&type=1"
+            )
         # Director search
         if self.director:
-            url = self.javbus_base_url + "search/" + self.director + "/" + page_num + "&type=2"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.director
+                + "/"
+                + page_num
+                + "&type=2"
+            )
         # Studio search
         if self.studio:
-            url = self.javbus_base_url + "search/" + self.studio + "/" + page_num + "&type=3"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.studio
+                + "/"
+                + page_num
+                + "&type=3"
+            )
         # Label search
         if self.label:
-            url = self.javbus_base_url + "search/" + self.label + "/" + page_num + "&type=4"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.label
+                + "/"
+                + page_num
+                + "&type=4"
+            )
         # Series search
         if self.series:
-            url = self.javbus_base_url + "search/" + self.series + "/" + page_num + "&type=5"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.series
+                + "/"
+                + page_num
+                + "&type=5"
+            )
         return url
-

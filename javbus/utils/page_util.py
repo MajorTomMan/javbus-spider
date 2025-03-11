@@ -1,6 +1,6 @@
 import re
 import logging
-from urllib.parse import urlparse,urlunparse,urljoin
+from urllib.parse import urlparse, urlunparse, urljoin
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.utils.actress_util import ActressUtil
@@ -25,7 +25,6 @@ from javbus.common.constants import (
     high_quality_image_link,
     normal_image_link,
 )
-from javbooks.utils.search_page_util import SearchPageUtil
 
 
 class PageUtil:
@@ -94,18 +93,20 @@ class PageUtil:
             )
             return categories
 
+        # 获取样品图像链接
+        sampleimages = self.get_sample_images(bs)
         # 获取种子链接
         magnets = self.get_magnets(bs, link)
         # 获取大图链接
-        images = self.get_topic_and_big_image_link(bs, movie["code"])
+        images = self.get_topic_and_big_image_link(
+            bs, movie["code"], sampleimages, is_censored
+        )
         if type(images) is dict:
             bigimage["link"] = images["big_image_link"]
             topic_image["link"] = images["topic_image_link"]
         elif type(images) is str:
             bigimage["link"] = images
 
-        # 获取样品图像链接
-        sampleimages = self.get_sample_images(bs)
         page_args = {
             "movie": movie,
             "director": director,
@@ -260,42 +261,62 @@ class PageUtil:
     def match_link_is_company_link(self, link):
         """检查链接是否属于公司"""
         for company in self.companys.values:
-            if company in link:
-                return True
+            if type(link) is str:
+                if company in link:
+                    return True
+            elif type(link) is SampleImageItem:
+                if company in link["link"]:
+                    return True
         return False
 
-    def get_topic_and_big_image_link(self, bs, code):
+    def get_topic_and_big_image_link(self, bs, code, sampleimages, is_censored):
         if code:
-            images = {}
-            # 调用javbooks的搜索结果
-            data = {"skey": code}
-            topic_image_link = SearchPageUtil().get_topic_image(keyword=data)
-            if topic_image_link:
-                high_quality_image_url = self.replace_base_url(
-                    topic_image_link, high_quality_image_link
-                )
-                response = self.request_util.get(high_quality_image_url)
-                if response.status_code == 200:
-                    images["big_image_link"] = high_quality_image_url.replace(
-                        "ps.jpg", "pl.jpg"
+            if sampleimages:
+                images= {}
+                company_link = None
+                # 验证是否是dmm链接
+                for sample in sampleimages:
+                    is_company_link = self.match_link_is_company_link(sample)
+                    if is_company_link:
+                        company_link = sample
+                        break
+                if company_link:
+                    high_quality_image_url = self.replace_base_url(
+                        company_link["link"], high_quality_image_link
                     )
-                    images["topic_image_link"] = high_quality_image_url.replace(
-                        "pl.jpg", "ps.jpg"
-                    )
-                    return images
-                else:
-                    normal_image_url = self.replace_base_url(
-                        topic_image_link, normal_image_link
-                    )
-                    response = self.request_util.get(normal_image_url)
-                    if response.status_code == 200:
-                        images["big_image_link"] = high_quality_image_url.replace(
-                            "ps", "pl"
+                    dmm_code = None
+                    try:
+                        dmm_code = self.get_dmm_movie_code(high_quality_image_url)
+                    except Exception as e:
+                        self.logger.info(f"match code exception:{e}")
+                    if dmm_code:
+                        new_high_quality_image_url = self.get_dmm_movie_image(
+                            high_quality_image_url,dmm_code
                         )
-                        images["topic_image_link"] = high_quality_image_url
-                        return images
-                    else:
-                        pass
+                        response = self.request_util.get(new_high_quality_image_url)
+                        if response.status_code == 200:
+                            images["big_image_link"] = (
+                                new_high_quality_image_url.replace("ps.jpg", "pl.jpg")
+                            )
+                            images["topic_image_link"] = (
+                                new_high_quality_image_url.replace("pl.jpg", "ps.jpg")
+                            )
+                            return images
+                        else:
+                            normal_image_url = self.replace_base_url(
+                                company_link, normal_image_link
+                            )
+                            response = self.request_util.get(normal_image_url)
+                            if response.status_code == 200:
+                                images["big_image_link"] = (
+                                    high_quality_image_url.replace("ps", "pl")
+                                )
+                                images["topic_image_link"] = high_quality_image_url
+                                return images
+                            else:
+                                pass
+            else:
+                self.logger.info("uncensored movie,abondoning to get image on dmm")
             a = bs.find("a", {"class": "bigImage"})
             if a:
                 link = self.attrs_util.get_big_image(a)
@@ -303,9 +324,23 @@ class PageUtil:
                 if is_company_link:
                     return link
                 else:
-                    return urljoin(self.base_url,link)
+                    return urljoin(self.base_url, link)
         return ""
 
+    def get_dmm_movie_image(self, link, code):
+        new_image = code + "pl.jpg"
+        new_url = link.rsplit("/", 1)[0] + "/" + new_image
+        return new_url
+    def get_dmm_movie_code(self, link):
+        match = re.search(r"video/([^/]+)/", link)
+        if match:
+            code = match.group(1)
+            if code:
+                self.logger.info(f"get movie code:{code}")
+                return code
+            else:
+                self.logger.info(f"unable match movie code,give up")
+                return None
     def get_sample_images(self, bs):
         samples = []
         waterfall = bs.find("div", {"id": "sample-waterfall"})
@@ -314,11 +349,10 @@ class PageUtil:
             if imgs:
                 for img in imgs:
                     sample = SampleImageItem()
-                    sample["link"] = (
-                        self.match_link_is_company_link(img)
-                        and img
-                        or urljoin(self.base_url,img)
-                    )
+                    if self.match_link_is_company_link(img):
+                        sample["link"] = img
+                    else:
+                        sample["link"] = urljoin(self.base_url, img)
                     samples.append(sample)
         return samples
 

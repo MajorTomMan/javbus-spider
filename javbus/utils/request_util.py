@@ -33,7 +33,7 @@ class RequestUtil:
 
     def get(self, url):
         try:
-            response = self.session.get(url,timeout=3)
+            response = self.session.get(url,timeout=10)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
