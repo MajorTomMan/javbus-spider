@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class RequestUtil:
     baseUrl = "http://"+server_url+"/api"
-    #baseUrl = "http://localhost:9999"
+    # baseUrl = "http://localhost:9999"
     headers = {"Content-Type": "application/json"}
     image_headers = {"Content-Type": "image/jpeg"}
     magnet_headers = {
@@ -33,7 +33,7 @@ class RequestUtil:
 
     def get(self, url):
         try:
-            response = self.session.get(url,timeout=3)
+            response = self.session.get(url,impersonate="chrome",timeout=3)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
@@ -47,28 +47,32 @@ class RequestUtil:
         else:
             url = self.baseUrl
         try:
-            response = self.session.post(url, json=data, headers=self.headers,timeout=3)
+            response = self.session.post(
+                url, json=data, headers=self.headers, impersonate="chrome", timeout=3
+            )
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:
             logger.error(f"Error in POST request to {url}: {str(e)}")
         except Exception as e:
             logger.error(f"Unexpected error in POST request: {str(e)}")
-
 
     def post(self, url, data, cookies=None):
         try:
             if cookies:
-                response = self.session.post(url, data=data, cookies=cookies,timeout=3)
+                response = self.session.post(
+                    url, data=data, cookies=cookies, impersonate="chrome", timeout=3
+                )
             else:
-                response = self.session.post(url, data=data,timeout=3)
+                response = self.session.post(
+                    url, data=data, impersonate="chrome", timeout=3
+                )
             response.raise_for_status()  # 触发异常以捕获 HTTP 错误
             return response
         except requests.exceptions.RequestException as e:
             logger.error(f"Error in POST request to {url}: {str(e)}")
         except Exception as e:
             logger.error(f"Unexpected error in POST request: {str(e)}")
-
 
     def send(self, data, path):
         response = self.post_to_server(data=data, path=path)
@@ -92,9 +96,8 @@ class RequestUtil:
         if referer:
             self.magnet_headers["referer"] = referer
         try:
-            response = requests.get(url=url, headers=self.magnet_headers)
+            response = requests.get(url=url,impersonate="chrome",headers=self.magnet_headers,timeout=3)
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as error:
             logger.error(f"request failed with: {error}")
-            return None

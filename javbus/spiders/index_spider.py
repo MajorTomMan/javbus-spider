@@ -12,8 +12,8 @@ import json
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
-from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.constants import javbus_base_url
+
+
 from javbus.common.redis_keys import (
     movie_start_url_key,
     javbus_backup_links,

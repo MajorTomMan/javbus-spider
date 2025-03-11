@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-10 23:41:26
+LastEditTime: 2025-03-11 20:03:33
 FilePath: \spider\base\base_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -15,6 +15,8 @@ import time
 from scrapy.utils.project import get_project_settings
 from scrapy import signals
 from javbus.utils.page_util import PageUtil
+from javbus.common.constants import javbus_base_url
+from javbus.utils.attrs_util import AttrsUtil
 
 settings = get_project_settings()
 logger = logging.getLogger(__name__)
