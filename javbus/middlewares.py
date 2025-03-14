@@ -181,7 +181,7 @@ class JavbusProxyMiddleware:
             new_url = request.meta.get("new_url", "")
             if new_url:
                 request.url = self.replace_base_url(request.url, new_url)
-        return request
+                return request
 
 
     def replace_base_url(self, original_url, new_base_url):
