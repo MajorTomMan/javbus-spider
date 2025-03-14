@@ -60,7 +60,11 @@ class JavbusDownloaderMiddleware:
 
     def process_request(self, request, spider):
         spider.logger.info(f"Sending request: {request.url}, with meta: {request.meta}")
-        return None
+        # 使用深拷贝来避免请求之间的共享引用
+        # 防止多并发时meta里的数据因为scrapy本身对meta使用浅拷贝导致多个请求使用引用相同的meta
+        # 会导致一旦meta使用可变类型就会导致多个爬虫中的数据错乱和混淆
+        # 在meta中使用字典这种可变类型导致数据混淆或者错乱!!!!
+        request.meta = copy.deepcopy(request.meta)
 
     def process_response(self, request, response, spider):
         spider.logger.info(
@@ -138,11 +142,11 @@ class JavbusTimeOutMiddleware:
                 # 创建新的 Request
                 new_request = request.replace(
                     url=new_url,
-                    meta={
-                        **copy.deepcopy(request.meta),
+                    meta=copy.deepcopy({
+                        **request.meta,
                         "is_change_link": True,
                         "new_url": backup_url_dict["url"],
-                    },
+                    }),
                     dont_filter=True,
                 )
                 # 重新发起请求
