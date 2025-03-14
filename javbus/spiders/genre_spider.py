@@ -1,11 +1,13 @@
-"""
-Date: 2025-02-14 20:07:34
+'''
+Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-16 20:17:45
-FilePath: \spider\javbus\spiders\genre_spider.py
+LastEditTime: 2025-03-14 20:41:10
+FilePath: \spiders\spider\javbus\spiders\genre_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-"""
+'''
 
+
+import copy
 import scrapy
 from bs4 import BeautifulSoup
 from javbus.items import  GenreItem, GenreCategoryItem
@@ -29,7 +31,7 @@ class GenreSpider(BaseSpider):
             url = self.javbus_base_url + "genre"
         else:
             url = self.javbus_base_url + "uncensored" + "/genre"
-        yield scrapy.Request(url, callback=self.parse,meta={"is_censored":self.is_censored},dont_filter=True)
+        yield scrapy.Request(url, callback=self.parse,meta=copy.deepcopy({"is_censored":self.is_censored}),dont_filter=True)
 
     def parse(self, response):
         is_censored = response.meta.get("is_censored",self.is_censored)

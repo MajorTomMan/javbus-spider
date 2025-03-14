@@ -1,14 +1,16 @@
-"""
-Date: 2025-02-08 19:33:55
+'''
+Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-02-08 22:41:54
-FilePath: \spider\javbus\spiders\actress_spider.py
+LastEditTime: 2025-03-14 20:25:48
+FilePath: \spiders\spider\javbus\spiders\actress_list_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
-"""
+'''
+
 
 import json
 import threading
 import scrapy
+import copy
 from bs4 import BeautifulSoup
 from javbus.utils.attrs_util import AttrsUtil
 from javbus.common.constants import javbus_base_url
@@ -36,7 +38,7 @@ class ActressListSpider(BaseSpider):
         yield scrapy.Request(
             url,
             callback=self.parse,
-            meta={"page_num": page_num, "is_censored": self.is_censored},
+            meta=copy.deepcopy({"page_num": page_num, "is_censored": self.is_censored}),
             dont_filter=True,
         )
 
@@ -85,7 +87,7 @@ class ActressListSpider(BaseSpider):
                 yield scrapy.Request(
                     url,
                     callback=self.parse,
-                    meta={"page_num": next_page_num, "is_censored": is_censored},
+                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": self.is_censored}),
                     dont_filter=True,
                 )
             else:

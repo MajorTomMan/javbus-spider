@@ -9,6 +9,7 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 import threading
 import scrapy
 import json
+import copy
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from scrapy_redis.spiders import RedisSpider
@@ -40,7 +41,7 @@ class IndexSpider(BaseSpider):
         yield scrapy.Request(
             javbus_base_url,
             callback=self.parse,
-            meta={"page_num": page_num, "is_censored": self.is_censored},
+            meta=copy.deepcopy({"page_num": page_num, "is_censored": self.is_censored}),
             dont_filter=True,
         )
 
@@ -83,20 +84,20 @@ class IndexSpider(BaseSpider):
             if next_page:
                 next_page_num = page_num + 1
                 if is_censored is False:
-                    javbus_base_url = (
+                    next_link = (
                         self.javbus_base_url
                         + "uncensored/"
                         + "page/"
                         + str(next_page_num)
                     )
                 else:
-                    javbus_base_url = (
+                    next_link = (
                         self.javbus_base_url + "page/" + str(next_page_num)
                     )
                 yield scrapy.Request(
-                    javbus_base_url,
+                    next_link,
                     callback=self.parse,
-                    meta={"page_num": next_page_num, "is_censored": is_censored},
+                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": is_censored}),
                     dont_filter=True,
                 )
             else:

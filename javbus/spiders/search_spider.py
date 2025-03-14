@@ -7,6 +7,7 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
 import json
+import copy
 import scrapy
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
@@ -29,89 +30,90 @@ class SearchSpider(BaseSpider):
         super().__init__(*args, **kwargs)
 
     def start_requests(self):
-        search_type = 1
         page_num = 1
-        """
-        Starts the requests by fetching the first page.
-        """
         if self.is_censored is False:
             self.javbus_base_url = self.javbus_base_url + "uncensored/"
-        url = ""
+
         if self.actress:
             url = self.javbus_base_url + "searchstar/" + self.actress
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
-        # Code search
         if self.code:
-            if self.is_censored:
-                url = self.javbus_base_url + "search/" + self.code + "&type=1"
-            else:
-                url = self.javbus_base_url + "search/" + self.code + "&type=0"
+            url = (
+                self.javbus_base_url
+                + "search/"
+                + self.code
+                + "&type="
+                + ("1" if self.is_censored else "0")
+            )
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
-        # Director search
         if self.director:
             url = self.javbus_base_url + "search/" + self.director + "&type=2"
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
-        # Studio search
         if self.studio:
             url = self.javbus_base_url + "search/" + self.studio + "&type=3"
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
-        # Label search
         if self.label:
             url = self.javbus_base_url + "search/" + self.label + "&type=4"
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
-        # Series search
         if self.series:
             url = self.javbus_base_url + "search/" + self.series + "&type=5"
             yield scrapy.Request(
-                url, callback=self.parse, meta={"page_num": page_num}, dont_filter=True
+                url,
+                callback=self.parse,
+                meta=copy.deepcopy({"page_num": page_num}),
+                dont_filter=True,
             )
 
     def parse(self, response):
         page_num = response.meta.get("page_num", 1)
-        if page_num is None:
-            page_num = page_num
+
         if response.status == 200:
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {page_num}")
             waterfall = bs.find(id="waterfall")
+
             if waterfall:
                 if self.actress:
-                    avatar_boxs = bs.find_all(
-                        "a", attrs={"class": "avatar-box text-center"}
-                    )
-                    if avatar_boxs:
-                        for box in avatar_boxs:
+                    avatar_boxes = bs.find_all("a", attrs={"class": "avatar-box text-center"})
+                    if avatar_boxes:
+                        for box in avatar_boxes:
                             link = self.get_link(box)
-                            actress_detail_request_data = {
-                                "url": link,
-                            }
-                            self.push_to_redis(
-                                actress_detail_start_url_key,
-                                json.dumps(actress_detail_request_data),
-                            )
-                            actress_detail_request_data = {
-                                "url": link,
-                                "is_censored": self.is_censored,
-                            }
-                            self.push_to_redis(
-                                actress_detail_censored_link_key,
-                                json.dumps(actress_detail_request_data),
-                            )
+                            if link:
+                                actress_detail_request_data = {"url": link}
+                                self.push_to_redis(actress_detail_start_url_key, json.dumps(actress_detail_request_data))
+
+                                actress_detail_request_data = {"url": link, "is_censored": self.is_censored}
+                                self.push_to_redis(actress_detail_censored_link_key, json.dumps(actress_detail_request_data))
                 else:
                     bricks = bs.find_all("a", attrs={"class": "movie-box"})
                     if bricks:
@@ -119,23 +121,16 @@ class SearchSpider(BaseSpider):
                             link = self.get_link(brick)
                             if link:
                                 movie_request_data = {"url": link}
-                                self.push_to_redis(
-                                    movie_start_url_key, json.dumps(movie_request_data)
-                                )
-                                movie_request_data = {
-                                    "url": link,
-                                    "is_censored": self.is_censored,
-                                }
-                                self.push_to_redis(
-                                    movie_censored_link_key,
-                                    json.dumps(movie_request_data),
-                                )
+                                self.push_to_redis(movie_start_url_key, json.dumps(movie_request_data))
 
+                                movie_request_data = {"url": link, "is_censored": self.is_censored}
+                                self.push_to_redis(movie_censored_link_key, json.dumps(movie_request_data))
                     else:
                         self.log("No bricks found on this page.")
             else:
                 self.log("No waterfall found on this page.")
-            # 查找是否有下一页，若有则抓取
+
+            # 处理下一页逻辑
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = page_num + 1
@@ -143,15 +138,16 @@ class SearchSpider(BaseSpider):
                 yield scrapy.Request(
                     next_url,
                     callback=self.parse,
-                    meta={"page_num": page_num},
+                    meta=copy.deepcopy({"page_num": next_page_num}),
                     dont_filter=True,
                 )
             else:
                 self.log("Final page reached.")
                 self.crawler.engine.close_spider(self, "No next page")
                 return
+
         elif response.status == 404:
-            self.log(f"Key Word Not Exist")
+            self.log("Key Word Not Exist")
         else:
             self.log(f"Request failed with status {response.status}")
 
@@ -159,8 +155,7 @@ class SearchSpider(BaseSpider):
         url = ""
         if self.actress:
             url = self.javbus_base_url + "searchstar/" + self.actress + "/" + page_num
-        # Code search
-        if self.code:
+        elif self.code:
             url = (
                 self.javbus_base_url
                 + "search/"
@@ -169,8 +164,7 @@ class SearchSpider(BaseSpider):
                 + page_num
                 + "&type=1"
             )
-        # Director search
-        if self.director:
+        elif self.director:
             url = (
                 self.javbus_base_url
                 + "search/"
@@ -179,8 +173,7 @@ class SearchSpider(BaseSpider):
                 + page_num
                 + "&type=2"
             )
-        # Studio search
-        if self.studio:
+        elif self.studio:
             url = (
                 self.javbus_base_url
                 + "search/"
@@ -189,8 +182,7 @@ class SearchSpider(BaseSpider):
                 + page_num
                 + "&type=3"
             )
-        # Label search
-        if self.label:
+        elif self.label:
             url = (
                 self.javbus_base_url
                 + "search/"
@@ -199,8 +191,7 @@ class SearchSpider(BaseSpider):
                 + page_num
                 + "&type=4"
             )
-        # Series search
-        if self.series:
+        elif self.series:
             url = (
                 self.javbus_base_url
                 + "search/"

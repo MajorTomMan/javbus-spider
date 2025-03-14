@@ -6,7 +6,9 @@ FilePath: \spider\javbus\spiders\actress_movie_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
+import copy
 import json
+import re
 import scrapy
 from scrapy_redis.spiders import RedisSpider
 from bs4 import BeautifulSoup
@@ -32,7 +34,6 @@ class ActressMovieSpider(BaseSpider):
     def parse(self, response):
         current_page_num = response.meta.get("page_num", self.page_num)
         censored = None
-        current_next_link = None
         current_is_censored = None
 
         if response.status == 200:
@@ -81,21 +82,26 @@ class ActressMovieSpider(BaseSpider):
             next_page = self.get_next_page(bs)
             if next_page:
                 next_page_num = current_page_num + 1
-                # Only add the current page number to the next page URL
-                next_link = response.url.split('/')[:-1]  # Remove the last number in the URL
-                next_link = '/'.join(next_link) + f"/{next_page_num}"
+                next_link = self.get_next_link(response.url, next_page_num)
 
                 self.log(f"Fetching next page: {next_link}")
 
                 yield scrapy.Request(
                     next_link,
                     callback=self.parse,
-                    meta={
+                    meta=copy.deepcopy({
                         "page_num": next_page_num,
                         "next_link": next_link,
                         "is_censored": current_is_censored,
-                    },
+                    }),
                     dont_filter=True,
                 )
             else:
                 self.log("No next page, waiting for new request.")
+
+
+    def get_next_link(current_url, next_page_num):
+        if re.search(r"/\d+$", current_url):  # 检查 URL 是否以数字结尾
+            return re.sub(r"/\d+$", f"/{next_page_num}", current_url)
+        else:
+            return f"{current_url}/{next_page_num}"  # 直接拼接页码
