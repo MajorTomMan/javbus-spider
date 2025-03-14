@@ -49,35 +49,34 @@ class ActressMovieSpider(BaseSpider):
             bs = BeautifulSoup(response.body, "html.parser")
             self.log(f"Now parsing page {current_page_num}")
             waterfall = bs.find(id="waterfall")
-                if waterfall:
-                    bricks = bs.find_all("a", attrs={"class": "movie-box"})
-                    if bricks:
-                        for brick in bricks:
-                            link = self.get_link(brick)
-                            if link:
-                                movie_request_data = {"url": link}
-                                self.push_to_redis(
-                                    movie_start_url_key, json.dumps(movie_request_data)
-                                )
-                                if censored is None:
-                                    movie_request_data = {
-                                        "url": link,
-                                        "is_censored": current_is_censored,
-                                    }
-                                else:
-                                    movie_request_data = {
-                                        "url": link,
-                                        "is_censored": censored["is_censored"],
-                                    }
-                                
+            if waterfall:
+                bricks = bs.find_all("a", attrs={"class": "movie-box"})
+                if bricks:
+                    for brick in bricks:
+                        link = self.get_link(brick)
+                        if link:
+                            movie_request_data = {"url": link}
+                            self.push_to_redis(
+                                movie_start_url_key, json.dumps(movie_request_data)
+                            )
+                            if censored is None:
+                                movie_request_data = {
+                                    "url": link,
+                                    "is_censored": current_is_censored,
+                                }
+                            else:
+                                movie_request_data = {
+                                    "url": link,
+                                    "is_censored": censored["is_censored"],
+                                }
                                 self.push_to_redis(
                                     movie_censored_link_key, json.dumps(movie_request_data)
                                 )
 
-                    else:
-                        self.log("No bricks found on this page.")
                 else:
-                    self.log("No waterfall found on this page.")
+                    self.log("No bricks found on this page.")
+            else:
+                self.log("No waterfall found on this page.")
             # 检查是否有下一页并跳转
             next_page = self.get_next_page(bs)
             if next_page:
