@@ -7,6 +7,7 @@ Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 
 
+import copy
 from scrapy.exceptions import CloseSpider
 from scrapy_redis.spiders import RedisSpider
 import logging
@@ -24,6 +25,8 @@ logger = logging.getLogger(__name__)
 class BaseSpider(RedisSpider):
     """所有爬虫的基类"""
     def __init__(self, *args, **kwargs):
+        # 深拷贝 kwargs
+        kwargs = copy.deepcopy(kwargs)
         self.javbus_base_url = kwargs.get("url", javbus_base_url)
         self.is_censored = AttrsUtil().str_to_bool(kwargs.get("is_censored", True))
         self.actress = kwargs.get("actress", "北野未奈")
