@@ -100,7 +100,7 @@ class ActressMovieSpider(BaseSpider):
                 self.log("No next page, waiting for new request.")
 
 
-    def get_next_link(current_url, next_page_num):
+    def get_next_link(self,current_url, next_page_num):
         if re.search(r"/\d+$", current_url):  # 检查 URL 是否以数字结尾
             return re.sub(r"/\d+$", f"/{next_page_num}", current_url)
         else:
