@@ -30,73 +30,73 @@ class ActressMovieSpider(BaseSpider):
         super().__init__(*args, **kwargs)
 
     def parse(self, response):
-    current_page_num = response.meta.get("page_num", self.page_num)
-    censored = None
-    current_next_link = None
-    current_is_censored = None
+        current_page_num = response.meta.get("page_num", self.page_num)
+        censored = None
+        current_next_link = None
+        current_is_censored = None
 
-    if response.status == 200:
-        censored_dict = self.pop_from_redis(self.censored_key)
+        if response.status == 200:
+            censored_dict = self.pop_from_redis(self.censored_key)
 
-        if censored_dict is None:
-            self.log("censored_dict is None")
-            current_next_link = response.meta["next_link"]
-            current_is_censored = response.meta["is_censored"]
-        else:
-            censored = json.loads(censored_dict.decode("utf-8"))
-            current_is_censored = censored.get("is_censored", False)
-
-        bs = BeautifulSoup(response.body, "html.parser")
-        self.log(f"Now parsing page {current_page_num}")
-        waterfall = bs.find(id="waterfall")
-            if waterfall:
-                bricks = bs.find_all("a", attrs={"class": "movie-box"})
-                if bricks:
-                    for brick in bricks:
-                        link = self.get_link(brick)
-                        if link:
-                            movie_request_data = {"url": link}
-                            self.push_to_redis(
-                                movie_start_url_key, json.dumps(movie_request_data)
-                            )
-                            if censored is None:
-                                movie_request_data = {
-                                    "url": link,
-                                    "is_censored": current_is_censored,
-                                }
-                            else:
-                                movie_request_data = {
-                                    "url": link,
-                                    "is_censored": censored["is_censored"],
-                                }
-                            
-                            self.push_to_redis(
-                                movie_censored_link_key, json.dumps(movie_request_data)
-                            )
-
-                else:
-                    self.log("No bricks found on this page.")
+            if censored_dict is None:
+                self.log("censored_dict is None")
+                current_next_link = response.meta["next_link"]
+                current_is_censored = response.meta["is_censored"]
             else:
-                self.log("No waterfall found on this page.")
-        # 检查是否有下一页并跳转
-        next_page = self.get_next_page(bs)
-        if next_page:
-            next_page_num = current_page_num + 1
-            # Only add the current page number to the next page URL
-            next_link = response.url.split('/')[:-1]  # Remove the last number in the URL
-            next_link = '/'.join(next_link) + f"/{next_page_num}"
+                censored = json.loads(censored_dict.decode("utf-8"))
+                current_is_censored = censored.get("is_censored", False)
 
-            self.log(f"Fetching next page: {next_link}")
+            bs = BeautifulSoup(response.body, "html.parser")
+            self.log(f"Now parsing page {current_page_num}")
+            waterfall = bs.find(id="waterfall")
+                if waterfall:
+                    bricks = bs.find_all("a", attrs={"class": "movie-box"})
+                    if bricks:
+                        for brick in bricks:
+                            link = self.get_link(brick)
+                            if link:
+                                movie_request_data = {"url": link}
+                                self.push_to_redis(
+                                    movie_start_url_key, json.dumps(movie_request_data)
+                                )
+                                if censored is None:
+                                    movie_request_data = {
+                                        "url": link,
+                                        "is_censored": current_is_censored,
+                                    }
+                                else:
+                                    movie_request_data = {
+                                        "url": link,
+                                        "is_censored": censored["is_censored"],
+                                    }
+                                
+                                self.push_to_redis(
+                                    movie_censored_link_key, json.dumps(movie_request_data)
+                                )
 
-            yield scrapy.Request(
-                next_link,
-                callback=self.parse,
-                meta={
-                    "page_num": next_page_num,
-                    "next_link": next_link,
-                    "is_censored": current_is_censored,
-                },
-                dont_filter=True,
-            )
-        else:
-            self.log("No next page, waiting for new request.")
+                    else:
+                        self.log("No bricks found on this page.")
+                else:
+                    self.log("No waterfall found on this page.")
+            # 检查是否有下一页并跳转
+            next_page = self.get_next_page(bs)
+            if next_page:
+                next_page_num = current_page_num + 1
+                # Only add the current page number to the next page URL
+                next_link = response.url.split('/')[:-1]  # Remove the last number in the URL
+                next_link = '/'.join(next_link) + f"/{next_page_num}"
+
+                self.log(f"Fetching next page: {next_link}")
+
+                yield scrapy.Request(
+                    next_link,
+                    callback=self.parse,
+                    meta={
+                        "page_num": next_page_num,
+                        "next_link": next_link,
+                        "is_censored": current_is_censored,
+                    },
+                    dont_filter=True,
+                )
+            else:
+                self.log("No next page, waiting for new request.")
