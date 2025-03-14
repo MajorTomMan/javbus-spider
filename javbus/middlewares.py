@@ -70,7 +70,7 @@ class JavbusDownloaderMiddleware:
             spider.logger.warning(f"Request to {request.url} returned 403 Forbidden. Retrying...")
             return request.replace(url=request.url,meta=copy.deepcopy(request.meta),dont_filter=True)
 
-        self.save_response_to_file(request,response, spider)
+        #self.save_response_to_file(request,response, spider)
 
         return response
 
