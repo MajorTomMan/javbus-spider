@@ -69,7 +69,7 @@ SPIDER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     "javbus.middlewares.JavbusDownloaderMiddleware": 543,
-    # "javbus.middlewares.JavbusProxyMiddleware": 544,
+    "javbus.middlewares.JavbusProxyMiddleware": 544,
     "javbus.middlewares.JavbusTimeOutMiddleware": 545,
 }
 
@@ -130,7 +130,7 @@ REDIS_PARAMS = {
     "password":"root"
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 1.2
+DOWNLOAD_DELAY = 5
 # 保证每分钟只有50个请求
 CONCURRENT_REQUESTS = 2
 
