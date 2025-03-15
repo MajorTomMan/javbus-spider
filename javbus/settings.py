@@ -145,3 +145,12 @@ DOWNLOAD_CONNECT_TIMEOUT = 10  # 设置连接超时时间
 RETRY_TIMES = 3  # 设置最大重试次数
 RETRY_HTTP_CODES = [408, 500, 502, 503, 504, 403, 404]  # 重试时的错误码
 REDIS_START_URLS_AS_ZSET = True # 将请求url保存为zset格式
+
+# 邮件发送设置
+MAIL_FROM = '765719516@qq.com'  # 发件人邮箱地址
+MAIL_HOST = 'smtp.qq.com'        # SMTP 服务器（例如：smtp.gmail.com）
+MAIL_PORT = 465                       # SMTP 端口（通常是 587 或 465）
+MAIL_USER = '765719516@qq.com'  # 发件人邮箱用户名
+MAIL_PASS = 'jtsrxuvmtnafbecc'     # 发件人邮箱密码
+MAIL_TLS = True                        # 是否启用 TLS 加密（通常为 True）
+MAIL_SSL = False                       # 是否启用 SSL 加密（通常为 False）

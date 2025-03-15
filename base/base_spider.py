@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-11 20:03:33
+LastEditTime: 2025-03-15 23:38:25
 FilePath: \spider\base\base_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -35,7 +35,7 @@ class BaseSpider(RedisSpider):
         self.studio = kwargs.get("studio", "")
         self.label = kwargs.get("label", "")
         self.series = kwargs.get("series", "")
-        
+        self.kwargs = kwargs
         
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):

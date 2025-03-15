@@ -1,3 +1,10 @@
+'''
+Date: 2025-03-15 18:51:12
+LastEditors: MajorTomMan 765719516@qq.com
+LastEditTime: 2025-03-15 23:38:41
+FilePath: \spider\javbus\extensions.py
+Description: MajorTomMan @版权声明 保留文件所有权利
+'''
 from datetime import datetime
 import logging
 import os
@@ -21,7 +28,7 @@ class JavbusLoggerExtension:
         spider_name = crawler.spider.name
         
         # 获取爬虫参数
-        kwargs = copy.deepcopy(crawler.spider.custom_settings)  # 获取爬虫的参数（可以是 custom_settings 或者其他地方）
+        kwargs = copy.deepcopy(crawler.spider.kwargs)  # 获取爬虫的参数（可以是 custom_settings 或者其他地方）
 
         # 初始化 params_str
         params_str = ""
