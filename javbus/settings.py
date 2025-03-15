@@ -129,7 +129,7 @@ REDIS_PARAMS = {
     "password":"root"
 }
 # 设置请求之间的延迟时间（单位：秒）
-DOWNLOAD_DELAY = 3.3
+DOWNLOAD_DELAY = 4.4
 # 保证每分钟只有50个请求
 CONCURRENT_REQUESTS = 2
 

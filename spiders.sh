@@ -75,27 +75,33 @@ touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIP
 > "$SCRIPT_DIR/logs/actress_movie.log"
 > "$SCRIPT_DIR/logs/genre_censored.log"
 > "$SCRIPT_DIR/logs/genre_uncensored.log"
-nohup scrapy crawl movie > "$SCRIPT_DIR/logs/movie.log" 2>&1 &
-PID_movie=$!
-echo "Movie spider is running with PID: $PID_movie"
 
-nohup scrapy crawl actress_movie > "$SCRIPT_DIR/logs/actress_movie.log" 2>&1 &
-PID_actress_movie=$!
-echo "Actress Movie spider is running with PID: $PID_actress_movie"
+nohup scrapy crawl actresses_list -a is_censored=True > $SCRIPT_DIR/logs/actresses_list_true.log  2>&1 &
+PID_actresses_list_true=$!
+nohup scrapy crawl actresses_list -a is_censored=False > $SCRIPT_DIR/logs/actresses_list_false.log 2>&1 &
+PID_actresses_list_false=$!
+#nohup scrapy crawl movie > "$SCRIPT_DIR/logs/movie.log" 2>&1 &
+#PID_movie=$!
+#echo "Movie spider is running with PID: $PID_movie"
 
-nohup scrapy crawl actress_detail > "$SCRIPT_DIR/logs/actress_detail.log" 2>&1 &
-PID_actress_detail=$!
-echo "Actress Detail spider is running with PID: $PID_actress_detail"
+#nohup scrapy crawl actress_movie > "$SCRIPT_DIR/logs/actress_movie.log" 2>&1 &
+#PID_actress_movie=$!
+#echo "Actress Movie spider is running with PID: $PID_actress_movie"
 
-nohup scrapy crawl genre -a is_censored=True > "$SCRIPT_DIR/logs/genre_censored.log" 2>&1 &
-PID_genre_censored=$!
-echo "Genre Censored spider is running with PID: $PID_genre_censored"
+#nohup scrapy crawl actress_detail > "$SCRIPT_DIR/logs/actress_detail.log" 2>&1 &
+#PID_actress_detail=$!
+#echo "Actress Detail spider is running with PID: $PID_actress_detail"
 
-nohup scrapy crawl genre -a is_censored=False > "$SCRIPT_DIR/logs/genre_uncensored.log" 2>&1 &
-PID_genre_uncensored=$!
-echo "Genre Uncensored spider is running with PID: $PID_genre_uncensored"
+#nohup scrapy crawl genre -a is_censored=True > "$SCRIPT_DIR/logs/genre_censored.log" 2>&1 &
+#PID_genre_censored=$!
+#echo "Genre Censored spider is running with PID: $PID_genre_censored"
 
-kill_command_batch=$(echo "$PID_movie $PID_actress_movie $PID_actress_detail $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
+#nohup scrapy crawl genre -a is_censored=False > "$SCRIPT_DIR/logs/genre_uncensored.log" 2>&1 &
+#PID_genre_uncensored=$!
+#echo "Genre Uncensored spider is running with PID: $PID_genre_uncensored"
+
+#kill_command_batch=$(echo "$PID_movie $PID_actress_movie $PID_actress_detail $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
+kill_command_batch=$(echo "$PID_actresses_list_true $PID_actresses_list_false | xargs -I {} echo "kill -9 {}")
  
 echo "以下是可以用来爬虫进程的命令："
 echo "$kill_command_batch"

@@ -87,7 +87,7 @@ class ActressListSpider(BaseSpider):
                 yield scrapy.Request(
                     url,
                     callback=self.parse,
-                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": self.is_censored}),
+                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": is_censored}),
                     dont_filter=True,
                 )
             else:
