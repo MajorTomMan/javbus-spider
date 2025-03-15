@@ -25,16 +25,16 @@ from base.base_spider import BaseSpider
 class ActressListSpider(BaseSpider):
     name = "actresses_list"
     allowed_domains = None
-    def __init__(self, *args, **kwargs):
-        # 父类会处理参数初始化
-        super().__init__(*args, **kwargs)
+        
     def start_requests(self):
+    
         page_num = 1
         if self.is_censored is False:
             url = self.javbus_base_url + "uncensored" + "/actresses/"
         else:
             url = self.javbus_base_url + "actresses/"
         url = url + str(page_num)
+        
         yield scrapy.Request(
             url,
             callback=self.parse,

@@ -40,6 +40,7 @@ class PageUtil:
 
     def parse_page(self, link, source, is_censored):
         """解析电影详情页"""
+        is_censored = AttrsUtil().str_to_bool(is_censored)
         if source:
             page = self.get_page(source, link, is_censored)
             if page != -1:

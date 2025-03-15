@@ -18,9 +18,6 @@ class MovieSpider(BaseSpider):
     allowed_domains = None
     censored_key = movie_censored_link_key
 
-    def __init__(self, *args, **kwargs):
-        # 父类会处理参数初始化
-        super().__init__(*args, **kwargs)
 
     def parse(self, response):
         censored_dict = self.pop_from_redis(self.censored_key)
@@ -34,7 +31,7 @@ class MovieSpider(BaseSpider):
             page = PageUtil().parse_page(
                 link=response.url,
                 source=bs,
-                is_censored=AttrsUtil().str_to_bool(censored["is_censored"]),
+                is_censored=censored["is_censored"],
             )
             if page == -1 or page is None:
                 self.log("in " + censored["url"] + " found ban tag skipping crawl")

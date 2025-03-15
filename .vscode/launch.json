@@ -8,7 +8,9 @@
             "module": "scrapy",
             "args": [
                 "runspider",
-                "${file}"
+                "${file}",
+                "-a",
+                "is_censored=True"
             ],
             "console": "integratedTerminal"
         }

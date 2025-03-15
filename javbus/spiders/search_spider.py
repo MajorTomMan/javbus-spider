@@ -25,10 +25,6 @@ class SearchSpider(BaseSpider):
     name = "search"
     allowed_domains = None
 
-    def __init__(self, *args, **kwargs):
-        # 父类会处理参数初始化
-        super().__init__(*args, **kwargs)
-
     def start_requests(self):
         page_num = 1
         if self.is_censored is False:

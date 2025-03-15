@@ -75,9 +75,9 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-# EXTENSIONS = {
-#    'scrapy_prometheus.prometheus.PrometheusExporter': 500,
-# }
+EXTENSIONS = {
+    'javbus.extensions.LogExtension': 500,
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
@@ -116,7 +116,6 @@ SCHEDULER = "scrapy_redis.scheduler.Scheduler"
 # 使用 FIFO 队列
 SCHEDULER_QUEUE_CLASS = "javbus.queue.FifoSortedQueue"
 
-REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 # 保证去重数据保存在 Redis 中，支持分布式
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
 # 持久化爬取队列（爬虫结束后，保留队列）

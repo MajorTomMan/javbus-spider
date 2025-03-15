@@ -244,7 +244,14 @@ class AttrsUtil:
         else:
             return None
 
-    def str_to_bool(self, value):
-        if type(value) is str:
-            return value.lower() == "true"
-        return value
+    def str_to_bool(self,value):
+            if isinstance(value, bool): 
+                return value
+            if isinstance(value, str): 
+                value = value.strip().lower()
+                if value in ["true", "1", "t", "y", "yes"]:
+                    return True
+                elif value in ["false", "0", "f", "n", "no"]:
+                    return False
+            return bool(value)  # 默认转换成布尔值（比如数字 0 或空字符串会转为 False，其他会转为 True）
+

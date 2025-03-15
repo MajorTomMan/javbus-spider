@@ -35,8 +35,6 @@ class BaseSpider(RedisSpider):
         self.studio = kwargs.get("studio", "")
         self.label = kwargs.get("label", "")
         self.series = kwargs.get("series", "")
-        # 确保调用父类的初始化
-        super(BaseSpider, self).__init__(*args, **kwargs)
         
         
     @classmethod

@@ -20,11 +20,6 @@ class GenreSpider(BaseSpider):
     name = "genre"
     allowed_domains = None
 
-    
-    def __init__(self, *args, **kwargs):
-        # 父类会处理参数初始化
-        super().__init__(*args, **kwargs)
-        
 
     def start_requests(self):
         if self.is_censored:
