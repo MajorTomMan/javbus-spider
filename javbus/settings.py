@@ -76,7 +76,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 EXTENSIONS = {
-    'javbus.extensions.LogExtension': 500,
+    'javbus.extensions.JavbusLoggerExtension': 500,
 }
 
 # Configure item pipelines
