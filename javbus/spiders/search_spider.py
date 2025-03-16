@@ -13,9 +13,7 @@ from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
 from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import (
-    movie_censored_link_key,
     actress_detail_start_url_key,
-    actress_detail_censored_link_key,
     movie_start_url_key,
 )
 from base.base_spider import BaseSpider
@@ -105,22 +103,21 @@ class SearchSpider(BaseSpider):
                         for box in avatar_boxes:
                             link = self.get_link(box)
                             if link:
-                                actress_detail_request_data = {"url": link}
+                                actress_detail_request_data = {"url": link,"meta":{"is_censored": self.is_censored}}
                                 self.push_to_redis(actress_detail_start_url_key, json.dumps(actress_detail_request_data))
-
-                                actress_detail_request_data = {"url": link, "is_censored": self.is_censored}
-                                self.push_to_redis(actress_detail_censored_link_key, json.dumps(actress_detail_request_data))
                 else:
                     bricks = bs.find_all("a", attrs={"class": "movie-box"})
                     if bricks:
                         for brick in bricks:
                             link = self.get_link(brick)
                             if link:
-                                movie_request_data = {"url": link}
+                                movie_request_data = {
+                                    "url": link,
+                                    "meta":{
+                                        "is_censored": self.is_censored
+                                    }
+                                }
                                 self.push_to_redis(movie_start_url_key, json.dumps(movie_request_data))
-
-                                movie_request_data = {"url": link, "is_censored": self.is_censored}
-                                self.push_to_redis(movie_censored_link_key, json.dumps(movie_request_data))
                     else:
                         self.log("No bricks found on this page.")
             else:

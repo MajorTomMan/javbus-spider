@@ -1,7 +1,7 @@
 '''
 Date: 2025-03-15 18:51:12
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-15 23:38:41
+LastEditTime: 2025-03-16 17:01:56
 FilePath: \spider\javbus\extensions.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
@@ -48,23 +48,18 @@ class JavbusLoggerExtension:
         return ext
 
     def spider_opened(self, spider):
-        """爬虫启动时，设置日志到文件 + 控制台"""
+        """爬虫启动时，设置日志到文件"""
         logger = logging.getLogger()
 
         # 文件日志
         file_handler = logging.FileHandler(self.log_file, encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
 
-        # 控制台日志
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(logging.INFO)
 
         # 设置格式
         formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(name)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
         file_handler.setFormatter(formatter)
-        console_handler.setFormatter(formatter)
 
         # 添加到 Scrapy logger
         logger.addHandler(file_handler)
-        logger.addHandler(console_handler)
         spider.logger.info(f"Logging to file: {self.log_file}")

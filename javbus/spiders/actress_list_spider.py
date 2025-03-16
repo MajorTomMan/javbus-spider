@@ -1,22 +1,19 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-14 20:25:48
-FilePath: \spiders\spider\javbus\spiders\actress_list_spider.py
+LastEditTime: 2025-03-16 18:26:26
+FilePath: \spider\javbus\spiders\actress_list_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 
 
 import json
-import threading
 import scrapy
 import copy
 from bs4 import BeautifulSoup
-from javbus.utils.attrs_util import AttrsUtil
-from javbus.common.constants import javbus_base_url
 from javbus.common.redis_keys import (
     actress_detail_start_url_key,
-    actress_detail_censored_link_key,
+    actresses_list_start_url_key
 )
 from base.base_spider import BaseSpider
 
@@ -57,20 +54,16 @@ class ActressListSpider(BaseSpider):
                     for box in boxs:
                         link = self.get_link(box)
                         if link:
-                            actresses_request_data = {"url": link}
+                            actresses_request_data = {
+                                "url": link,
+                                "meta":{
+                                    "is_censored": is_censored
+                                }
+                            }
                             self.push_to_redis(
                                 actress_detail_start_url_key,
                                 json.dumps(actresses_request_data),
                             )
-                            actresses_request_data = {
-                                "url": link,
-                                "is_censored": is_censored,
-                            }
-                            self.push_to_redis(
-                                actress_detail_censored_link_key,
-                                json.dumps(actresses_request_data),
-                            )
-
                 else:
                     self.log("No boxs found on this page.")
             else:
@@ -80,16 +73,18 @@ class ActressListSpider(BaseSpider):
             if next_page:
                 next_page_num = page_num + 1
                 if is_censored is False:
-                    url = self.javbus_base_url + "uncensored" + "/actresses/"
+                    next_link = self.javbus_base_url + "uncensored" + "/actresses/"
                 else:
-                    url = self.javbus_base_url + "actresses/"
-                url = url + str(next_page_num)
-                yield scrapy.Request(
-                    url,
-                    callback=self.parse,
-                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": is_censored}),
-                    dont_filter=True,
-                )
+                    next_link = self.javbus_base_url + "actresses/"
+                next_link = next_link + str(next_page_num)
+                next_params = {
+                    "url":next_link,
+                    "meta":{
+                        "page_num": next_page_num, 
+                        "is_censored": is_censored
+                    }
+                }
+                self.push_to_redis(actresses_list_start_url_key,json.dumps(next_params))
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")

@@ -11,8 +11,6 @@ from bs4 import BeautifulSoup
 from javbus.items import ActressesItem
 from javbus.utils.actress_util import ActressUtil
 from javbus.common.redis_keys import (
-    actress_detail_censored_link_key,
-    actress_movie_censored_link_key,
     actress_movie_start_url_key,
 )
 
@@ -25,35 +23,26 @@ from base.base_spider import BaseSpider
 class ActressDetailSpider(BaseSpider):
     name = "actress_detail"
     allowed_domains = None
-    censored_key = actress_detail_censored_link_key
     
         
     def parse(self, response):
-        censored_dict = self.pop_from_redis(self.censored_key)
-        if censored_dict is None:
-            self.log("censored_dict is None")
-            return
-        censored = json.loads(censored_dict.decode("utf-8"))
         if response.status == 200:
+            link = response.url
+            is_censored = response.meta["is_censored"]
             bs = BeautifulSoup(response.body, "html.parser")
             actress_detail = ActressUtil().get_details(bs)
-            actress_detail["is_censored"] = censored["is_censored"]
-            actress_detail["actress_link"] = censored["url"]
+            actress_detail["is_censored"] = is_censored
+            actress_detail["actress_link"] = link
             if actress_detail:
                 actresses = ActressesItem()
                 actresses["actresses"] = [actress_detail]
                 yield actresses
             # 爬取女优详情页的电影
-            movie_request_data = {"url": censored["url"]}
+            actresses_movie_request_data = {"url": link,"meta":{
+                "is_censored": is_censored
+            }}
             self.push_to_redis(
-                actress_movie_start_url_key, json.dumps(movie_request_data)
-            )
-            movie_request_data = {
-                "url": censored["url"],
-                "is_censored": censored["is_censored"],
-            }
-            self.push_to_redis(
-                actress_movie_censored_link_key, json.dumps(movie_request_data)
+                actress_movie_start_url_key, json.dumps(actresses_movie_request_data)
             )
         else:
             self.log("Request failed with status code: {}".format(response.status))

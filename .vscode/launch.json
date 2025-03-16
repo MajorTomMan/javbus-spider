@@ -10,7 +10,7 @@
                 "runspider",
                 "${file}",
                 "-a",
-                "is_censored=False"
+                "is_censored=True"
             ],
             "console": "integratedTerminal"
         }

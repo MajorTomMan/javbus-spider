@@ -6,19 +6,17 @@ FilePath: \spider\javbus\spiders\index_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 """
 
-import threading
 import scrapy
 import json
 import copy
 from bs4 import BeautifulSoup
 from javbus.utils.page_util import PageUtil
-from scrapy_redis.spiders import RedisSpider
 
 
 from javbus.common.redis_keys import (
     movie_start_url_key,
     javbus_backup_links,
-    movie_censored_link_key,
+    index_start_url_key,
 )
 from base.base_spider import BaseSpider
 
@@ -60,18 +58,12 @@ class IndexSpider(BaseSpider):
                     for brick in bricks:
                         link = self.get_link(brick)
                         if link:
-                            movie_request_data = {"url": link}
+                            movie_request_data = {"url": link,"meta":{
+                                "is_censored": is_censored,
+                            }}
                             self.push_to_redis(
                                 movie_start_url_key, json.dumps(movie_request_data)
                             )
-                            movie_request_data = {
-                                "url": link,
-                                "is_censored": is_censored,
-                            }
-                            self.push_to_redis(
-                                movie_censored_link_key, json.dumps(movie_request_data)
-                            )
-
                 else:
                     self.log("No bricks found on this page.")
             else:
@@ -91,12 +83,8 @@ class IndexSpider(BaseSpider):
                     next_link = (
                         self.javbus_base_url + "page/" + str(next_page_num)
                     )
-                yield scrapy.Request(
-                    next_link,
-                    callback=self.parse,
-                    meta=copy.deepcopy({"page_num": next_page_num, "is_censored": is_censored}),
-                    dont_filter=True,
-                )
+                next_params = {"url":next_link,"meta":{"page_num": next_page_num, "is_censored": is_censored}}
+                self.push_to_redis(index_start_url_key,json.dumps(next_params))
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")

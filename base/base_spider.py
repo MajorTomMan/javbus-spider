@@ -1,24 +1,25 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-15 23:38:25
+LastEditTime: 2025-03-16 17:17:48
 FilePath: \spider\base\base_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 
 
 import copy
+import json
 from scrapy.exceptions import CloseSpider
 from scrapy_redis.spiders import RedisSpider
 import logging
-import redis
 import time
 from scrapy.utils.project import get_project_settings
-from scrapy import signals
+from scrapy import FormRequest, signals
 from javbus.utils.page_util import PageUtil
 from javbus.common.constants import javbus_base_url
 from javbus.utils.attrs_util import AttrsUtil
-
+from scrapy_redis.utils import TextColor
+from scrapy_redis.utils import bytes_to_str,is_dict
 settings = get_project_settings()
 logger = logging.getLogger(__name__)
 
@@ -49,18 +50,7 @@ class BaseSpider(RedisSpider):
     def parse(self, response):
         """可以覆盖此方法来处理 response"""
         pass
-
-    def get_redis_connection(self):
-        """获取 Redis 连接"""
-        redis_params = settings.get('REDIS_PARAMS')
-        # 请根据你的 Redis 设置调整
-        return redis.StrictRedis(    
-            host=redis_params['host'],
-            port=redis_params['port'],
-            db=redis_params['db'],
-            password=redis_params['password']
-        )
-
+    
     def handle_exception(self, failure):
         """统一处理爬虫中的异常"""
         logger.error(f"Spider encountered an exception: {failure}")

@@ -295,7 +295,7 @@ class PageUtil:
                             high_quality_image_url,dmm_code
                         )
                         response = self.request_util.get(new_high_quality_image_url)
-                        if response.status_code == 200:
+                        if response and response.status_code == 200:
                             images["big_image_link"] = (
                                 new_high_quality_image_url.replace("ps.jpg", "pl.jpg")
                             )
