@@ -1,14 +1,16 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-16 18:19:05
-FilePath: \spider\javbus\spiders\actress_movie_spider.py
+LastEditTime: 2025-03-16 19:48:50
+FilePath: \spiders\spider\javbus\spiders\actress_movie_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 
+import copy
 import json
 import re
 from bs4 import BeautifulSoup
+import scrapy
 from javbus.common.redis_keys import (
     movie_start_url_key,
     actress_movie_start_url_key
@@ -48,16 +50,17 @@ class ActressMovieSpider(BaseSpider):
             if next_page:
                 next_page_num = current_page_num + 1
                 next_link = self.get_next_link(response.url, next_page_num)
-
                 self.log(f"Fetching next page: {next_link}")
                 next_params = {
-                    "url":next_link,
-                    "meta":{
-                        "page_num": next_page_num, 
-                        "is_censored": is_censored
-                    }
+                    "page_num": next_page_num, 
+                    "is_censored": is_censored
                 }
-                self.push_to_redis(actress_movie_start_url_key,json.dumps(next_params))
+                yield scrapy.Request(
+                    next_link,
+                    callback=self.parse,
+                    meta=next_params,
+                    dont_filter=True,
+                )
             else:
                 self.log("No next page, waiting for new request.")
 

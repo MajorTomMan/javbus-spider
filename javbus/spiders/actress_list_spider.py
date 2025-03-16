@@ -1,8 +1,8 @@
 '''
 Date: 2025-03-10 21:19:15
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-16 18:26:26
-FilePath: \spider\javbus\spiders\actress_list_spider.py
+LastEditTime: 2025-03-16 19:55:39
+FilePath: \spiders\spider\javbus\spiders\actress_list_spider.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 
@@ -78,13 +78,15 @@ class ActressListSpider(BaseSpider):
                     next_link = self.javbus_base_url + "actresses/"
                 next_link = next_link + str(next_page_num)
                 next_params = {
-                    "url":next_link,
-                    "meta":{
-                        "page_num": next_page_num, 
-                        "is_censored": is_censored
-                    }
+                    "page_num": next_page_num, 
+                    "is_censored": is_censored
                 }
-                self.push_to_redis(actresses_list_start_url_key,json.dumps(next_params))
+                yield scrapy.Request(
+                    next_link,
+                    callback=self.parse,
+                    meta=next_params,
+                    dont_filter=True,
+                )
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")

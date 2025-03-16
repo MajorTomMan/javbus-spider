@@ -83,8 +83,16 @@ class IndexSpider(BaseSpider):
                     next_link = (
                         self.javbus_base_url + "page/" + str(next_page_num)
                     )
-                next_params = {"url":next_link,"meta":{"page_num": next_page_num, "is_censored": is_censored}}
-                self.push_to_redis(index_start_url_key,json.dumps(next_params))
+                next_params = {
+                    "page_num": next_page_num, 
+                    "is_censored": is_censored
+                }
+                yield scrapy.Request(
+                    next_link,
+                    callback=self.parse,
+                    meta=next_params,
+                    dont_filter=True,
+                )
             else:
                 self.log("No next page, stopping crawl.")
                 self.crawler.engine.close_spider(self, "No next page")

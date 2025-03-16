@@ -65,16 +65,6 @@ pip install -r "$SCRIPT_DIR/requirements.txt"
 # 创建日志目录
 mkdir -p "$SCRIPT_DIR/logs"
 #mkdir -p "$SCRIPT_DIR/outputs"
-# 创建日志文件（如果不存在）
-touch "$SCRIPT_DIR/logs/movie.log" "$SCRIPT_DIR/logs/actress_detail.log" "$SCRIPT_DIR/logs/actress_movie.log" \
-      "$SCRIPT_DIR/logs/genre_censored.log" "$SCRIPT_DIR/logs/genre_uncensored.log" \
-
-# 清空日志文件
-> "$SCRIPT_DIR/logs/movie.log"
-> "$SCRIPT_DIR/logs/actress_detail.log"
-> "$SCRIPT_DIR/logs/actress_movie.log"
-> "$SCRIPT_DIR/logs/genre_censored.log"
-> "$SCRIPT_DIR/logs/genre_uncensored.log"
 
 nohup scrapy crawl index -a is_censored=True > "$SCRIPT_DIR/logs/index_censored.log" 2>&1 &
 PID_index_censored=$!
@@ -84,10 +74,12 @@ nohup scrapy crawl index -a is_censored=False > "$SCRIPT_DIR/logs/index_uncensor
 PID_index_uncensored=$!
 echo "Index Uncensored spider is running with PID: $PID_index_uncensored"
 
-nohup scrapy crawl actresses_list -a is_censored=True > $SCRIPT_DIR/logs/actresses_list_true.log  2>&1 &
-PID_actresses_list_true=$!
-nohup scrapy crawl actresses_list -a is_censored=False > $SCRIPT_DIR/logs/actresses_list_false.log 2>&1 &
-PID_actresses_list_false=$!
+nohup scrapy crawl actresses_list -a is_censored=True > $SCRIPT_DIR/logs/actresses_list_censored.log  2>&1 &
+PID_actresses_list_censored=$!
+echo "Genre Actresses List Censored spider is running with PID: $PID_actresses_list_censored"
+nohup scrapy crawl actresses_list -a is_censored=False > $SCRIPT_DIR/logs/actresses_list_uncensored.log 2>&1 &
+PID_actresses_list_uncensored=$!
+echo "Genre Actresses List Uncensored spider is running with PID: $PID_actresses_list_uncensored"
 #nohup scrapy crawl movie > "$SCRIPT_DIR/logs/movie.log" 2>&1 &
 #PID_movie=$!
 #echo "Movie spider is running with PID: $PID_movie"
@@ -108,8 +100,8 @@ nohup scrapy crawl genre -a is_censored=False > "$SCRIPT_DIR/logs/genre_uncensor
 PID_genre_uncensored=$!
 echo "Genre Uncensored spider is running with PID: $PID_genre_uncensored"
 
-kill_command_first_batch=$(echo "$PID_index_censored $PID_index_uncensored $PID_actresses_list_censored $PID_actresses_list_uncensored $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
+kill_command_batch=$(echo "$PID_index_censored $PID_index_uncensored $PID_actresses_list_censored $PID_actresses_list_uncensored $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
 #kill_command_batch=$(echo "$PID_actresses_list_true $PID_actresses_list_false | xargs -I {} echo "kill -9 {}")
  
-echo "以下是可以用来爬虫进程的命令："
+echo "以下是可以用来杀死爬虫进程的命令："
 echo "$kill_command_batch"
