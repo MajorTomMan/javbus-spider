@@ -1,18 +1,9 @@
-'''
-Date: 2025-03-15 18:51:12
-LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-16 17:01:56
-FilePath: \spider\javbus\extensions.py
-Description: MajorTomMan @版权声明 保留文件所有权利
-'''
-from datetime import datetime
 import logging
 import os
-import sys
-from scrapy import signals
 import copy
-
-
+from datetime import datetime
+from scrapy import signals
+import json
 
 class JavbusLoggerExtension:
     def __init__(self, log_file):
@@ -26,40 +17,53 @@ class JavbusLoggerExtension:
 
         # 获取爬虫名字
         spider_name = crawler.spider.name
-        
+
         # 获取爬虫参数
-        kwargs = copy.deepcopy(crawler.spider.kwargs)  # 获取爬虫的参数（可以是 custom_settings 或者其他地方）
+        kwargs = copy.deepcopy(crawler.spider.kwargs)
 
-        # 初始化 params_str
-        params_str = ""
-        if kwargs:
-            # 提取所有参数并拼接成一个字符串
-            for key, value in kwargs.items():
-                params_str += f"_{key}={str(value)}"  # 拼接每个参数
-            # 根据爬虫名字、参数和时间生成日志文件名
-            log_file = os.path.join(log_dir, f"{spider_name}{params_str}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log")
+        # 构建参数字符串，保证参数顺序一致（这样不同参数组合会生成不同的文件）
+        params_str = "_".join(f"{key}={value}" for key, value in sorted(kwargs.items())) if kwargs else ""
+
+        # 获取当前时间戳（精确到秒）
+        timestamp_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        # 构造日志文件名（文件名带时间戳和参数）
+        if params_str:
+            log_file_name = f"{spider_name}_{params_str}_{timestamp_str}.log"
         else:
-            log_file = os.path.join(log_dir, f"{spider_name}_{datetime.now().strftime('%Y-%m-%d')}.log")
-        # 创建扩展对象
-        ext = cls(log_file)
+            log_file_name = f"{spider_name}_{timestamp_str}.log"
+        
+        log_file = os.path.join(log_dir, log_file_name)
 
-        # 监听爬虫启动信号
+        # 检查日志文件是否已存在
+        if not os.path.exists(log_file):
+            # 文件不存在时创建
+            ext = cls(log_file)
+        else:
+            # 文件已存在，使用现有文件
+            ext = cls(log_file)
+
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
         return ext
 
     def spider_opened(self, spider):
-        """爬虫启动时，设置日志到文件"""
+        """爬虫启动时，检查是否已存在相同 handler，避免重复添加"""
         logger = logging.getLogger()
 
-        # 文件日志
+        # 避免重复添加 file handler
+        if any(isinstance(h, logging.FileHandler) and h.baseFilename == self.log_file for h in logger.handlers):
+            return
+
+        # 创建文件 handler
         file_handler = logging.FileHandler(self.log_file, encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
 
-
-        # 设置格式
-        formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(name)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+        # 设置日志格式
+        formatter = logging.Formatter(
+            "%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
         file_handler.setFormatter(formatter)
 
-        # 添加到 Scrapy logger
         logger.addHandler(file_handler)
         spider.logger.info(f"Logging to file: {self.log_file}")

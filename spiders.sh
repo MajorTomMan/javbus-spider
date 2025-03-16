@@ -66,18 +66,18 @@ pip install -r "$SCRIPT_DIR/requirements.txt"
 mkdir -p "$SCRIPT_DIR/logs"
 #mkdir -p "$SCRIPT_DIR/outputs"
 
-nohup scrapy crawl index -a is_censored=True > "$SCRIPT_DIR/logs/index_censored.log" 2>&1 &
+nohup scrapy crawl index -a is_censored=True > /dev/null 2>&1 &
 PID_index_censored=$!
 echo "Index Censored spider is running with PID: $PID_index_censored"
 
-nohup scrapy crawl index -a is_censored=False > "$SCRIPT_DIR/logs/index_uncensored.log" 2>&1 &
+nohup scrapy crawl index -a is_censored=False > /dev/null 2>&1 &
 PID_index_uncensored=$!
 echo "Index Uncensored spider is running with PID: $PID_index_uncensored"
 
-nohup scrapy crawl actresses_list -a is_censored=True > $SCRIPT_DIR/logs/actresses_list_censored.log  2>&1 &
+nohup scrapy crawl actresses_list -a is_censored=True > /dev/null  2>&1 &
 PID_actresses_list_censored=$!
 echo "Genre Actresses List Censored spider is running with PID: $PID_actresses_list_censored"
-nohup scrapy crawl actresses_list -a is_censored=False > $SCRIPT_DIR/logs/actresses_list_uncensored.log 2>&1 &
+nohup scrapy crawl actresses_list -a is_censored=False > /dev/null 2>&1 &
 PID_actresses_list_uncensored=$!
 echo "Genre Actresses List Uncensored spider is running with PID: $PID_actresses_list_uncensored"
 #nohup scrapy crawl movie > "$SCRIPT_DIR/logs/movie.log" 2>&1 &
@@ -92,11 +92,11 @@ echo "Genre Actresses List Uncensored spider is running with PID: $PID_actresses
 #PID_actress_detail=$!
 #echo "Actress Detail spider is running with PID: $PID_actress_detail"
 
-nohup scrapy crawl genre -a is_censored=True > "$SCRIPT_DIR/logs/genre_censored.log" 2>&1 &
+nohup scrapy crawl genre -a is_censored=True > /dev/null 2>&1 &
 PID_genre_censored=$!
 echo "Genre Censored spider is running with PID: $PID_genre_censored"
 
-nohup scrapy crawl genre -a is_censored=False > "$SCRIPT_DIR/logs/genre_uncensored.log" 2>&1 &
+nohup scrapy crawl genre -a is_censored=False > /dev/null 2>&1 &
 PID_genre_uncensored=$!
 echo "Genre Uncensored spider is running with PID: $PID_genre_uncensored"
 
