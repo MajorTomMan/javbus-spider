@@ -80,17 +80,17 @@ echo "Genre Actresses List Censored spider is running with PID: $PID_actresses_l
 nohup scrapy crawl actresses_list -a is_censored=False > /dev/null 2>&1 &
 PID_actresses_list_uncensored=$!
 echo "Genre Actresses List Uncensored spider is running with PID: $PID_actresses_list_uncensored"
-#nohup scrapy crawl movie > "$SCRIPT_DIR/logs/movie.log" 2>&1 &
-#PID_movie=$!
-#echo "Movie spider is running with PID: $PID_movie"
+nohup scrapy crawl movie > /dev/null 2>&1 &
+PID_movie=$!
+echo "Movie spider is running with PID: $PID_movie"
 
-#nohup scrapy crawl actress_movie > "$SCRIPT_DIR/logs/actress_movie.log" 2>&1 &
-#PID_actress_movie=$!
-#echo "Actress Movie spider is running with PID: $PID_actress_movie"
+nohup scrapy crawl actress_movie > /dev/null 2>&1 &
+PID_actress_movie=$!
+echo "Actress Movie spider is running with PID: $PID_actress_movie"
 
-#nohup scrapy crawl actress_detail > "$SCRIPT_DIR/logs/actress_detail.log" 2>&1 &
-#PID_actress_detail=$!
-#echo "Actress Detail spider is running with PID: $PID_actress_detail"
+nohup scrapy crawl actress_detail > /dev/null 2>&1 &
+PID_actress_detail=$!
+echo "Actress Detail spider is running with PID: $PID_actress_detail"
 
 nohup scrapy crawl genre -a is_censored=True > /dev/null 2>&1 &
 PID_genre_censored=$!
@@ -100,8 +100,7 @@ nohup scrapy crawl genre -a is_censored=False > /dev/null 2>&1 &
 PID_genre_uncensored=$!
 echo "Genre Uncensored spider is running with PID: $PID_genre_uncensored"
 
-kill_command_batch=$(echo "$PID_index_censored $PID_index_uncensored $PID_actresses_list_censored $PID_actresses_list_uncensored $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
-#kill_command_batch=$(echo "$PID_actresses_list_true $PID_actresses_list_false | xargs -I {} echo "kill -9 {}")
+kill_command_batch=$(echo "$PID_actress_detail $PID_movie $PID_actress_movie $PID_index_censored $PID_index_uncensored $PID_actresses_list_censored $PID_actresses_list_uncensored $PID_genre_censored $PID_genre_uncensored" | xargs -I {} echo "kill -9 {}")
  
 echo "以下是可以用来杀死爬虫进程的命令："
 echo "$kill_command_batch"
