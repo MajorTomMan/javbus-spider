@@ -3,7 +3,7 @@ import os
 import copy
 from datetime import datetime
 from scrapy import signals
-
+from scrapy.utils.log import configure_logging
 class JavbusLoggerExtension:
     def __init__(self, log_file):
         self.log_file = log_file
@@ -39,26 +39,32 @@ class JavbusLoggerExtension:
 
         # 连接信号
         crawler.signals.connect(ext.spider_opened, signal=signals.spider_opened)
+        crawler.signals.connect(ext.spider_closed, signal=signals.spider_closed)
         return ext
 
     def spider_opened(self, spider):
-        """爬虫启动时，检查是否已存在相同 handler，避免重复添加"""
-        logger = logging.getLogger()
+        """设置日志系统，输出到文件和终端"""
+        configure_logging(install_root_handler=False)  # 关闭 Scrapy 默认日志处理器
 
-        # 避免重复添加 file handler
-        if any(isinstance(h, logging.FileHandler) and h.baseFilename == self.log_file for h in logger.handlers):
-            return
+        log_formatter = logging.Formatter('%(asctime)s - [%(name)s] - %(levelname)s - %(message)s')
 
-        # 创建文件 handler
-        file_handler = logging.FileHandler(self.log_file, encoding="utf-8")
+        # 文件日志
+        file_handler = logging.FileHandler(self.log_file, mode='a', encoding='utf-8')
         file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(log_formatter)
 
-        # 设置日志格式
-        formatter = logging.Formatter(
-            "%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S"
-        )
-        file_handler.setFormatter(formatter)
+        # 终端日志
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        console_handler.setFormatter(log_formatter)
 
-        logger.addHandler(file_handler)
+        # 获取根日志记录器
+        root_logger = logging.getLogger()
+        root_logger.setLevel(logging.DEBUG)
+        root_logger.addHandler(file_handler)
+        root_logger.addHandler(console_handler)
         spider.logger.info(f"Logging to file: {self.log_file}")
+        
+    def spider_closed(self, spider, reason):
+        self.logger.info(f"Spider {spider.name} closed: {reason}")
+        self.logger.removeHandler(self.file_handler)  # 爬虫关闭时移除 handler
