@@ -13,7 +13,7 @@ class JavbusLoggerExtension:
         log_base_dir = crawler.settings.get("LOG_DIRECTORY", "logs")
 
         # 以当前时间（精确到秒）作为文件夹名
-        timestamp_dir = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp_dir = datetime.now().strftime("%Y-%m-%d_%H-%M")
         log_dir = os.path.join(log_base_dir, timestamp_dir)
         os.makedirs(log_dir, exist_ok=True)  # 确保目录存在
 
