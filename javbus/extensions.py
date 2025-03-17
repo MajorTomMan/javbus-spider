@@ -49,22 +49,30 @@ class JavbusLoggerExtension:
         log_formatter = logging.Formatter('%(asctime)s - [%(name)s] - %(levelname)s - %(message)s')
 
         # 文件日志
-        file_handler = logging.FileHandler(self.log_file, mode='a', encoding='utf-8')
-        file_handler.setLevel(logging.DEBUG)
-        file_handler.setFormatter(log_formatter)
+        self.file_handler = logging.FileHandler(self.log_file, mode='a', encoding='utf-8')
+        self.file_handler.setLevel(logging.DEBUG)
+        self.file_handler.setFormatter(log_formatter)
 
         # 终端日志
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(log_formatter)
+        self.console_handler = logging.StreamHandler()
+        self.console_handler.setLevel(logging.DEBUG)
+        self.console_handler.setFormatter(log_formatter)
 
         # 获取根日志记录器
         root_logger = logging.getLogger()
         root_logger.setLevel(logging.DEBUG)
-        root_logger.addHandler(file_handler)
-        root_logger.addHandler(console_handler)
+        root_logger.addHandler(self.file_handler)
+        root_logger.addHandler(self.console_handler)
         spider.logger.info(f"Logging to file: {self.log_file}")
         
     def spider_closed(self, spider, reason):
-        self.logger.info(f"Spider {spider.name} closed: {reason}")
-        self.logger.removeHandler(self.file_handler)  # 爬虫关闭时移除 handler
+        spider.logger.info(f"Spider {spider.name} closed: {reason}")
+        root_logger = logging.getLogger()
+        # 先检查 handler 是否存在再移除
+        if hasattr(self, "file_handler"):
+            root_logger.removeHandler(self.file_handler)
+            self.file_handler.close()  # 关闭文件
+
+        if hasattr(self, "console_handler"):
+            root_logger.removeHandler(self.console_handler)
+            self.console_handler.close()
