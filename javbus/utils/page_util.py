@@ -308,7 +308,7 @@ class PageUtil:
                                 company_link, normal_image_link
                             )
                             response = self.request_util.get(normal_image_url)
-                            if response.status_code == 200:
+                            if response and response.status_code == 200:
                                 images["big_image_link"] = (
                                     high_quality_image_url.replace("ps", "pl")
                                 )
@@ -393,7 +393,18 @@ class PageUtil:
         return f"https://{domain}"
 
     def replace_base_url(self, original_url, new_base_url):
-        parsed_original = urlparse(original_url)
+        # 判断数据类型
+        if isinstance(original_url, dict):    # 字典
+            parsed_original = original_url.get("link", "")
+        elif isinstance(original_url, SampleImageItem) or isinstance(original_url,BigImageItem):    # Scrapy Item 处理
+            parsed_original = original_url.get("link", "")
+        elif isinstance(original_url, bytes):  # 字节流
+            parsed_original = original_url.decode('utf-8')
+        elif original_url is None:             # 空值处理
+            parsed_original = ""
+        else:                                  # 转为字符串
+            parsed_original = original_url
+        parsed_original = urlparse(parsed_original)
         new_url = urlunparse(
             (
                 parsed_original.scheme,  # 使用新 URL 的 scheme

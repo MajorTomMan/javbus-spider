@@ -1,12 +1,13 @@
 '''
 Date: 2025-03-10 21:19:43
 LastEditors: MajorTomMan 765719516@qq.com
-LastEditTime: 2025-03-10 23:22:36
+LastEditTime: 2025-03-19 23:58:02
 FilePath: \spider\javbus\queue.py
 Description: MajorTomMan @版权声明 保留文件所有权利
 '''
 from scrapy_redis.queue import Base
 import time
+from scrapy_redis.dupefilter import RFPDupeFilter  # 引入去重过滤器
 
 # 根据scrapy_redis源码参考
 # 实现的一个根据时间戳递增保证有序且先进后出的集合结构
@@ -73,4 +74,7 @@ class FifoSortedQueue(Base):
         pipe.zremrangebyrank(self.key, 0, 0)
         results, count = pipe.execute()
         if results:
-            return self._decode_request(results[0])
+            request = self._decode_request(results[0])
+            if self.spider.crawler.engine.slot.scheduler.df.request_seen(request):
+                return None
+            return request
