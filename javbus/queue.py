@@ -75,6 +75,7 @@ class FifoSortedQueue(Base):
         results, count = pipe.execute()
         if results:
             request = self._decode_request(results[0])
+            # 先验证是否是请求过的,做增量更新
             if self.spider.crawler.engine.slot.scheduler.df.request_seen(request):
                 return None
             return request
