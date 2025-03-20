@@ -11,4 +11,4 @@ javbus_base_url = "https://www.javbus.com/"
 
 high_quality_image_link = "awsimgsrc.dmm.co.jp/pics_dig"
 normal_image_link = "pics.dmm.co.jp"
-server_url = "13.114.140.140"
+server_url = "http://172.26.4.174"

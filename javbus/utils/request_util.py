@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 class RequestUtil:
-    baseUrl = "http://"+server_url+"/api"
+    baseUrl = server_url
+    # baseUrl = "http://"+server_url+"/api"
     # baseUrl = "http://localhost:9999"
     headers = {"Content-Type": "application/json"}
-    image_headers = {"Content-Type": "image/jpeg"}
     magnet_headers = {
         "accept": "*/*",
         "accept-encoding": "gzip, deflate, br, zstd",
